@@ -1,4 +1,3 @@
-// src/users/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { UserInterestDessert } from './user.interest.dessert.entity';
 

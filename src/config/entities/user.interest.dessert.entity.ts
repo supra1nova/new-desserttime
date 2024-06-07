@@ -1,6 +1,5 @@
-// src/users/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { User } from './user.entity';
+import { Member } from './member.entity';
 import { DessertCategory } from './dessert.category.entity';
 
 @Entity()
@@ -14,8 +13,8 @@ export class UserInterestDessert {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(()=>User, user=>user.uids)
-  user:User;
+  @ManyToOne(()=>Member, member=>member.uids)
+  member:Member;
   @ManyToOne(()=>DessertCategory, dc=>dc.uid)
   dc:DessertCategory
   

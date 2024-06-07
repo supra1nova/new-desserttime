@@ -1,6 +1,5 @@
-// src/users/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm';
-import { User } from './user.entity';
+import { Member } from './member.entity';
 import { Review } from './review.entity';
 import { ReviewImg } from './review.img.entity';
 
@@ -23,8 +22,8 @@ export class Img {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @OneToOne(()=>User, user => user.img)
-  user:User
+  @OneToOne(()=>Member, member => member.img)
+  member:Member
 
   @OneToMany(()=>ReviewImg, rImg => rImg.img)
   rImg:ReviewImg[]

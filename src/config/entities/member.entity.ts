@@ -1,4 +1,3 @@
-// src/users/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { UserInterestDessert } from './user.interest.dessert.entity';
 import { QnA } from './qna.entity';
@@ -6,14 +5,15 @@ import { Review } from './review.entity';
 import { Like } from './like.entity';
 import { Point } from './point.entity';
 import { Img } from './img.entity';
+import { Accusation } from './accusation.entity';
 
 @Entity()
-export class User {
+export class Member {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  userName: string;
+  memberName: string;
 
   @Column()
   nickName: string;
@@ -45,21 +45,27 @@ export class User {
   @Column()
   isAgreeAD:boolean
 
-  @OneToMany(()=>UserInterestDessert, udi => udi.user)
+  @Column()
+  domain:string
+
+  @OneToMany(()=>UserInterestDessert, udi => udi.member)
   uids:UserInterestDessert[];
 
-  @OneToMany(()=>QnA, qna=>qna.user)
+  @OneToMany(()=>QnA, qna=>qna.member)
   qnas:QnA[];
 
-  @OneToMany(()=>Review, reviews => reviews.user)
+  @OneToMany(()=>Accusation, accusation => accusation.member)
+  accusations:Accusation[]
+
+  @OneToMany(()=>Review, reviews => reviews.member)
   reviews:Review[];
 
-  @OneToMany(()=>Like, likes => likes.user)
+  @OneToMany(()=>Like, likes => likes.member)
   likes:Like[];
 
-  @OneToMany(()=>Point,points=>points.user)
+  @OneToMany(()=>Point,points=>points.member)
   points:Point[];
   
-  @OneToOne(()=>Img, img => img.user)
+  @OneToOne(()=>Img, img => img.member)
   img:Img
 }

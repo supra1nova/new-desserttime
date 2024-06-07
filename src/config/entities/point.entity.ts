@@ -1,6 +1,5 @@
-// src/users/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { User } from './user.entity';
+import { Member } from './member.entity';
 import { Review } from './review.entity';
 
 @Entity()
@@ -17,8 +16,8 @@ export class Point {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(()=>User, user => user.points)
-  user:User
+  @ManyToOne(()=>Member, member => member.points)
+  member:Member
 
   @ManyToOne(()=>Review, review => review.points)
   review:Review

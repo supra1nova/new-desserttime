@@ -1,6 +1,5 @@
-// src/users/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { User } from './user.entity';
+import { Member } from './member.entity';
 
 @Entity()
 export class QnA {
@@ -19,6 +18,6 @@ export class QnA {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(()=>User, user => user.qnas)
-  user:User
+  @ManyToOne(()=>Member, member => member.qnas)
+  member:Member
 }
