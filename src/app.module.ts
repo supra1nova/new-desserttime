@@ -16,12 +16,10 @@ import { Notice } from './config/entities/notice.entity';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: 'password',
-    database: 'test',
+    type: 'oracle',
+    connectString: `(DESCRIPTION=(ADDRESS=(PROTOCOL=TCPS)(HOST=localhost)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=db_desserttime)))`,
+    username: 'admin',
+    password: 'DTelwjxmxkdla8*',
     entities: [Accusation,UserInterestDessert,Img,Like,Point,QnA,Review,ReviewImg,Member,DessertCategory,Notice],
     synchronize: true,
   }),],
