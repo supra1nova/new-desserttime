@@ -17,7 +17,7 @@ import { Notice } from './config/entities/notice.entity';
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'oracle',
-    connectString: `(DESCRIPTION=(ADDRESS=(PROTOCOL=TCPS)(HOST=localhost)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=db_desserttime)))`,
+    connectString: `(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=ga0c4cbf63f5084_dbdesserttime_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))`,
     username: 'admin',
     password: 'DTelwjxmxkdla8*',
     entities: [Accusation,UserInterestDessert,Img,Like,Point,QnA,Review,ReviewImg,Member,DessertCategory,Notice],
