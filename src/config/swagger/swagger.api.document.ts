@@ -19,6 +19,6 @@ export class APIDocument {
 
 
     const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('DessertTime', app, document);
+    SwaggerModule.setup('desser-time', app, document);
   }
 }
