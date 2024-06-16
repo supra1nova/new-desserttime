@@ -13,6 +13,7 @@ import { ReviewImg } from './config/entities/review.img.entity';
 import { Member } from './config/entities/member.entity';
 import { DessertCategory } from './config/entities/dessert.category.entity';
 import { Notice } from './config/entities/notice.entity';
+import { MemberModule } from './modules/member/member.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -22,7 +23,9 @@ import { Notice } from './config/entities/notice.entity';
     password: 'DTelwjxmxkdla8*',
     entities: [Accusation,UserInterestDessert,Img,Like,Point,QnA,Review,ReviewImg,Member,DessertCategory,Notice],
     synchronize: true,
-  }),],
+  }),
+MemberModule
+],
   controllers: [AppController],
   providers: [AppService],
 })
