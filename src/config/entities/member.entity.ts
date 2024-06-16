@@ -10,16 +10,19 @@ import { Accusation } from './accusation.entity';
 @Entity()
 export class Member {
   @PrimaryGeneratedColumn()
-  id: number;
+  MId: number;
+
+  @Column()
+  memberId: string;
 
   @Column()
   memberName: string;
 
-  @Column()
+  @Column({nullable:true})
   nickName: string;
 
   @Column()
-  birthday: Date;
+  birth: Date;
 
   @Column()
   gender: string;
@@ -39,8 +42,8 @@ export class Member {
   @Column()
   address: string;
 
-  @Column()
-  isAgreeLocation:boolean
+  // @Column()
+  // isAgreeLocation:boolean
 
   @Column()
   isAgreeAD:boolean

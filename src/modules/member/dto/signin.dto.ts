@@ -32,11 +32,27 @@ export class SignInDto {
 
   @ApiProperty({
     example: '김디저트',
-    description: '훈련자 명',
+    description: '회원 명',
     required: true,
   })
   @IsNotEmpty()
-  readonly userName: string;
+  readonly memberName: string;
+
+  @ApiProperty({
+    example: 'dessert1@naver.com',
+    description: '이메일',
+    required: true,
+  })
+  @IsNotEmpty()
+  readonly memberEmail: string;
+
+  @ApiProperty({
+    example: '각sns에서 제공해주는 사용자 식별값',
+    description: '식별값',
+    required: true,
+  })
+  @IsNotEmpty()
+  readonly memberId: string;
 
   @ApiProperty({
     example: 'naver/google/kakao/apple',
@@ -44,7 +60,7 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly userDomain: string;
+  readonly memberDomain: string;
 
   @ApiProperty({
     example: '1997',
@@ -52,7 +68,7 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly userBirth: number;
+  readonly memberBirth: number;
 
   @ApiProperty({
     example: 'F:여/ M:남',
@@ -60,7 +76,7 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly userGender: string;
+  readonly memberGender: string;
 
   @ApiProperty({
     example: '서울광역시 신림동',
@@ -68,31 +84,15 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly userAddress: string;
+  readonly memberAddress: string;
 
   @ApiProperty({
-    example: 'Y',
-    description: '사용자 약관동의 필수1',
+    example: '사용자 마케팅 광고 약관동의 여부  - N / Y',
+    description: '사용자 마케팅 광고 약관동의 여부',
     required: true,
   })
   @IsNotEmpty()
-  readonly userTerms1: string;
-
-  @ApiProperty({
-    example: 'Y',
-    description: '사용자 약관 동의 필수2',
-    required: true,
-  })
-  @IsNotEmpty()
-  readonly userTerms2: number;
-
-  @ApiProperty({
-    example: 'N / Y',
-    description: '사용자 약관동의 선택1',
-    required: true,
-  })
-  @IsNotEmpty()
-  readonly userTerms3: string;
+  readonly isAgreeAD: boolean;
 
   @ApiProperty({
     example: 1,
@@ -100,7 +100,7 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly usersPickCategory1: number;
+  readonly memberPickCategory1: number;
 
   @ApiProperty({
     example: 2,
@@ -108,7 +108,7 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly usersPickCategory2: number;
+  readonly memberPickCategory2: number;
 
   @ApiProperty({
     example: 3,
@@ -116,7 +116,7 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly usersPickCategory3: number;
+  readonly memberPickCategory3: number;
 
   @ApiProperty({
     example: 4,
@@ -124,7 +124,7 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly usersPickCategory4: number;
+  readonly memberPickCategory4: number;
 
   @ApiProperty({
     example: 5,
@@ -132,5 +132,5 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly usersPickCategory5: number;
+  readonly memberPickCategory5: number;
 }
