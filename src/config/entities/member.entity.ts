@@ -22,7 +22,7 @@ export class Member {
   nickName: string;
 
   @Column()
-  birth: Date;
+  birth: number;
 
   @Column()
   gender: string;
