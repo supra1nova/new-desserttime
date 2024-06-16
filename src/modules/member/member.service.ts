@@ -9,7 +9,8 @@ constructor(private memberRepository:MemberRepository){}
  async memberSignIn(signInDto:SignInDto){
     try {
         const isMember = await this.memberRepository.selectMember(signInDto.memberId, signInDto.memberEmail);
-if(isMember){
+        console.log('isMember ::::::::::::::::::::::::::',isMember);
+if(!isMember){
         await this.memberRepository.insertMember(signInDto);
 }else{
     throw new BadRequestException('중복정보', {
