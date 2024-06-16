@@ -30,7 +30,7 @@ export class Member {
   @Column()
   email: string;
   
-  @Column()
+  @Column({nullable:true,default:false})
   isHavingImg: boolean;
   
   @CreateDateColumn()
