@@ -1,9 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/signin.dto';
 import { MemberService } from './member.service';
 import { LoginDto } from './dto/login.dto';
 
+@ApiTags('MEMBER')
 @Controller('member')
 export class MemberController {
     constructor(

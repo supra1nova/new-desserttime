@@ -23,6 +23,7 @@ return {
 }
     } catch (error) {
      console.log(error);   
+     throw error;
     }
  }   
 
@@ -39,6 +40,7 @@ if(!isMember){
     }
     } catch (error) {
         console.log(error);
+        throw error;
     }
     
  }
