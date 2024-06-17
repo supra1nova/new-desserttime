@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DessertCategoryRepository } from "./dessert-category.repository";
 import { DessertSessionDto } from "./dto/dessertsession.dto";
-import { FirstCategoryAppendDto } from "./dto/firstcategory.append.dto.ts/firstcategory.append.dto";
+import { CategoryAppendDto } from "./dto/category.append.dto";
 
 @Injectable()
 export class DessertCategoryService{
@@ -20,9 +20,9 @@ export class DessertCategoryService{
      }
       }
 
-      async postDessertCategory(firstCategoryAppendDto:FirstCategoryAppendDto){
+      async postDessertCategory(categoryAppendDto:CategoryAppendDto){
         try {
-            await this.dessertCategoryRepository.insertDessertCategory(firstCategoryAppendDto);
+            await this.dessertCategoryRepository.insertDessertCategory(categoryAppendDto);
             return {
                 resultStatus:true,
             }
