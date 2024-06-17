@@ -14,6 +14,7 @@ import { Member } from './config/entities/member.entity';
 import { DessertCategory } from './config/entities/dessert.category.entity';
 import { Notice } from './config/entities/notice.entity';
 import { MemberModule } from './modules/member/member.module';
+import { DessertCategoryModule } from './modules/dessert-category/dessert-category.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -24,7 +25,8 @@ import { MemberModule } from './modules/member/member.module';
     entities: [Accusation,UserInterestDessert,Img,Like,Point,QnA,Review,ReviewImg,Member,DessertCategory,Notice],
     synchronize: true,
   }),
-MemberModule
+MemberModule,
+DessertCategoryModule
 ],
   controllers: [AppController],
   providers: [AppService],
