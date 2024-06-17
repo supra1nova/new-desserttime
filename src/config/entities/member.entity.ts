@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { UserInterestDessert } from './user.interest.dessert.entity';
-import { QnA } from './qna.entity';
+// import { QnA } from './qna.entity';
 import { Review } from './review.entity';
 import { Like } from './like.entity';
 import { Point } from './point.entity';
@@ -54,8 +54,8 @@ export class Member {
   @OneToMany(()=>UserInterestDessert, udi => udi.member)
   uids:UserInterestDessert[];
 
-  @OneToMany(()=>QnA, qna=>qna.member)
-  qnas:QnA[];
+  // @OneToMany(()=>QnA, qna=>qna.member)
+  // qnas:QnA[];
 
   @OneToMany(()=>Accusation, accusation => accusation.member)
   accusations:Accusation[]
