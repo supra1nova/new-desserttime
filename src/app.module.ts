@@ -15,6 +15,7 @@ import { DessertCategory } from './config/entities/dessert.category.entity';
 import { Notice } from './config/entities/notice.entity';
 import { MemberModule } from './modules/member/member.module';
 import { DessertCategoryModule } from './modules/dessert-category/dessert-category.module';
+import { QnAModule } from './modules/qna/qna.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -26,7 +27,8 @@ import { DessertCategoryModule } from './modules/dessert-category/dessert-catego
     synchronize: true,
   }),
 MemberModule,
-DessertCategoryModule
+DessertCategoryModule,
+QnAModule
 ],
   controllers: [AppController],
   providers: [AppService],

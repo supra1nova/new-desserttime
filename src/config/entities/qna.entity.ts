@@ -4,14 +4,20 @@ import { Member } from './member.entity';
 @Entity()
 export class QnA {
   @PrimaryGeneratedColumn()
-  id: number;
+  QnAId: number;
 
-  @Column()
+  @Column({nullable:true})
   title: string;
+
+  @Column({nullable:true})
+  email: string;
 
   @Column()
   content: string;
   
+  @Column()
+  usable:boolean
+
   @CreateDateColumn()
   createdDate: Date;
   
