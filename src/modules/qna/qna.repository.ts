@@ -14,10 +14,10 @@ export class QnARepository{
     }
 
     async findQnAList(){
-       return await this.qna.find({select:{content:true,email:true,createdDate:true},where:{usable:true}});//QnAId:true,
+       return await this.qna.find({select:{content:true,createdDate:true}});//QnAId:true,email:true,    ,where:{usable:true}
     }
 
     async findQnA(qnAIdDto:QnAIdDto){
-       return await this.qna.findOne({select:{title:true,content:true,email:true,createdDate:true},where:{usable:true}});//QnAId:true,
+       return await this.qna.findOne({select:{title:true,content:true,createdDate:true}});//QnAId:true,email:true,    ,where:{usable:true}
     }
 }
