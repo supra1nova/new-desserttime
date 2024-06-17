@@ -10,7 +10,7 @@ export class DessertCategoryRepository{
     constructor(@InjectRepository(DessertCategory) private dessertCategory:Repository<DessertCategory> ){
     }
     async selectDessertCategory(dessertSessionDto : DessertSessionDto){
-        return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, DCId:true}, where :{sessionNum:dessertSessionDto.sessionNum}})
+        return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, DCid:true}, where :{sessionNum:dessertSessionDto.sessionNum}})
     }
     async insertDessertCategory(categoryAppendDto:CategoryAppendDto){
         await this.dessertCategory.insert(categoryAppendDto)
