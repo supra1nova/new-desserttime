@@ -28,7 +28,7 @@ import { QnAModule } from './modules/qna/qna.module';
   }),
 MemberModule,
 DessertCategoryModule,
-QnAModule
+//QnAModule
 ],
   controllers: [AppController],
   providers: [AppService],
