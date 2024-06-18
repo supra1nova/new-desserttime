@@ -24,6 +24,6 @@ export class QnA {
   @UpdateDateColumn()
   updateDate: Date;
 
-  // @ManyToOne(()=>Member, member => member.qnas)
-  // member:Member
+  @ManyToOne(()=>Member, member => member.qnas)
+  member:Member
 }

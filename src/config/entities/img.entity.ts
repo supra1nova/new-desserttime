@@ -22,9 +22,9 @@ export class Img {
   @UpdateDateColumn()
   updateDate: Date;
 
-  // @OneToOne(()=>Member, member => member.img)
-  // member:Member
+  @OneToOne(()=>Member, member => member.img)
+  member:Member
 
-  // @OneToMany(()=>ReviewImg, rImg => rImg.img)
-  // rImg:ReviewImg[]
+  @OneToMany(()=>ReviewImg, rImg => rImg.img)
+  rImg:ReviewImg[]
 }

@@ -10,9 +10,9 @@ export class Like {
   @CreateDateColumn()
   createdDate: Date;
   
-  // @ManyToOne(()=>Member, member => member.likes)
-  // member:Member
+  @ManyToOne(()=>Member, member => member.likes)
+  member:Member
 
-  // @ManyToOne(()=>Review, review => review.likes)
-  // review:Review
+  @ManyToOne(()=>Review, review => review.likes)
+  review:Review
 }

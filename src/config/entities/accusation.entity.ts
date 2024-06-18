@@ -16,9 +16,9 @@ export class Accusation {
   @UpdateDateColumn()
   updateDate: Date;
 
-  // @ManyToOne(()=>Member, member => member.accusations)
-  // member:Member
+  @ManyToOne(()=>Member, member => member.accusations)
+  member:Member
 
-  // @ManyToOne(()=>Review, review => review.accusations)
-  // review:Review
+  @ManyToOne(()=>Review, review => review.accusations)
+  review:Review
 }

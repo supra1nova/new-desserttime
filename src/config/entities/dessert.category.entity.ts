@@ -18,7 +18,7 @@ export class DessertCategory {
   @UpdateDateColumn()
   updateDate: Date;
 
-  // @OneToMany(()=>UserInterestDessert,uid=>uid.dc)
-  // uid:UserInterestDessert[];
+  @OneToMany(()=>UserInterestDessert,uid=>uid.dc)
+  uid:UserInterestDessert[];
 
 }
