@@ -13,9 +13,9 @@ export class UserInterestDessert {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(()=>Member, member=>member.uids)
-  member:Member;
-  @ManyToOne(()=>DessertCategory, dc=>dc.uid)
-  dc:DessertCategory
+  // @ManyToOne(()=>Member, member=>member.uids)
+  // member:Member;
+  // @ManyToOne(()=>DessertCategory, dc=>dc.uid)
+  // dc:DessertCategory
   
 }

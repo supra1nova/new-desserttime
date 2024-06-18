@@ -8,9 +8,9 @@ export class ReviewImg {
   @PrimaryGeneratedColumn()
   rIId: number;
 
-  @ManyToOne(()=>Img, img=>img.rImg)
-  img:Img;
+  // @ManyToOne(()=>Img, img=>img.rImg)
+  // img:Img;
 
-  @ManyToOne(()=>Review,review=>review.rImg)
-  review:Review
+  // @ManyToOne(()=>Review,review=>review.rImg)
+  // review:Review
 }

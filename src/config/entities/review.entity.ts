@@ -31,18 +31,18 @@ export class Review {
   @UpdateDateColumn()
   updateDate: Date;
   
-  @OneToMany(()=>Accusation, accusation => accusation.review)
-  accusations:Accusation[]
+  // @OneToMany(()=>Accusation, accusation => accusation.review)
+  // accusations:Accusation[]
 
-  @ManyToOne(()=>Member,member=>member.reviews)
-  member:Member
+  // @ManyToOne(()=>Member,member=>member.reviews)
+  // member:Member
 
-  @OneToMany(()=>Like, likes => likes.review)
-  likes:Like[]
+  // @OneToMany(()=>Like, likes => likes.review)
+  // likes:Like[]
 
-  @OneToMany(()=>Point,points=>points.review)
-  points:Point[];
+  // @OneToMany(()=>Point,points=>points.review)
+  // points:Point[];
 
-  @OneToMany(()=>ReviewImg, rImg => rImg.img)
-  rImg:ReviewImg[]
+  // @OneToMany(()=>ReviewImg, rImg => rImg.img)
+  // rImg:ReviewImg[]
 }

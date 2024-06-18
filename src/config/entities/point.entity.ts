@@ -16,9 +16,9 @@ export class Point {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(()=>Member, member => member.points)
-  member:Member
+  // @ManyToOne(()=>Member, member => member.points)
+  // member:Member
 
-  @ManyToOne(()=>Review, review => review.points)
-  review:Review
+  // @ManyToOne(()=>Review, review => review.points)
+  // review:Review
 }

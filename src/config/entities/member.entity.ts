@@ -51,24 +51,24 @@ export class Member {
   @Column()
   domain:string
 
-  @OneToMany(()=>UserInterestDessert, udi => udi.member)
-  uids:UserInterestDessert[];
+  // @OneToMany(()=>UserInterestDessert, udi => udi.member)
+  // uids:UserInterestDessert[];
 
   // @OneToMany(()=>QnA, qna=>qna.member)
   // qnas:QnA[];
 
-  @OneToMany(()=>Accusation, accusation => accusation.member)
-  accusations:Accusation[]
+  // @OneToMany(()=>Accusation, accusation => accusation.member)
+  // accusations:Accusation[]
 
-  @OneToMany(()=>Review, reviews => reviews.member)
-  reviews:Review[];
+  // @OneToMany(()=>Review, reviews => reviews.member)
+  // reviews:Review[];
 
-  @OneToMany(()=>Like, likes => likes.member)
-  likes:Like[];
+  // @OneToMany(()=>Like, likes => likes.member)
+  // likes:Like[];
 
-  @OneToMany(()=>Point,points=>points.member)
-  points:Point[];
+  // @OneToMany(()=>Point,points=>points.member)
+  // points:Point[];
   
-  @OneToOne(()=>Img, img => img.member)
-  img:Img
+  // @OneToOne(()=>Img, img => img.member)
+  // img:Img
 }
