@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
-export class CategoryAppendDto{
+export class FirstCategoryAppendDto{
     @ApiProperty({
         example: '1',
-        description: '카테고리 차수 1차:1/ 2차:2/ 3차:3',
+        description: '카테고리 차수 1차:1/ 2차:2/',
         required: true,
       })
       @IsNotEmpty()
