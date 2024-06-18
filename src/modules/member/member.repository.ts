@@ -24,7 +24,7 @@ export class MemberRepository {
             memberId: true,
             email: true,
           },
-          where: { memberId ,email:memberEmail},
+          where: { email:memberEmail}, //memberid
         });
       }
 
@@ -39,7 +39,7 @@ export class MemberRepository {
         memberId: true,
         email: true,
       },
-      where: { memberId : loginDto.memberId ,email:loginDto.memberEmail},
+      where: { email:loginDto.memberEmail}, //memberId : loginDto.memberId ,
     });
   }
 
@@ -50,7 +50,6 @@ export class MemberRepository {
    */
   async insertMember(signInDto: SignInDto){
     return await this.memberRepository.insert({
-        memberId:signInDto.memberId,
         memberName:signInDto.memberName,
         email:signInDto.memberEmail,
         domain:signInDto.memberDomain,
@@ -58,7 +57,8 @@ export class MemberRepository {
         gender:signInDto.memberGender,
         address:signInDto.memberAddress,
         isAgreeAD:signInDto.isAgreeAD
-    });
+    }); //        memberId:signInDto.memberId,
+
   }
 
 }
