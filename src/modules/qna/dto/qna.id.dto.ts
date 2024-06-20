@@ -8,5 +8,5 @@ export class QnAIdDto{
         required: true,
       })
       @IsNotEmpty()
-      readonly id: string;
+      readonly qId: string;
 }

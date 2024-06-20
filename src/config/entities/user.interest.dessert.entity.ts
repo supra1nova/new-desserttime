@@ -15,6 +15,7 @@ export class UserInterestDessert {
 
   @ManyToOne(()=>Member, member=>member.uids)
   member:Member;
+  
   @ManyToOne(()=>DessertCategory, dc=>dc.uid)
   dc:DessertCategory
   

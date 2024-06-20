@@ -4,7 +4,7 @@ import { Member } from './member.entity';
 @Entity()
 export class QnA {
   @PrimaryGeneratedColumn()
-  id: number;
+  qId: number;
 
   @Column({nullable:true})
   title: string;

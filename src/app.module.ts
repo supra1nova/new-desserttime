@@ -23,12 +23,13 @@ import { QnAModule } from './modules/qna/qna.module';
     connectString: `(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=ga0c4cbf63f5084_dbdesserttime_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))`,
     username: 'admin',
     password: 'DTelwjxmxkdla8*',
-    entities: [Accusation,UserInterestDessert,Img,Like,Point,Review,ReviewImg,Member,DessertCategory,Notice,QnA],//
+    entities: [UserInterestDessert,Member,Img,Like,Point,Review,ReviewImg,QnA,Notice,Accusation,DessertCategory],//,,Img,Like,Point,Review,ReviewImg,Member,DessertCategory,Notice,QnA,Accusation
     synchronize: true,
+    logging:true
   }),
 MemberModule,
 DessertCategoryModule,
-//QnAModule
+QnAModule
 ],
   controllers: [AppController],
   providers: [AppService],
