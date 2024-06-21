@@ -16,9 +16,15 @@ import { Notice } from './config/entities/notice.entity';
 import { MemberModule } from './modules/member/member.module';
 import { DessertCategoryModule } from './modules/dessert-category/dessert-category.module';
 import { QnAModule } from './modules/qna/qna.module';
+import { InitModule } from './config/moduleInit/init.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
+  imports: [
+    MemberModule,
+DessertCategoryModule,
+QnAModule,
+//InitModule,
+    TypeOrmModule.forRoot({
     type: 'oracle',
     connectString: `(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=ga0c4cbf63f5084_dbdesserttime_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))`,
     username: 'admin',
@@ -27,9 +33,7 @@ import { QnAModule } from './modules/qna/qna.module';
     synchronize: false,
     logging:true
   }),
-MemberModule,
-DessertCategoryModule,
-QnAModule
+
 ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { QnAService } from './qna.service';
 import { QnAIdDto } from './dto/qna.id.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -11,13 +11,13 @@ export class QnAController {
 
     @ApiOperation({summary:"문의 하나 생성하기"})
     @Post()
-    async postQnA(createQnADto:CreateQnADto){
+    async postQnA(@Body() createQnADto:CreateQnADto){
         return await this.qnaService.postQnA(createQnADto);
     }
 
     @ApiOperation({summary:'문의 1개 조회하기'})
     @Get()
-    async getQnA(@Param() qnAIdDto:QnAIdDto){
+    async getQnA(@Query() qnAIdDto:QnAIdDto){
         return await this.qnaService.getQnA(qnAIdDto);
     }
 
