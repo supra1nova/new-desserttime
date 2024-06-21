@@ -24,7 +24,7 @@ import { QnAModule } from './modules/qna/qna.module';
     username: 'admin',
     password: 'DTelwjxmxkdla8*',
     entities: [UserInterestDessert,Member,Img,Like,Point,Review,ReviewImg,QnA,Notice,Accusation,DessertCategory],//,,Img,Like,Point,Review,ReviewImg,Member,DessertCategory,Notice,QnA,Accusation
-    synchronize: true,
+    synchronize: false,
     logging:true
   }),
 MemberModule,
