@@ -30,14 +30,16 @@ return {
 
  async memberLogIn(loginDto:LoginDto){
     try {
-        const isMember = await this.memberRepository.memberLogin(loginDto);
-if(!isMember){
+        const memberData = await this.memberRepository.memberLogin(loginDto);
+if(!memberData){
     throw new BadRequestException('미등록정보', {
         cause: new Error(),
         description: '가입되지않은 정보입니다.',
       });
     }
+    console.log("isMember ::::::::::::::::: ",memberData);
     return {    resultStatus :true,
+        data : memberData
     }
     } catch (error) {
         console.log(error);

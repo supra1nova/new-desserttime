@@ -35,11 +35,7 @@ export class MemberRepository {
    */
   async memberLogin(loginDto:LoginDto) {
     return await this.memberRepository.findOne({
-      select: {
-        memberId: true,
-        email: true,
-      },
-      where: { memberId : loginDto.memberId ,email:loginDto.memberEmail},
+       where: { memberId : loginDto.memberId ,email:loginDto.memberEmail},
     });
   }
 

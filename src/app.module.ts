@@ -23,7 +23,7 @@ import { InitModule } from './config/moduleInit/init.module';
     MemberModule,
 DessertCategoryModule,
 QnAModule,
-//InitModule,
+InitModule,
     TypeOrmModule.forRoot({
     type: 'oracle',
     connectString: `(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=ga0c4cbf63f5084_dbdesserttime_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))`,
