@@ -11,7 +11,6 @@ export class DessertCategoryController{
     constructor(private dessertCategoryService:DessertCategoryService){
     }
 
-    @UseInterceptors(TransactionInterceptor)
     @ApiOperation({ summary: '디저트카테고리 목록 조회' })
     @Get('list')
     async getDessertCategory(@Param() dessertSessionDto : DessertSessionDto){

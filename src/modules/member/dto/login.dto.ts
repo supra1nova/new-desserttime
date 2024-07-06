@@ -17,6 +17,6 @@ export class LoginDto{
         required: true,
       })
       @IsNotEmpty()
-      readonly memberId: string;
+      readonly snsId: string;
     
 }

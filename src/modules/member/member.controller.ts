@@ -19,11 +19,11 @@ export class MemberController {
     //@ApiBearerAuth()
     @Post('signin')
     async memberSignIn(@Body() signInDto: SignInDto) {
+      console.log("::::::::::::::::::::::::::::::::::::::::::::::::::",signInDto)
       return await this.memberService.memberSignIn(signInDto);
     }
 
     @ApiOperation({summary:'로그인'})
-    @UseInterceptors(TransactionInterceptor)
     @Post('login')
     async memberLogIn(@Body() loginDto: LoginDto){
         return await this.memberService.memberLogIn(loginDto);

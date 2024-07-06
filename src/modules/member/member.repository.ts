@@ -18,13 +18,14 @@ export class MemberRepository {
    * @param loginDto
    * @returns
    */
-    async selectMember(memberId:string,memberEmail:string) {
+    async findMemberOne(snsId:string,memberEmail:string) {
+      console.log(" ::::snsId :::: ",snsId," :::memberEmail ::::", memberEmail)
         return await this.memberRepository.findOne({
           select: {
             memberId: true,
-            email: true,
+            memberEmail: true,
           },
-          where: { memberId ,email:memberEmail},
+          where: { snsId ,memberEmail:memberEmail},
         });
       }
 
@@ -35,7 +36,7 @@ export class MemberRepository {
    */
   async memberLogin(loginDto:LoginDto) {
     return await this.memberRepository.findOne({
-       where: { memberId : loginDto.memberId ,email:loginDto.memberEmail},
+       where: { snsId : loginDto.snsId ,memberEmail:loginDto.memberEmail},
     });
   }
 
@@ -45,14 +46,17 @@ export class MemberRepository {
    * @returns
    */
   async insertMember(signInDto: SignInDto){
+    console.log('signInDto ::::::',signInDto);
     return await this.memberRepository.insert({
-        memberId:signInDto.memberId,
+        snsId:signInDto.snsId,
         memberName:signInDto.memberName,
-        email:signInDto.memberEmail,
-        domain:signInDto.memberDomain,
-        birth:signInDto.memberBirth,
+        memberEmail:signInDto.memberEmail,
+        signInSns:signInDto.signInSns,
+        birthYear:signInDto.birthYear,
         gender:signInDto.memberGender,
-        address:signInDto.memberAddress,
+        firstCity:signInDto.firstCity,
+        secondaryCity:signInDto.secondaryCity,
+        thirdCity:signInDto.thirdCity,
         isAgreeAD:signInDto.isAgreeAD
     });
   }

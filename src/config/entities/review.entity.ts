@@ -2,13 +2,12 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { Member } from './member.entity';
 import { Accusation } from './accusation.entity';
 import { Like } from './like.entity';
-import { Point } from './point.entity';
 import { ReviewImg } from './review.img.entity';
 
 @Entity()
 export class Review {
   @PrimaryGeneratedColumn()
-  Rid: number;
+  reviewId: number;
 
   @Column()
   totalLikedNum: number;
@@ -24,6 +23,18 @@ export class Review {
   
   @Column()
   score: number;
+    
+  @Column({default:true})
+  isUsable:boolean;
+
+  @Column({default:false})
+  isUpdated:boolean;
+
+  @Column({default:false})
+  isInitalized:boolean;
+
+  @Column({default:0})
+  point:number;
   
   @CreateDateColumn()
   createdDate: Date;
@@ -40,9 +51,6 @@ export class Review {
   @OneToMany(()=>Like, likes => likes.review)
   likes:Like[]
 
-  @OneToMany(()=>Point,points=>points.review)
-  points:Point[];
-
-  @OneToMany(()=>ReviewImg, rImg => rImg.img)
-  rImg:ReviewImg[]
+  @OneToMany(()=>ReviewImg, rImg => rImg.reviewImg)
+  reviewImg:ReviewImg[]
 }

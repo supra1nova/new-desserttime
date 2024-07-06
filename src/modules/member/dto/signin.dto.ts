@@ -9,27 +9,6 @@ import {
 
 export class SignInDto {
 
-//   @ApiProperty({
-//     example: 'jiminjeong1',
-//     description: '훈련자 id',
-//     required: true,
-//   })
-//   @IsNotEmpty()
-//   @IsString()
-//   @Length(5, 20)
-//   @Matches(/^(?=.*[a-z])(?=.*[0-9])(?!.*\s)(?!.*\W)(?!.*_).{5,20}$/)
-//   readonly userId: string;
-
-//   @ApiProperty({
-//     example: 'jiminjeong1',
-//     description: '훈련자 pw',
-//     required: false,
-//   })
-//   @Length(8)
-//   @Matches(/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/)
-//   @IsOptional()
-//   readonly userPw: string;
-
   @ApiProperty({
     example: '김디저트',
     description: '회원 명',
@@ -52,15 +31,15 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: string;
+  readonly snsId: string;
 
   @ApiProperty({
     example: 'naver/google/kakao/apple',
-    description: '도메인',
+    description: '등록한 sns 도메인',
     required: true,
   })
   @IsNotEmpty()
-  readonly memberDomain: string;
+  readonly signInSns: string;
 
   @ApiProperty({
     example: '1997',
@@ -68,7 +47,7 @@ export class SignInDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberBirth: number;
+  readonly birthYear: number;
 
   @ApiProperty({
     example: 'F:여/ M:남',
@@ -79,12 +58,28 @@ export class SignInDto {
   readonly memberGender: string;
 
   @ApiProperty({
-    example: '서울광역시 신림동',
-    description: '주소',
+    example: '서울광역시',
+    description: '첫 주소', 
     required: true,
   })
   @IsNotEmpty()
-  readonly memberAddress: string;
+  readonly firstCity: string;
+
+  @ApiProperty({
+    example: '관악구',
+    description: '두번째 주소',
+    required: true,
+  })
+  @IsNotEmpty()
+  readonly secondaryCity: string;
+
+  @ApiProperty({
+    example: '신림동',
+    description: '세번째 주소',
+    required: true,
+  })
+  @IsNotEmpty()
+  readonly thirdCity: string;
 
   @ApiProperty({
     example: '사용자 마케팅 광고 약관동의 여부  - N / Y',

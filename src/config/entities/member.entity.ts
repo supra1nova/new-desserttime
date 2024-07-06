@@ -3,18 +3,23 @@ import { UserInterestDessert } from './user.interest.dessert.entity';
 import { QnA } from './qna.entity';
 import { Review } from './review.entity';
 import { Like } from './like.entity';
-import { Point } from './point.entity';
-import { Img } from './img.entity';
+import { MemberImg } from './member.img.entity';
 import { Accusation } from './accusation.entity';
 
 @Entity()
 export class Member {
   @PrimaryGeneratedColumn()
-  MId: number;
+  memberId: number;
 
   @Column()
-  memberId: string;
+  snsId:string;
 
+  @Column()
+  signInSns:string;
+
+  @Column()
+  memberEmail: string;
+  
   @Column()
   memberName: string;
 
@@ -22,13 +27,10 @@ export class Member {
   nickName: string;
 
   @Column()
-  birth: number;
+  birthYear: number;
 
   @Column()
   gender: string;
-  
-  @Column()
-  email: string;
   
   @Column({nullable:true,default:false})
   isHavingImg: boolean;
@@ -40,16 +42,16 @@ export class Member {
   updateDate: Date;
   
   @Column()
-  address: string;
+  firstCity:string;
 
-  // @Column()
-  // isAgreeLocation:boolean
+  @Column()
+  secondaryCity:string;
 
+  @Column()
+  thirdCity:string;
+ 
   @Column()
   isAgreeAD:boolean
-
-  @Column()
-  domain:string
 
   @OneToMany(()=>UserInterestDessert, udi => udi.member)
   uids:UserInterestDessert[];
@@ -66,9 +68,6 @@ export class Member {
   @OneToMany(()=>Like, likes => likes.member)
   likes:Like[];
 
-  @OneToMany(()=>Point,points=>points.member)
-  points:Point[];
-  
-  @OneToOne(()=>Img, img => img.member)
-  img:Img
+  @OneToOne(()=>MemberImg, img => img.member)
+  img:MemberImg
 }

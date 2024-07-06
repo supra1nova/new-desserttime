@@ -9,11 +9,11 @@ import {
   } from '@nestjs/common';
   import { Observable, catchError, tap } from 'rxjs';
   import { DataSource } from 'typeorm';
+import { winstonLogger } from '../logger/winston.util';
   
   @Injectable()
   export class TransactionInterceptor implements NestInterceptor {
     constructor(private readonly dataSource: DataSource) {}
-    private readonly logger = new Logger();
   
     async intercept(
       context: ExecutionContext,
@@ -41,7 +41,7 @@ import {
             message: error.message,
             error,
           };
-          this.logger.error({ errorResponse });
+          winstonLogger.error({ errorResponse });
   
           if (error instanceof HttpException) {
             throw new HttpException(error.getResponse(), error.getStatus());

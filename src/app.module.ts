@@ -1,41 +1,64 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Accusation } from './config/entities/accusation.entity';
-import { UserInterestDessert } from './config/entities/user.interest.dessert.entity';
-import { Img } from './config/entities/img.entity';
-import { Like } from './config/entities/like.entity';
-import { Point } from './config/entities/point.entity';
-import { QnA } from './config/entities/qna.entity';
-import { Review } from './config/entities/review.entity';
-import { ReviewImg } from './config/entities/review.img.entity';
-import { Member } from './config/entities/member.entity';
-import { DessertCategory } from './config/entities/dessert.category.entity';
-import { Notice } from './config/entities/notice.entity';
+import * as path from 'path';
 import { MemberModule } from './modules/member/member.module';
 import { DessertCategoryModule } from './modules/dessert-category/dessert-category.module';
 import { QnAModule } from './modules/qna/qna.module';
 import { InitModule } from './config/moduleInit/init.module';
+import { ConfigModule,ConfigService } from '@nestjs/config';
+import { typeORMConfig } from './config/typeorm/typeorm.config';
+import helmet from 'helmet';
+import { LoggerMiddleware } from './config/middleware/logger.middleware';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     MemberModule,
-DessertCategoryModule,
-QnAModule,
-InitModule,
-    TypeOrmModule.forRoot({
-    type: 'oracle',
-    connectString: `(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=ga0c4cbf63f5084_dbdesserttime_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))`,
-    username: 'admin',
-    password: 'DTelwjxmxkdla8*',
-    entities: [UserInterestDessert,Member,Img,Like,Point,Review,ReviewImg,QnA,Notice,Accusation,DessertCategory],//,,Img,Like,Point,Review,ReviewImg,Member,DessertCategory,Notice,QnA,Accusation
-    synchronize: false,
-    logging:true
-  }),
+    DessertCategoryModule,
+    QnAModule,
+    InitModule,
+    //AuthModule,
+    ConfigModule.forRoot({
+      envFilePath: [
+        process.env.NODE_ENV === 'production'
+          ? path.join(process.cwd(), 'config', '.env.production')
+          : path.join(process.cwd(), 'config', '.env.development'),
+      ],
+      isGlobal: true,
+    }),
+    ScheduleModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: path.join(String(process.env.fileroot)),
+      serveStaticOptions: {
+        //index: false, // 디렉토리 색인 페이지 표시 비활성화
+        setHeaders: (res) => {
+          res.setHeader(
+            'Content-Security-Policy',
+            'upgrade-insecure-requests',
+            //  `attachment; filename=${encodeURIComponent(path)}`,
+          );
+          //res.setHeader('Content-Type', 'application/octet-stream'); // MIME 유형 설정
+        },
+      },
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) =>
+        await typeORMConfig(configService),
+    }),
 
 ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  public configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes('*'); // '*'는 모든 라우트에 대한 적용을 의미합니다.
+    consumer
+      .apply(helmet())
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

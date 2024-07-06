@@ -4,19 +4,19 @@ import { Member } from './member.entity';
 @Entity()
 export class QnA {
   @PrimaryGeneratedColumn()
-  qId: number;
-
-  @Column({nullable:true})
-  title: string;
+  qnaId: number;
 
   @Column({nullable:true})
   email: string;
 
   @Column()
   content: string;
-  
-  @Column()
-  usable:boolean
+
+  @Column({default:false})
+  isAnswered:boolean;
+
+  @Column({default:true})
+  isUsable:boolean;
   
   @CreateDateColumn()
   createdDate: Date;

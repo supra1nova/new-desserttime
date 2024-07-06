@@ -1,16 +1,36 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Img } from "./img.entity";
-import { Review } from "./review.entity";
-
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm';
+import { Member } from './member.entity';
+import { Review } from './review.entity';
 
 @Entity()
 export class ReviewImg {
   @PrimaryGeneratedColumn()
-  rIId: number;
+  reviewImgId: number;
 
-  @ManyToOne(()=>Img, img=>img.rImg)
-  img:Img;
+  @Column()
+  middlepath: string;
 
-  @ManyToOne(()=>Review,review=>review.rImg)
-  review:Review
+  @Column()
+  path: string;
+
+  @Column()
+  extention: string;
+
+  @Column()
+  imgName: string;
+
+  @Column({default:false})
+  isMain:boolean;
+
+  @Column()
+  num:number;
+
+  @CreateDateColumn()
+  createdDate: Date;
+  
+  @UpdateDateColumn()
+  updateDate: Date;
+
+  @ManyToOne(()=>Review, review => review.reviewImg)
+  reviewImg:Review[]
 }

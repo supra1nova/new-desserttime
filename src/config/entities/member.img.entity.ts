@@ -4,18 +4,22 @@ import { Review } from './review.entity';
 import { ReviewImg } from './review.img.entity';
 
 @Entity()
-export class Img {
+export class MemberImg {
   @PrimaryGeneratedColumn()
-  imgId: number;
+  memberImgId: number;
 
   @Column()
   middlepath: string;
+
   @Column()
   path: string;
+
   @Column()
   extention: string;
+
   @Column()
-  imgName: string;ß
+  imgName: string;
+
   @CreateDateColumn()
   createdDate: Date;
   
@@ -24,7 +28,4 @@ export class Img {
 
   @OneToOne(()=>Member, member => member.img)
   member:Member
-
-  @OneToMany(()=>ReviewImg, rImg => rImg.img)
-  rImg:ReviewImg[]
 }

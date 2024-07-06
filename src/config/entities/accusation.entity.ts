@@ -5,9 +5,12 @@ import { Review } from './review.entity';
 @Entity()
 export class Accusation {
   @PrimaryGeneratedColumn()
-  Aid: number;
+  accusationId: number;
 
   @Column()
+  reason:string;
+
+  @Column({nullable:true})
   content: string;
   
   @CreateDateColumn()
