@@ -13,6 +13,9 @@ import helmet from 'helmet';
 import { LoggerMiddleware } from './config/middleware/logger.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TransactionInterceptor } from './config/interceptor/transaction.interceptor';
+import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
 
 @Module({
   imports: [
@@ -52,7 +55,16 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransactionInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void {
