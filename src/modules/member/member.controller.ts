@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/signin.dto';
 import { MemberService } from './member.service';
@@ -24,8 +24,8 @@ export class MemberController {
     }
 
     @ApiOperation({summary:'로그인'})
-    @Post('login')
-    async memberLogIn(@Body() loginDto: LoginDto){
+    @Get('login')
+    async memberLogIn(@Param() loginDto: LoginDto){
         return await this.memberService.memberLogIn(loginDto);
     }
 }
