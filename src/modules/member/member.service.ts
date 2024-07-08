@@ -17,10 +17,6 @@ if(!isMember){
         description: '사용중인 사용자입니다.',
       });
 }
-return {
-    resultStatus :true,
-
-}
     } catch (error) {
      console.log(error);   
      throw error;
@@ -36,9 +32,7 @@ if(!memberData){
         description: '가입되지않은 정보입니다.',
       });
     }
-    return {    resultStatus :true,
-        data : memberData
-    }
+    return memberData;
     } catch (error) {
         console.log(error);
         throw error;

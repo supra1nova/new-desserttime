@@ -9,7 +9,6 @@ export class QnAService {
     async postQnA(createQnADto:CreateQnADto){
         try {
             await this.qnaRepository.insertQnA(createQnADto);
-       return {resultStatus:true};     
         } catch (error) {
             throw error;
         }
@@ -17,11 +16,8 @@ export class QnAService {
     async getQnA(qnAIdDto:QnAIdDto){
         try {
             const oneQna = await this.qnaRepository.findQnA(qnAIdDto);
-            return {
-                resultStatus:true,
-                qna : oneQna
-            }
-        } catch (error) {
+            return oneQna;
+                } catch (error) {
             throw error;
         }
     }
@@ -29,10 +25,7 @@ export class QnAService {
     async getQnAList(){
 try {
     const qnaList = await this.qnaRepository.findQnAList();
-    return{
-        resultStatus:true,
-        qnaList
-    }
+    return qnaList;
 } catch (error) {
     throw error;
 }

@@ -10,11 +10,7 @@ export class DessertCategoryService{
     async getDessertCategory(dessertSessionDto : DessertSessionDto){
      try {
         const firstCategoryList = await this.dessertCategoryRepository.selectDessertCategory(dessertSessionDto);  
-        const result ={
-            resultStatus:true,
-            firstCategoryList
-        }
-        return result;
+        return firstCategoryList;
      } catch (error) {
         throw error;
      }
@@ -23,9 +19,6 @@ export class DessertCategoryService{
       async postDessertCategory(firstCategoryAppendDto:FirstCategoryAppendDto){
         try {
             await this.dessertCategoryRepository.insertDessertCategory(firstCategoryAppendDto);
-            return {
-                resultStatus:true,
-            }
         } catch (error) {
             throw error;
         }
