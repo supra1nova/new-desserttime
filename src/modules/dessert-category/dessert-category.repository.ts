@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { DessertSessionDto } from "./dto/dessertsession.dto";
 import { FirstCategoryAppendDto } from "./dto/firstcategory.append.dto";
 import { ParentIdDto } from "./dto/parent.id.dto";
+import { DessertCatrgoryIdDto } from "./dto/dessert.category.dto";
 
 @Injectable()
 export class DessertCategoryRepository{
@@ -15,7 +16,7 @@ export class DessertCategoryRepository{
         async findAllDessertCategoryList(){
             return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, DessertCatrgoryId:true, parentDCId:true}})
         }
-        
+
     async findDessertCategoryList(dessertSessionDto : DessertSessionDto){
         return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, DessertCatrgoryId:true, parentDCId:true}, where :{sessionNum:dessertSessionDto.sessionNum}})
     }
@@ -25,6 +26,10 @@ export class DessertCategoryRepository{
     }
     async insertDessertCategory(firstCategoryAppendDto:FirstCategoryAppendDto){
         await this.dessertCategory.insert(firstCategoryAppendDto)
+
+    }
+    async deleteDessertCategory(dessertCatrgoryIdDto :DessertCatrgoryIdDto){
+        await this.dessertCategory.delete(dessertCatrgoryIdDto.dessertCatrgoryId)
 
     }
 }

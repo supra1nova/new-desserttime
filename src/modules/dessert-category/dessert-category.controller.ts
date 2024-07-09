@@ -1,17 +1,18 @@
-import { Body, Controller, Get, Param, Post, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { DessertCategoryService } from "./dessert-category.service";
 import { DessertSessionDto } from "./dto/dessertsession.dto";
 import { FirstCategoryAppendDto } from "./dto/firstcategory.append.dto";
 import { TransactionInterceptor } from 'src/config/interceptor/transaction.interceptor';
 import { ParentIdDto } from "./dto/parent.id.dto";
+import { DessertCatrgoryIdDto } from "./dto/dessert.category.dto";
 
 @ApiTags('Dessert Category')
 @Controller('dessert-category')
 export class DessertCategoryController{
     constructor(private dessertCategoryService:DessertCategoryService){
     }
-    
+
     @ApiOperation({ summary: '전체 디저트카테고리 목록 조회' })
     @Get('all-list')
     async getAllDessertCategory(){
@@ -39,5 +40,11 @@ export class DessertCategoryController{
     @Post('one')
     async postDessertCategory(@Body() firstCategoryAppendDto:FirstCategoryAppendDto){
     return this.dessertCategoryService.postDessertCategory(firstCategoryAppendDto);
+    }
+
+    @ApiOperation({ summary: '카테고리 하나 삭제' })
+    @Delete('delete/:DessertCatrgoryId')
+    async deleteDessertCategory(@Param() dessertCatrgoryIdDto :DessertCatrgoryIdDto){
+       return this.dessertCategoryService.deleteDessertCategory(dessertCatrgoryIdDto);
     }
 }

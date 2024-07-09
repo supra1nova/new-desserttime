@@ -3,6 +3,7 @@ import { DessertCategoryRepository } from "./dessert-category.repository";
 import { DessertSessionDto } from "./dto/dessertsession.dto";
 import { FirstCategoryAppendDto } from "./dto/firstcategory.append.dto";
 import { ParentIdDto } from "./dto/parent.id.dto";
+import { DessertCatrgoryIdDto } from "./dto/dessert.category.dto";
 
 @Injectable()
 export class DessertCategoryService{
@@ -21,7 +22,7 @@ export class DessertCategoryService{
            throw error;
         }
          }
-         
+
     /**
      * 차수별 디저트 카테고리 목록조회
      * @param dessertSessionDto 
@@ -51,6 +52,17 @@ export class DessertCategoryService{
       async postDessertCategory(firstCategoryAppendDto:FirstCategoryAppendDto){
         try {
             await this.dessertCategoryRepository.insertDessertCategory(firstCategoryAppendDto);
+        } catch (error) {
+            throw error;
+        }
+      }
+      /**
+       * 디저트 카테고리 하나 삭제
+       * @param dessertCatrgoryIdDto 
+       */
+      async deleteDessertCategory(dessertCatrgoryIdDto :DessertCatrgoryIdDto){
+        try {
+            await this.dessertCategoryRepository.deleteDessertCategory(dessertCatrgoryIdDto);
         } catch (error) {
             throw error;
         }
