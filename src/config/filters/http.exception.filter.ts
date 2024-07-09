@@ -43,10 +43,10 @@ import { winstonLogger } from '../logger/winston.util';
       };
       winstonLogger.error({ errorResponse });
 
-      if (error instanceof HttpException) {
-        throw new HttpException(error.getResponse(), error.getStatus());
-      }
-      throw new InternalServerErrorException();
+      // if (error instanceof HttpException) {
+      //   throw new HttpException(error.getResponse(), error.getStatus());
+      // }
+      // throw new InternalServerErrorException();
     }
   }
   

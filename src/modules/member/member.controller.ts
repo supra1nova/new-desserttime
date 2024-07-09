@@ -24,8 +24,9 @@ export class MemberController {
     }
 
     @ApiOperation({summary:'로그인'})
-    @Get('login')
-    async memberLogIn(@Param() loginDto: LoginDto){
+    @Get('login/:snsId/:memberEmail')
+    async memberLogIn(@Param() loginDto: LoginDto){      
+      console.log("::::::::::::::::::::::::::::::::::::::::::::::::::",loginDto)
         return await this.memberService.memberLogIn(loginDto);
     }
 }

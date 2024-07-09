@@ -12,7 +12,7 @@ export class DessertCategoryController{
     }
 
     @ApiOperation({ summary: '디저트카테고리 목록 조회' })
-    @Get('list')
+    @Get('list/:sessionNum')
     async getDessertCategory(@Param() dessertSessionDto : DessertSessionDto){
        return this.dessertCategoryService.getDessertCategory(dessertSessionDto);
     }

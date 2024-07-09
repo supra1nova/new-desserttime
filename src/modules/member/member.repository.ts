@@ -35,6 +35,7 @@ export class MemberRepository {
    * @returns
    */
   async memberLogin(loginDto:LoginDto) {
+    console.log(loginDto);
     return await this.memberRepository.findOne({
        where: { snsId : loginDto.snsId ,memberEmail:loginDto.memberEmail},
     });
