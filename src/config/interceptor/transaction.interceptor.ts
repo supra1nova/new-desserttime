@@ -20,8 +20,9 @@ import { winstonLogger } from '../logger/winston.util';
       next: CallHandler,
     ): Promise<Observable<any>> {
       const request = context.switchToHttp().getRequest();
-
       if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
+        console.log(request.method)
+
       const queryRunner = this.dataSource.createQueryRunner();
       await queryRunner.connect();
       await queryRunner.startTransaction();

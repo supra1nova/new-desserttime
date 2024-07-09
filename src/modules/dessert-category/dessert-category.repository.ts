@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { DessertSessionDto } from "./dto/dessertsession.dto";
 import { FirstCategoryAppendDto } from "./dto/firstcategory.append.dto";
 import { ParentIdDto } from "./dto/parent.id.dto";
-import { DessertCatrgoryIdDto } from "./dto/dessert.category.dto";
+import { DessertCategoryIdDto } from "./dto/dessert.category.dto";
 
 @Injectable()
 export class DessertCategoryRepository{
@@ -14,22 +14,23 @@ export class DessertCategoryRepository{
 
         //수정필요 조건절
         async findAllDessertCategoryList(){
-            return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, DessertCatrgoryId:true, parentDCId:true}})
+            return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, dessertCategoryId:true, parentDCId:true}})
         }
 
     async findDessertCategoryList(dessertSessionDto : DessertSessionDto){
-        return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, DessertCatrgoryId:true, parentDCId:true}, where :{sessionNum:dessertSessionDto.sessionNum}})
+        return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, dessertCategoryId:true, parentDCId:true}, where :{sessionNum:dessertSessionDto.sessionNum}})
     }
 
     async findSessionSubDessertCategoryList(parentIdDto :ParentIdDto){
-        return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, DessertCatrgoryId:true, parentDCId:true},where :{parentDCId:parentIdDto.parentDCId}})
+        return await this.dessertCategory.find({select :{dessertName:true, sessionNum:true, dessertCategoryId:true, parentDCId:true},where :{parentDCId:parentIdDto.parentDCId}})
     }
     async insertDessertCategory(firstCategoryAppendDto:FirstCategoryAppendDto){
         await this.dessertCategory.insert(firstCategoryAppendDto)
 
     }
-    async deleteDessertCategory(dessertCatrgoryIdDto :DessertCatrgoryIdDto){
-        await this.dessertCategory.delete(dessertCatrgoryIdDto.dessertCatrgoryId)
+    async deleteDessertCategory(dessertCategoryIdDto :DessertCategoryIdDto){
+        console.log('또여기')
+        await this.dessertCategory.delete({dessertCategoryId:dessertCategoryIdDto.dessertCategoryId})
 
     }
 }

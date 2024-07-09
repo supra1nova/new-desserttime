@@ -4,7 +4,7 @@ import { UserInterestDessert } from './user.interest.dessert.entity';
 @Entity()
 export class DessertCategory {
   @PrimaryGeneratedColumn()
-  DessertCatrgoryId: number;
+  dessertCategoryId: number;
 
   @Column()
   dessertName: string;

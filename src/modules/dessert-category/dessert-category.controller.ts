@@ -5,7 +5,7 @@ import { DessertSessionDto } from "./dto/dessertsession.dto";
 import { FirstCategoryAppendDto } from "./dto/firstcategory.append.dto";
 import { TransactionInterceptor } from 'src/config/interceptor/transaction.interceptor';
 import { ParentIdDto } from "./dto/parent.id.dto";
-import { DessertCatrgoryIdDto } from "./dto/dessert.category.dto";
+import { DessertCategoryIdDto } from "./dto/dessert.category.dto";
 
 @ApiTags('Dessert Category')
 @Controller('dessert-category')
@@ -45,7 +45,7 @@ export class DessertCategoryController{
     @UseInterceptors(TransactionInterceptor)
     @ApiOperation({ summary: '카테고리 하나 삭제' })
     @Delete('delete/:DessertCatrgoryId')
-    async deleteDessertCategory(@Param() dessertCatrgoryIdDto :DessertCatrgoryIdDto){
-       return this.dessertCategoryService.deleteDessertCategory(dessertCatrgoryIdDto);
+    async deleteDessertCategory(@Param() dessertCategoryIdDto :DessertCategoryIdDto){
+       return this.dessertCategoryService.deleteDessertCategory(dessertCategoryIdDto);
     }
 }
