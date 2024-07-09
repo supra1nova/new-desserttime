@@ -42,6 +42,7 @@ export class DessertCategoryController{
     return this.dessertCategoryService.postDessertCategory(firstCategoryAppendDto);
     }
 
+    @UseInterceptors(TransactionInterceptor)
     @ApiOperation({ summary: '카테고리 하나 삭제' })
     @Delete('delete/:DessertCatrgoryId')
     async deleteDessertCategory(@Param() dessertCatrgoryIdDto :DessertCatrgoryIdDto){
