@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,7 +12,7 @@ import { MemberModule } from './modules/member/member.module';
 import { DessertCategoryModule } from './modules/dessert-category/dessert-category.module';
 import { QnAModule } from './modules/qna/qna.module';
 import { InitModule } from './config/moduleInit/init.module';
-import { ConfigModule,ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { typeORMConfig } from './config/typeorm/typeorm.config';
 import helmet from 'helmet';
 import { LoggerMiddleware } from './config/middleware/logger.middleware';
@@ -16,6 +21,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './config/interceptor/transaction.interceptor';
 import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
+import { ReviewModule } from './modules/review/review.module';
 
 @Module({
   imports: [
@@ -23,6 +29,7 @@ import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
     DessertCategoryModule,
     QnAModule,
     InitModule,
+    ReviewModule,
     //AuthModule,
     ConfigModule.forRoot({
       envFilePath: [
@@ -52,10 +59,10 @@ import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
       useFactory: async (configService: ConfigService) =>
         await typeORMConfig(configService),
     }),
-
-],
+  ],
   controllers: [AppController],
-  providers: [AppService,
+  providers: [
+    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,
