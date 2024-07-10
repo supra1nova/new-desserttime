@@ -10,7 +10,7 @@ export class DessertCategoryService {
   constructor(private dessertCategoryRepository: DessertCategoryRepository) {}
 
   /**
-   * 전체 디저트카테고리 목록 조회
+   * 전체 디저트카테고리 목록 조회(1,2차만)
    * @returns
    */
   async getAllDessertCategory() {

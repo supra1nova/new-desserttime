@@ -12,7 +12,6 @@ import { Accusation } from '../entities/accusation.entity';
 import { DessertCategory } from '../entities/dessert.category.entity';
 import { Like } from '../entities/like.entity';
 
-
 export const typeORMConfig = async (
   configService: ConfigService,
 ): Promise<TypeOrmModuleOptions> => {
@@ -22,9 +21,20 @@ export const typeORMConfig = async (
     connectString: `(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=ga0c4cbf63f5084_dbdesserttime_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))`,
     username: 'admin',
     password: 'DTelwjxmxkdla8*',
-    entities: [UserInterestDessert,Member,MemberImg,Like,Review,ReviewImg,QnA,Notice,Accusation,DessertCategory],
+    entities: [
+      UserInterestDessert,
+      Member,
+      MemberImg,
+      Like,
+      Review,
+      ReviewImg,
+      QnA,
+      Notice,
+      Accusation,
+      DessertCategory,
+    ],
     synchronize: false,
-    logging:true,
+    logging: true,
     //connectTimeout: 30, //30초가 지나면 트랜잭션을 롤백한다.
     // migrations: [process.cwd() + '\\src\\database\\migrations\\*.ts'],
     // migrationsRun: true, //자동적으로 처음 migration이 실행되도록 한다.
