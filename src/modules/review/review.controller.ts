@@ -11,7 +11,7 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @ApiOperation({ summary: '선택한 카테고리의 리뷰 목록 조회' })
-  @Get('category/list/:dessertCategoryId/:selectedOrder')
+  @Get('category/list/:dessertCategoryId/:selectedOrder/:memberId')
   async getReviewCategoryList(@Param() reviewCategoryDto: ReviewCategoryDto) {
     return await this.reviewService.findReviewCategoryList(reviewCategoryDto);
   }
