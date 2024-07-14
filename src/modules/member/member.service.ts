@@ -5,38 +5,41 @@ import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class MemberService {
-constructor(private memberRepository:MemberRepository){}
- async memberSignIn(signInDto:SignInDto){
+  constructor(private memberRepository: MemberRepository) {}
+  async memberSignIn(signInDto: SignInDto) {
     try {
-        const isMember = await this.memberRepository.findMemberOne(signInDto.snsId, signInDto.memberEmail);
-if(!isMember){
+      const isMember = await this.memberRepository.findMemberOne(
+        signInDto.snsId,
+        signInDto.memberEmail,
+      );
+      if (!isMember) {
         await this.memberRepository.insertMember(signInDto);
-}else{
-    throw new BadRequestException('중복정보', {
-        cause: new Error(),
-        description: '사용중인 사용자입니다.',
-      });
-}
+      } else {
+        throw new BadRequestException('중복정보', {
+          cause: new Error(),
+          description: '사용중인 사용자입니다.',
+        });
+      }
     } catch (error) {
-     console.log(error);   
-     throw error;
+      console.log(error);
+      throw error;
     }
- }   
+  }
 
- async memberLogIn(loginDto:LoginDto){
+  async memberLogIn(loginDto: LoginDto) {
     try {
-        const memberData = await this.memberRepository.memberLogin(loginDto);
-if(!memberData){
-    throw new BadRequestException('미등록정보', {
-        cause: new Error(),
-        description: '가입되지않은 정보입니다.',
-      });
-    }
-    return memberData;
+      const memberData = await this.memberRepository.memberLogin(loginDto);
+      if (!memberData) {
+        throw new BadRequestException('미등록정보', {
+          cause: new Error(),
+          description: '가입되지않은 정보입니다.',
+        });
+      }
+      memberData.nickName = '1번째 상큼한 복숭아';
+      return memberData;
     } catch (error) {
-        console.log(error);
-        throw error;
+      console.log(error);
+      throw error;
     }
-    
- }
+  }
 }
