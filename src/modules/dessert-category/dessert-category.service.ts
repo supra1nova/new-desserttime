@@ -62,6 +62,11 @@ export class DessertCategoryService {
     }
   }
 
+  /**
+   * 선택한 카테고리의 하위카테고리 목록 조회
+   * @param parentIdDto
+   * @returns
+   */
   async getSessionSubDessertCategory(parentIdDto: ParentIdDto) {
     try {
       const subCategoryList =
@@ -86,6 +91,7 @@ export class DessertCategoryService {
       throw error;
     }
   }
+
   /**
    * 디저트 카테고리 하나 삭제
    * @param dessertCategoryIdDto
