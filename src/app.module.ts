@@ -22,6 +22,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './config/interceptor/transaction.interceptor';
 import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
 import { ReviewModule } from './modules/review/review.module';
+import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
 
 @Module({
   imports: [
@@ -65,7 +66,7 @@ import { ReviewModule } from './modules/review/review.module';
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: TransactionInterceptor,
+      useClass: LoggerInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
