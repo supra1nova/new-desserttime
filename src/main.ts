@@ -5,7 +5,7 @@ import { APIDocument } from './config/swagger/swagger.api.document';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { winstonLogger } from './config/logger/winston.util';
 import { HttpExceptionFilter } from './config/filters/http.exception.filter';
-
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   // app.use(
@@ -22,8 +22,11 @@ async function bootstrap() {
   app.enableCors();
   new APIDocument().initializeOptions(app);
   app.useGlobalFilters(new HttpExceptionFilter());
-
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
   await app.listen(3000);
-  
 }
 bootstrap();
