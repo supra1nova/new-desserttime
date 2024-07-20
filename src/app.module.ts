@@ -8,9 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as path from 'path';
-import { MemberModule } from './modules/member/member.module';
-import { DessertCategoryModule } from './modules/dessert-category/dessert-category.module';
-import { QnAModule } from './modules/qna/qna.module';
+import { MemberModule } from './client-modules/member/member.module';
+import { DessertCategoryModule } from './client-modules/dessert-category/dessert-category.module';
+import { QnAModule } from './client-modules/qna/qna.module';
 import { InitModule } from './config/moduleInit/init.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { typeORMConfig } from './config/typeorm/typeorm.config';
@@ -21,7 +21,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './config/interceptor/transaction.interceptor';
 import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
-import { ReviewModule } from './modules/review/review.module';
+import { ReviewModule } from './client-modules/review/review.module';
 import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
 
 @Module({
