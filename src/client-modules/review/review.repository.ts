@@ -47,22 +47,10 @@ export class ReviewRepository {
         'reviewImg.extention AS reviewImgExtention',
         'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS isLiked',
       ])
-      .leftJoin(
-        DessertCategory,
-        'dessertCategory',
-        'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId',
-      )
+      .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      .leftJoin(
-        ProfileImg,
-        'memberImg',
-        'member.memberId = memberImg.memberImgId',
-      )
-      .leftJoin(
-        ReviewImg,
-        'reviewImg',
-        'reviewImg.reviewImgReviewId = review.reviewId',
-      )
+      .leftJoin(ProfileImg, 'memberImg', 'member.memberId = memberImg.memberImgId')
+      .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
       .andWhere('review.isUpdated = :isUpdated', { isUpdated: true })
@@ -176,22 +164,10 @@ export class ReviewRepository {
         'reviewImg.extention AS reviewImgExtention',
         'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS isLiked',
       ])
-      .leftJoin(
-        DessertCategory,
-        'dessertCategory',
-        'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId',
-      )
+      .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      .leftJoin(
-        ProfileImg,
-        'memberImg',
-        'member.memberId = memberImg.memberImgId',
-      )
-      .leftJoin(
-        ReviewImg,
-        'reviewImg',
-        'reviewImg.reviewImgReviewId = review.reviewId',
-      )
+      .leftJoin(ProfileImg, 'memberImg', 'member.memberId = memberImg.memberImgId')
+      .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
       .andWhere('review.isUpdated = :isUpdated', { isUpdated: true })
@@ -302,11 +278,7 @@ export class ReviewRepository {
    * @param likeDto
    */
   async incrementTotalLikeNum(likeDto: LikeDto) {
-    await this.review.increment(
-      { reviewId: likeDto.reviewId },
-      'totalLikedNum',
-      1,
-    );
+    await this.review.increment({ reviewId: likeDto.reviewId }, 'totalLikedNum', 1);
   }
 
   /**
@@ -314,10 +286,6 @@ export class ReviewRepository {
    * @param likeDto
    */
   async decrementTotalLikeNum(likeDto: LikeDto) {
-    await this.review.decrement(
-      { reviewId: likeDto.reviewId },
-      'totalLikedNum',
-      1,
-    );
+    await this.review.decrement({ reviewId: likeDto.reviewId }, 'totalLikedNum', 1);
   }
 }
