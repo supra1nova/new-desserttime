@@ -11,6 +11,9 @@ import { Notice } from '../entities/notice.entity';
 import { Accusation } from '../entities/accusation.entity';
 import { DessertCategory } from '../entities/dessert.category.entity';
 import { Like } from '../entities/like.entity';
+import { PointTotalCount } from '../entities/point.total.count.entity';
+import { PointHistory } from '../entities/point.history.entity';
+import { ReceiptImg } from '../entities/receipt.Img.entity';
 
 export const typeORMConfig = async (
   configService: ConfigService,
@@ -32,8 +35,11 @@ export const typeORMConfig = async (
       Notice,
       Accusation,
       DessertCategory,
+      PointTotalCount,
+      PointHistory,
+      ReceiptImg,
     ],
-    synchronize: false,
+    synchronize: true,
     logging: true,
     //connectTimeout: 30, //30초가 지나면 트랜잭션을 롤백한다.
     // migrations: [process.cwd() + '\\src\\database\\migrations\\*.ts'],
