@@ -35,16 +35,16 @@ export class ReviewService {
       if (likeDto.isLike === false) {
         const isLikedData = await this.reviewRepository.findLikeId(likeDto);
         if (isLikedData) {
-          return await this.reviewRepository.deleteReviewLike(
-            isLikedData.likeId,
-          );
+          await this.reviewRepository.deleteReviewLike(isLikedData.likeId);
+          await this.reviewRepository.decrementTotalLikeNum(likeDto);
         }
       } else if (likeDto.isLike === true) {
         const isMemberData = await this.reviewRepository.findMemberId(likeDto);
         const isReviewData = await this.reviewRepository.findReviewId(likeDto);
 
         if (isMemberData && isReviewData) {
-          return await this.reviewRepository.insertReviewLike(likeDto);
+          await this.reviewRepository.insertReviewLike(likeDto);
+          await this.reviewRepository.incrementTotalLikeNum(likeDto);
         }
       }
     } catch (error) {

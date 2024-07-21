@@ -39,7 +39,7 @@ export const typeORMConfig = async (
       PointHistory,
       ReceiptImg,
     ],
-    synchronize: true,
+    synchronize: false,
     logging: true,
     //connectTimeout: 30, //30초가 지나면 트랜잭션을 롤백한다.
     // migrations: [process.cwd() + '\\src\\database\\migrations\\*.ts'],
