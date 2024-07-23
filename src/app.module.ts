@@ -9,6 +9,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as path from 'path';
 import { AdminLoginModule } from './backoffice-modules/admin-login/admin-login.module';
+import { NoticeModule } from './backoffice-modules/notice/notice.module';
 import { MemberModule } from './client-modules/member/member.module';
 import { DessertCategoryModule } from './client-modules/dessert-category/dessert-category.module';
 import { QnAModule } from './client-modules/qna/qna.module';
@@ -28,6 +29,7 @@ import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
 @Module({
   imports: [
     AdminLoginModule,
+    NoticeModule,
     MemberModule,
     DessertCategoryModule,
     QnAModule,
