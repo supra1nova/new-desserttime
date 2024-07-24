@@ -3,6 +3,8 @@ import { CreateNoticeDto } from './dto/create-notice.dto';
 import { SearchNoticeDto } from './dto/search-notice.dto';
 import { NoticeRepository } from './notice.repository';
 import { Page } from '../common/dto/page.dto';
+import { UpdateNoticeDto } from './dto/update-notice.dto';
+import { DeleteDto } from './dto/delete-notice.dto';
 
 @Injectable()
 export class NoticeService {
@@ -18,17 +20,24 @@ export class NoticeService {
     return new Page(pageNo, total, limitSize, items);
   }
 
-  create(createNoticeDto: CreateNoticeDto) {
-    return this.noticeRepository.insertNotice(createNoticeDto);
+  async create(createNoticeDto: CreateNoticeDto) {
+    return this.noticeRepository.insert(createNoticeDto);
   }
 
-  /*findOne(id: number) {
-    return `This action returns a #${id} notice`;
+  async findOneById(noticeId: number) {
+    return this.noticeRepository.findOneById(noticeId);
   }
 
-  update(id: number, updateNoticeDto: UpdateNoticeDto) {
-    return `This action updates a #${id} notice`;
+  async update(noticeId: number, updateNoticeDto: UpdateNoticeDto) {
+    return this.noticeRepository.update(noticeId, updateNoticeDto);
   }
+
+  async delete(noticeId: number) {
+    const deleteDto = new DeleteDto(noticeId, true);
+    return this.noticeRepository.delete(deleteDto);
+  }
+
+  /*
 
   remove(id: number) {
     return `This action removes a #${id} notice`;

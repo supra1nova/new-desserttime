@@ -1,21 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Optional } from '@nestjs/common';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateNoticeDto {
   @ApiProperty({
-    example: '1',
-    description: '공지사항 일련번호',
-    required: true,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  readonly noticeId: number;
-
-  @ApiProperty({
     example: '수정된 공지사항 제목입니다.',
     description: '공지사항 제목',
-    required: true,
+    required: false,
   })
   @IsString()
   @IsNotEmpty()
@@ -24,7 +14,7 @@ export class UpdateNoticeDto {
   @ApiProperty({
     example: '수정된 공지사항 본문입니다.',
     description: '공지사항 본문',
-    required: true,
+    required: false,
   })
   @IsString()
   @IsNotEmpty()
@@ -36,6 +26,6 @@ export class UpdateNoticeDto {
     required: false,
   })
   @IsBoolean()
-  @Optional()
+  @IsOptional()
   readonly isTopFixed: boolean;
 }

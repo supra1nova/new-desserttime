@@ -5,13 +5,16 @@ import { Like, Repository } from 'typeorm';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { SearchNoticeDto } from './dto/search-notice.dto';
 import { NoticeSearchEnum } from '../common/enum/notice.enum';
+import { UpdateNoticeDto } from './dto/update-notice.dto';
+import { DeleteDto } from './dto/delete-notice.dto';
 
 @Injectable()
 export class NoticeRepository {
   constructor(
     @InjectRepository(Notice)
     private noticeRepository: Repository<Notice>,
-  ) {}
+  ) {
+  }
 
   /**
    * 공지사항 게시물 수량 조회
@@ -21,20 +24,20 @@ export class NoticeRepository {
     const whereClause = this.setWhereClause(searchNoticeDto);
 
     return await this.noticeRepository.count({
-      where: whereClause,
+      where: {...whereClause, isDeleted: false},
     });
   }
 
   /**
    * 페이지네이션된 공지사항 조회
-   * @param searchNoticeDto SearchNoticeDto instance
+   * @param searchNoticeDto
    * @returns Promise<Notice[]>
    */
   async findAll(searchNoticeDto: SearchNoticeDto) {
     const whereClause = this.setWhereClause(searchNoticeDto);
 
     return await this.noticeRepository.find({
-      where: whereClause,
+      where: {...whereClause, isDeleted: false},
       skip: searchNoticeDto.getSkip(),
       take: searchNoticeDto.getTake(),
       order: {
@@ -45,10 +48,10 @@ export class NoticeRepository {
 
   /**
    * 공지사항 등록
-   * @param createNoticeDto CreateNoticeDto instance
+   * @param createNoticeDto
    * @returns Promise<InsertResult>
    */
-  async insertNotice(createNoticeDto: CreateNoticeDto) {
+  async insert(createNoticeDto: CreateNoticeDto) {
     return await this.noticeRepository.insert({
       title: createNoticeDto.title,
       content: createNoticeDto.content,
@@ -56,8 +59,42 @@ export class NoticeRepository {
   }
 
   /**
+   * 공지사항 조회
+   * @param noticeId
+   * @returns Promise<Notice>
+   */
+  async findOneById(noticeId: number) {
+    return await this.noticeRepository.findOneBy({
+      noticeId: noticeId,
+      isDeleted: false,
+    });
+  }
+
+  /**
+   * 공지사항 수정
+   * @param updateNoticeDto
+   * @returns Promise<boolean>
+   */
+  async update(noticeIdFromParam: number, updateNoticeDto: UpdateNoticeDto) {
+    const { ...elements } = updateNoticeDto;
+    const updateResult = await this.noticeRepository.update({ noticeId: noticeIdFromParam }, { ...elements });
+    return !!updateResult.affected;
+  }
+
+  /**
+   * 공지사항 삭제
+   * @param deleteDto
+   * @returns Promise<boolean>
+   */
+  async delete(deleteDto: DeleteDto) {
+    const { noticeId, ...elements } = deleteDto;
+    const updateResult = await this.noticeRepository.update({ noticeId: noticeId }, { ...elements });
+    return !!updateResult.affected;
+  }
+
+  /**
    * repository 내에서 사용할 where 절 구성
-   * @param searchNoticeDto SearchNoticeDto instance
+   * @param searchNoticeDto
    * @returns {string: T}
    */
   private setWhereClause(searchNoticeDto: SearchNoticeDto) {
