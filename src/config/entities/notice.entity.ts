@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToOne,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class Notice {
@@ -11,12 +20,18 @@ export class Notice {
   @Column()
   content: string;
 
-  @Column()
-  isNotice:boolean;
+  @Column({ default: true })
+  isNotice: boolean;
+
+  @Column({ default: false })
+  isTopFixed: boolean;
+
+  @Column({ default: false })
+  isDeleted: boolean;
 
   @CreateDateColumn()
   createdDate: Date;
 
   @UpdateDateColumn()
-  updatedDate:Date;
+  updatedDate: Date;
 }
