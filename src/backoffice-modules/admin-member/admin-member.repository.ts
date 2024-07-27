@@ -1,0 +1,158 @@
+import { InjectRepository } from '@nestjs/typeorm';
+import { Like, Repository } from 'typeorm';
+import { Member } from '../../config/entities/member.entity';
+import { SearchAdminMemberDto } from './model/search-admin-member.dto';
+import { MemberEnum } from './model/member.enum';
+import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
+import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
+
+export class AdminMemberRepository {
+  constructor(
+    @InjectRepository(Member) private adminMemberRepository: Repository<Member>,
+  ) {}
+
+  /**
+   * 회원 수량 조회
+   * @returns Promise<number>
+   */
+  async count(searchAdminMemberDto: SearchAdminMemberDto) {
+    const whereClause = this.setWhereClause(searchAdminMemberDto);
+
+    return await this.adminMemberRepository.count({
+      where: whereClause,
+    });
+  }
+
+  /**
+   * 페이지네이션된 회원 리스트 조회
+   * @param searchAdminMemberDto
+   * @returns Promise<Member[]>
+   */
+  async findAll(searchAdminMemberDto: SearchAdminMemberDto) {
+    const selectClause = {
+      memberId: true,
+      isUsable: true,
+      nickName: true,
+      snsId: true,
+      signInSns: true,
+      memberEmail: true,
+      memberName: true,
+      lastAccessDate: true,
+      createdDate: true,
+    };
+    const whereClause = this.setWhereClause(searchAdminMemberDto);
+
+    return await this.adminMemberRepository.find({
+      select: selectClause,
+      where: whereClause,
+      skip: searchAdminMemberDto.getSkip(),
+      take: searchAdminMemberDto.getTake(),
+      order: {
+        createdDate: 'DESC',
+      },
+    });
+  }
+
+  /**
+   * 회원 단건 조회
+   * @param memberId
+   * @returns Promise<Member>
+   */
+  async findOneById(memberId: number) {
+    return await this.adminMemberRepository
+      .createQueryBuilder('member')
+      .select([
+        'member.snsId',
+        'member.signInSns',
+        'member.memberEmail',
+        'member.memberName',
+        'member.nickName',
+        'member.birthYear',
+        'member.gender',
+        'member.isHavingImg',
+        'member.isUsable',
+        'member.createdDate',
+        'member.updateDate',
+        'member.lastAccessDate',
+        'member.memo',
+        'member.firstCity',
+        'member.secondaryCity',
+        'member.thirdCity',
+        'member.isAgreeAD',
+        'memberImg.middlepath',
+      ])
+      .leftJoinAndSelect(
+        'member.uids',
+        'userInterestDessert',
+        'userInterestDessert.member = member.memberId',
+      )
+      .leftJoinAndSelect('member.img', 'memberImg')
+      .where('member.memberId = :memberId', { memberId: true })
+      .setParameter('memberId', memberId)
+      .orderBy('member.createdDate', 'DESC')
+      .getOne();
+  }
+
+  async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
+    const { ...elements } = updateAdminMemberDto;
+    const updateResult = await this.adminMemberRepository.update(
+      { memberId: memberId },
+      { ...elements },
+    );
+    return !!updateResult.affected;
+  }
+
+  /**
+   * 회원 삭제
+   * @param deleteAdminMemberDto
+   * @returns Promise<boolean>
+   */
+  async delete(deleteAdminMemberDto: DeleteAdminMemberDto) {
+    const { memberId, ...elements } = deleteAdminMemberDto;
+    const updateResult = await this.adminMemberRepository.update(
+      { memberId: memberId },
+      { ...elements },
+    );
+    return !!updateResult.affected;
+  }
+
+  /**
+   * repository 내에서 사용할 where 절 구성
+   * @param searchAdminMemberDto
+   * @returns {string: T}
+   */
+  private setWhereClause(searchAdminMemberDto: SearchAdminMemberDto) {
+    const searchType = searchAdminMemberDto.searchType;
+    const searchValue = searchAdminMemberDto.searchValue;
+
+    const whereClause = {};
+
+    const memberId = MemberEnum.ID;
+    const nickname = MemberEnum.NICKNAME;
+    const status = MemberEnum.STATUS;
+
+    if (searchValue === undefined || searchValue === null) {
+      return {};
+    }
+
+    if (searchType === undefined) {
+      whereClause[memberId] = Like(`%${searchAdminMemberDto.searchValue}%`);
+      whereClause[nickname] = Like(`%${searchAdminMemberDto.searchValue}%`);
+    }
+
+    if (searchType === memberId) {
+      whereClause[memberId] = Like(`%${searchAdminMemberDto.searchValue}%`);
+    }
+
+    if (searchType === nickname) {
+      whereClause[nickname] = Like(`%${searchAdminMemberDto.searchValue}%`);
+    }
+
+    if (searchType === status) {
+      whereClause['isUsable'] =
+        1 === Number.parseInt(searchAdminMemberDto.searchValue) ? 1 : 0;
+    }
+
+    return whereClause;
+  }
+}
