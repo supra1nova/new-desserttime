@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AdminLoginDto } from './dto/admin-login.dto';
+import { AdminLoginDto } from './model/admin-login.dto';
 
 @Injectable()
 export class AdminLoginService {

@@ -11,7 +11,7 @@ export class SearchNoticeDto extends PageRequest {
     description: '검색어 종류',
     required: false,
   })
-  searchType?: string;
+  readonly searchType?: NoticeSearchEnum;
 
   @IsString()
   @IsOptional()
@@ -20,5 +20,5 @@ export class SearchNoticeDto extends PageRequest {
     description: '검색값',
     required: false,
   })
-  searchValue?: string;
+  readonly searchValue?: string;
 }

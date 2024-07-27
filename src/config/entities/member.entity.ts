@@ -32,7 +32,7 @@ export class Member {
   @Column()
   memberName: string;
 
-  @Column({ nullable: true })
+  @Column()
   nickName: string;
 
   @Column()
@@ -44,14 +44,20 @@ export class Member {
   @Column({ nullable: true, default: false })
   isHavingImg: boolean;
 
+  @Column({ nullable: true, default: true })
+  isUsable: boolean;
+
   @CreateDateColumn()
   createdDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;
 
-  // @Column({ nullable: true })
-  // lastAccessDate: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  lastAccessDate: Date;
+
+  @Column({ nullable: true })
+  memo: string;
 
   @Column()
   firstCity: string;

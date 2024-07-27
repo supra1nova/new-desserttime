@@ -1,12 +1,21 @@
-import { Controller, Get, Post, Body, Query, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { NoticeService } from './notice.service';
-import { CreateNoticeDto } from './dto/create-notice.dto';
-import { SearchNoticeDto } from './dto/search-notice.dto';
+import { CreateNoticeDto } from './model/create-notice.dto';
+import { SearchNoticeDto } from './model/search-notice.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { UpdateNoticeDto } from './dto/update-notice.dto';
+import { UpdateNoticeDto } from './model/update-notice.dto';
 
-@ApiTags('Notice')
-@Controller('notice')
+@ApiTags('Admin notice')
+@Controller('admin/notice')
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
@@ -23,19 +32,19 @@ export class NoticeController {
   }
 
   @ApiOperation({ summary: '공지사항 조회 by noticeId' })
-  @Get(":id")
-  findOneById(@Param("id") id: number) {
-    return this.noticeService.findOneById(id);
+  @Get(':noticeId')
+  findOneById(@Param('noticeId') noticeId: number) {
+    return this.noticeService.findOneById(noticeId);
   }
 
   @ApiOperation({ summary: '공지사항 수정' })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
-    return this.noticeService.update(+id, updateNoticeDto);
+  @Patch(':noticeId')
+  update(@Param('noticeId') noticeId: number, @Body() updateNoticeDto: UpdateNoticeDto) {
+    return this.noticeService.update(+noticeId, updateNoticeDto);
   }
 
-  @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.noticeService.delete(+id);
+  @Delete(':noticeId')
+  delete(@Param('noticeId') noticeId: number) {
+    return this.noticeService.delete(+noticeId);
   }
 }

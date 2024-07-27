@@ -1,0 +1,59 @@
+import { Injectable } from '@nestjs/common';
+import { Page } from '../common/dto/page.dto';
+import { AdminMemberRepository } from './admin-member.repository';
+import { SearchAdminMemberDto } from './model/search-admin-member.dto';
+import { UpdateNoticeDto } from '../notice/model/update-notice.dto';
+import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
+import { DeleteNoticeDto } from '../notice/model/delete-notice.dto';
+import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
+
+@Injectable()
+export class AdminMemberService {
+  constructor(private adminMemberRepository: AdminMemberRepository) {}
+
+  /**
+   * 회원 리스트 조회
+   * @param searchAdminMemberDto
+   * @returns Promise<Page<Member>>
+   */
+  async findAll(searchAdminMemberDto: SearchAdminMemberDto) {
+    const total = await this.adminMemberRepository.count(searchAdminMemberDto);
+    const items =
+      await this.adminMemberRepository.findAll(searchAdminMemberDto);
+
+    const pageNo = searchAdminMemberDto.pageNo;
+    const limitSize = searchAdminMemberDto.limitSize;
+
+    return new Page(pageNo, total, limitSize, items);
+  }
+
+  /**
+   * 회원 단건 조회
+   * @param memberId
+   * @returns Promise<Member>
+   */
+  async processFindOneById(memberId: number) {
+    // TODO: userInterestedCategory 정보 배열로 받아와 해당 attribute 에 저장 후 리턴
+    return await this.adminMemberRepository.findOneById(memberId);
+  }
+
+  /**
+   * 회원 정보 수정
+   * @param memberId
+   * @param updateAdminMemberDto
+   * @returns Promise<boolean>
+   */
+  async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
+    return this.adminMemberRepository.update(memberId, updateAdminMemberDto);
+  }
+
+  /**
+   * 회원 삭제
+   * @param memberId
+   * @returns Promise<boolean>
+   */
+  async delete(memberId: number) {
+    const deleteDto = new DeleteAdminMemberDto(memberId, false);
+    return this.adminMemberRepository.delete(deleteDto);
+  }
+}

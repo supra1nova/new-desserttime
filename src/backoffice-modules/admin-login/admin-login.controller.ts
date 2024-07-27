@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { AdminLoginService } from './admin-login.service';
-import { AdminLoginDto } from './dto/admin-login.dto';
+import { AdminLoginDto } from './model/admin-login.dto';
 
 @Controller('login')
 export class AdminLoginController {
