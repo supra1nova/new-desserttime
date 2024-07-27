@@ -2,19 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notice } from '../../config/entities/notice.entity';
 import { Like, Repository } from 'typeorm';
-import { CreateNoticeDto } from './dto/create-notice.dto';
-import { SearchNoticeDto } from './dto/search-notice.dto';
-import { NoticeSearchEnum } from '../common/enum/notice.enum';
-import { UpdateNoticeDto } from './dto/update-notice.dto';
-import { DeleteDto } from './dto/delete-notice.dto';
+import { CreateNoticeDto } from './model/create-notice.dto';
+import { SearchNoticeDto } from './model/search-notice.dto';
+import { NoticeSearchEnum } from './model/notice-search.enum';
+import { UpdateNoticeDto } from './model/update-notice.dto';
+import { DeleteNoticeDto } from './model/delete-notice.dto';
 
 @Injectable()
 export class NoticeRepository {
   constructor(
     @InjectRepository(Notice)
     private noticeRepository: Repository<Notice>,
-  ) {
-  }
+  ) {}
 
   /**
    * 공지사항 게시물 수량 조회
@@ -24,7 +23,7 @@ export class NoticeRepository {
     const whereClause = this.setWhereClause(searchNoticeDto);
 
     return await this.noticeRepository.count({
-      where: {...whereClause, isDeleted: false},
+      where: { ...whereClause, isUsable: true },
     });
   }
 
@@ -37,7 +36,7 @@ export class NoticeRepository {
     const whereClause = this.setWhereClause(searchNoticeDto);
 
     return await this.noticeRepository.find({
-      where: {...whereClause, isDeleted: false},
+      where: { ...whereClause },
       skip: searchNoticeDto.getSkip(),
       take: searchNoticeDto.getTake(),
       order: {
@@ -66,7 +65,7 @@ export class NoticeRepository {
   async findOneById(noticeId: number) {
     return await this.noticeRepository.findOneBy({
       noticeId: noticeId,
-      isDeleted: false,
+      isUsable: true,
     });
   }
 
@@ -77,7 +76,10 @@ export class NoticeRepository {
    */
   async update(noticeIdFromParam: number, updateNoticeDto: UpdateNoticeDto) {
     const { ...elements } = updateNoticeDto;
-    const updateResult = await this.noticeRepository.update({ noticeId: noticeIdFromParam }, { ...elements });
+    const updateResult = await this.noticeRepository.update(
+      { noticeId: noticeIdFromParam },
+      { ...elements },
+    );
     return !!updateResult.affected;
   }
 
@@ -86,9 +88,12 @@ export class NoticeRepository {
    * @param deleteDto
    * @returns Promise<boolean>
    */
-  async delete(deleteDto: DeleteDto) {
+  async delete(deleteDto: DeleteNoticeDto) {
     const { noticeId, ...elements } = deleteDto;
-    const updateResult = await this.noticeRepository.update({ noticeId: noticeId }, { ...elements });
+    const updateResult = await this.noticeRepository.update(
+      { noticeId: noticeId },
+      { ...elements },
+    );
     return !!updateResult.affected;
   }
 

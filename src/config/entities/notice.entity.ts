@@ -4,9 +4,6 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  OneToOne,
-  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -26,8 +23,8 @@ export class Notice {
   @Column({ default: false })
   isTopFixed: boolean;
 
-  @Column({ default: false })
-  isDeleted: boolean;
+  @Column({ default: true })
+  isUsable: boolean;
 
   @CreateDateColumn()
   createdDate: Date;
