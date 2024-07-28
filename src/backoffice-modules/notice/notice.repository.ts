@@ -4,7 +4,7 @@ import { Notice } from '../../config/entities/notice.entity';
 import { Like, Repository } from 'typeorm';
 import { CreateNoticeDto } from './model/create-notice.dto';
 import { SearchNoticeDto } from './model/search-notice.dto';
-import { NoticeSearchEnum } from '../common/enum/notice.enum';
+import { NoticeSearchEnum } from './model/notice.enum';
 import { UpdateNoticeDto } from './model/update-notice.dto';
 import { DeleteNoticeDto } from './model/delete-notice.dto';
 
