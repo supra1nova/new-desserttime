@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsArray,
+  IsArray, IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
-import { MemberGenderEnum } from './member.enum';
+import { MemberGenderEnum, MemberTypeEnum } from './member.enum';
 
 export class UpdateAdminMemberDto {
   @ApiProperty({
@@ -62,6 +62,33 @@ export class UpdateAdminMemberDto {
   @IsString()
   @IsOptional()
   thirdCity: string;
+
+  @ApiProperty({
+    example: 'N',
+    description: '회원 유형( N: 일반회원 normal, P: 프로회원 pro )',
+    required: true,
+  })
+  @IsEnum(MemberTypeEnum)
+  @IsNotEmpty()
+  type: MemberTypeEnum;
+
+  @ApiProperty({
+    example: 'true',
+    description: '광고 수신 동의 여부( true: 동의, false: 비동의 )',
+    required: true,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  isAgreeAD: boolean;
+
+  @ApiProperty({
+    example: 'true',
+    description: '알림 수신 동의 여부( true: 동의, false: 비동의 )',
+    required: true,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  isAgreeAlarm: boolean;
 
   @ApiProperty({
     example: '[1, 2, 3, 4]',
