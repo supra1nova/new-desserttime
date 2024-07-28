@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
 import { UserInterestDessert } from '../entities/user.interest.dessert.entity';
 import { Member } from '../entities/member.entity';
-import { MemberImg } from '../entities/member.img.entity';
+import { ProfileImg } from '../entities/profile.img.entity';
 import { Review } from '../entities/review.entity';
 import { ReviewImg } from '../entities/review.img.entity';
 import { QnA } from '../entities/qna.entity';
@@ -27,7 +27,7 @@ export const typeORMConfig = async (
     entities: [
       UserInterestDessert,
       Member,
-      MemberImg,
+      ProfileImg,
       Like,
       Review,
       ReviewImg,

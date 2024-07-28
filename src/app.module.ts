@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 import * as path from 'path';
 import { AdminLoginModule } from './backoffice-modules/admin-login/admin-login.module';
 import { AdminMemberModule } from './backoffice-modules/admin-member/admin-member.module';
+import { AdminUserInterestDessertModule } from './backoffice-modules/admin-user-interest-dessert/admin-user-interest-dessert.module';
 import { NoticeModule } from './backoffice-modules/notice/notice.module';
 import { MemberModule } from './client-modules/member/member.module';
 import { DessertCategoryModule } from './client-modules/dessert-category/dessert-category.module';
@@ -29,8 +30,9 @@ import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
 
 @Module({
   imports: [
-    AdminMemberModule,
     AdminLoginModule,
+    AdminMemberModule,
+    AdminUserInterestDessertModule,
     NoticeModule,
     MemberModule,
     DessertCategoryModule,

@@ -4,10 +4,15 @@ import { AdminMemberRepository } from './admin-member.repository';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
 import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
+import { Member } from '../../config/entities/member.entity';
+import { AdminUserInterestDessertService } from '../admin-user-interest-dessert/admin-user-interest-dessert.service';
 
 @Injectable()
 export class AdminMemberService {
-  constructor(private adminMemberRepository: AdminMemberRepository) {}
+  constructor(
+    private adminMemberRepository: AdminMemberRepository,
+    private userInterestDessertService: AdminUserInterestDessertService,
+  ) {}
 
   /**
    * 회원 리스트 조회
@@ -40,8 +45,34 @@ export class AdminMemberService {
    * @param updateAdminMemberDto
    * @returns Promise<boolean>
    */
-  async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
+  /*async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
     return this.adminMemberRepository.update(memberId, updateAdminMemberDto);
+  }*/
+  async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
+    const memberData: Partial<Member> = {
+      nickName: updateAdminMemberDto.nickName,
+      memo: updateAdminMemberDto.memo,
+      gender: updateAdminMemberDto.gender,
+      firstCity: updateAdminMemberDto.firstCity,
+      secondaryCity: updateAdminMemberDto.secondaryCity,
+      thirdCity: updateAdminMemberDto.thirdCity,
+    };
+
+    const userInterestDessertData: number[] = updateAdminMemberDto.uidIdArr;
+
+    const result = await this.adminMemberRepository.update(
+      memberId,
+      memberData,
+    );
+
+    if (result && userInterestDessertData !== undefined) {
+      await this.userInterestDessertService.processInsertMultipleData(
+        memberId,
+        userInterestDessertData,
+      );
+    }
+
+    return result;
   }
 
   /**

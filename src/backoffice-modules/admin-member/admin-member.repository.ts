@@ -3,7 +3,6 @@ import { Like, Repository } from 'typeorm';
 import { Member } from '../../config/entities/member.entity';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
 import { MemberEnum } from './model/member.enum';
-import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 
 export class AdminMemberRepository {
@@ -87,10 +86,10 @@ export class AdminMemberRepository {
         'dessertCategory.dessertCategoryId',
         'dessertCategory.dessertName',
         'dessertCategory.sessionNum',
-        'memberImg.memberImgId',
-        'memberImg.middlePath',
-        'memberImg.path',
-        'memberImg.imgName',
+        'profileImg.profileImgId',
+        'profileImg.middlePath',
+        'profileImg.path',
+        'profileImg.imgName',
       ])
       .leftJoin('member.point', 'point')
       .leftJoin('member.uids', 'userInterestDessert')
@@ -99,7 +98,7 @@ export class AdminMemberRepository {
         'dessertCategory',
         'dessertCategory.isUsable = 1',
       )
-      .leftJoin('member.img', 'memberImg', 'memberImg.isUsable = 1')
+      .leftJoin('member.profileImg', 'profileImg', 'profileImg.isUsable = 1')
       .where('member.memberId = :memberId', { memberId: true })
       .setParameter('memberId', memberId)
       .orderBy('member.createdDate', 'DESC')
@@ -107,11 +106,16 @@ export class AdminMemberRepository {
       .getOne();
   }
 
-  async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
-    const { ...elements } = updateAdminMemberDto;
+  /**
+   * 회원 정보 수정
+   * @param memberId
+   * @param partialMember
+   * @returns Promise<boolean>
+   */
+  async update(memberId: number, partialMember: Partial<Member>) {
     const updateResult = await this.adminMemberRepository.update(
-      { memberId: memberId },
-      { ...elements },
+      memberId,
+      partialMember,
     );
     return !!updateResult.affected;
   }

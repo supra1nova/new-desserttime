@@ -11,7 +11,7 @@ import { UserInterestDessert } from './user.interest.dessert.entity';
 import { QnA } from './qna.entity';
 import { Review } from './review.entity';
 import { Like } from './like.entity';
-import { MemberImg } from './member.img.entity';
+import { ProfileImg } from './profile.img.entity';
 import { Accusation } from './accusation.entity';
 import { Point } from './point.entity';
 
@@ -92,8 +92,8 @@ export class Member {
   @OneToMany(() => Like, (likes) => likes.member)
   likes: Like[];
 
-  @OneToOne(() => MemberImg, (img) => img.member)
-  img: MemberImg;
+  @OneToOne(() => ProfileImg, (profileImg) => profileImg.member)
+  profileImg: ProfileImg;
 
   @OneToOne(() => Point, (point) => point.member)
   point: Point;
