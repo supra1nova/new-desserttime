@@ -15,8 +15,7 @@ import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
 @ApiTags('Admin member')
 @Controller('admin/member')
 export class AdminMemberController {
-  constructor(private readonly adminMemberService: AdminMemberService) {
-  }
+  constructor(private readonly adminMemberService: AdminMemberService) {}
 
   @ApiOperation({ summary: '전체 회원 목록 조회' })
   @Get()

@@ -75,21 +75,35 @@ export class AdminMemberRepository {
         'member.updateDate',
         'member.lastAccessDate',
         'member.memo',
+        'member.type',
+        'member.isAgreeAD',
+        'member.isAgreeAlarm',
         'member.firstCity',
         'member.secondaryCity',
         'member.thirdCity',
         'member.isAgreeAD',
-        'memberImg.middlepath',
+        'point.totalPoint',
+        'userInterestDessert.UIDid',
+        'dessertCategory.dessertCategoryId',
+        'dessertCategory.dessertName',
+        'dessertCategory.sessionNum',
+        'memberImg.memberImgId',
+        'memberImg.middlePath',
+        'memberImg.path',
+        'memberImg.imgName',
       ])
-      .leftJoinAndSelect(
-        'member.uids',
-        'userInterestDessert',
-        'userInterestDessert.member = member.memberId',
+      .leftJoin('member.point', 'point')
+      .leftJoin('member.uids', 'userInterestDessert')
+      .leftJoin(
+        'userInterestDessert.dc',
+        'dessertCategory',
+        'dessertCategory.isUsable = 1',
       )
-      .leftJoinAndSelect('member.img', 'memberImg')
+      .leftJoin('member.img', 'memberImg', 'memberImg.isUsable = 1')
       .where('member.memberId = :memberId', { memberId: true })
       .setParameter('memberId', memberId)
       .orderBy('member.createdDate', 'DESC')
+      .orderBy('userInterestDessert.UIDid', 'ASC')
       .getOne();
   }
 

@@ -13,7 +13,7 @@ import { Review } from './review.entity';
 import { Like } from './like.entity';
 import { MemberImg } from './member.img.entity';
 import { Accusation } from './accusation.entity';
-import { PointTotalCount } from './point.total.count.entity';
+import { Point } from './point.entity';
 
 @Entity()
 export class Member {
@@ -59,6 +59,9 @@ export class Member {
   @Column({ nullable: true })
   memo: string;
 
+  @Column({ nullable: true, default: 'user' })
+  type: string;
+
   @Column()
   firstCity: string;
 
@@ -70,6 +73,9 @@ export class Member {
 
   @Column()
   isAgreeAD: boolean;
+
+  @Column({ nullable: true, default: true })
+  isAgreeAlarm: boolean;
 
   @OneToMany(() => UserInterestDessert, (udi) => udi.member)
   uids: UserInterestDessert[];
@@ -89,6 +95,6 @@ export class Member {
   @OneToOne(() => MemberImg, (img) => img.member)
   img: MemberImg;
 
-  @OneToOne(() => PointTotalCount, (pointTotalCount) => pointTotalCount.member)
-  pointTotalCount: PointTotalCount;
+  @OneToOne(() => Point, (point) => point.member)
+  point: Point;
 }

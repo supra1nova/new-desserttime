@@ -4,14 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
   OneToOne,
-  OneToMany,
   JoinColumn,
 } from 'typeorm';
 import { Member } from './member.entity';
-import { Review } from './review.entity';
-import { ReviewImg } from './review.img.entity';
 
 @Entity()
 export class MemberImg {
@@ -19,23 +15,23 @@ export class MemberImg {
   memberImgId: number;
 
   @Column()
-  middlepath: string;
+  middlePath: string;
 
   @Column()
   path: string;
 
   @Column()
-  extention: string;
+  extension: string;
 
   @Column()
   imgName: string;
 
-  @Column({ nullable: true, default: true })
+  @Column({ nullable: false, default: true })
   isUsable: boolean;
 
   @CreateDateColumn()
   createdDate: Date;
-  
+
   @UpdateDateColumn()
   updateDate: Date;
 

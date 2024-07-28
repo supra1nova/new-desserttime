@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Page } from '../common/dto/page.dto';
 import { AdminMemberRepository } from './admin-member.repository';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
-import { UpdateNoticeDto } from '../notice/model/update-notice.dto';
 import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
-import { DeleteNoticeDto } from '../notice/model/delete-notice.dto';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 
 @Injectable()
@@ -33,7 +31,6 @@ export class AdminMemberService {
    * @returns Promise<Member>
    */
   async processFindOneById(memberId: number) {
-    // TODO: userInterestedCategory 정보 배열로 받아와 해당 attribute 에 저장 후 리턴
     return await this.adminMemberRepository.findOneById(memberId);
   }
 
