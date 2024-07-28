@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ReviewService } from './review.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/config/entities/review.entity';
 import { Repository } from 'typeorm';
@@ -7,7 +6,7 @@ import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { Like } from 'src/config/entities/like.entity';
 import { Member } from 'src/config/entities/member.entity';
-import { MemberImg } from 'src/config/entities/member.img.entity';
+import { ProfileImg } from 'src/config/entities/profile.img.entity';
 import { ReviewImg } from 'src/config/entities/review.img.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 
@@ -55,7 +54,7 @@ export class ReviewRepository {
       )
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
       .leftJoin(
-        MemberImg,
+        ProfileImg,
         'memberImg',
         'member.memberId = memberImg.memberImgId',
       )
@@ -184,7 +183,7 @@ export class ReviewRepository {
       )
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
       .leftJoin(
-        MemberImg,
+        ProfileImg,
         'memberImg',
         'member.memberId = memberImg.memberImgId',
       )

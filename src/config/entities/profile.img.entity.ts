@@ -10,9 +10,9 @@ import {
 import { Member } from './member.entity';
 
 @Entity()
-export class MemberImg {
+export class ProfileImg {
   @PrimaryGeneratedColumn()
-  memberImgId: number;
+  profileImgId: number;
 
   @Column()
   middlePath: string;
@@ -35,7 +35,7 @@ export class MemberImg {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @OneToOne(() => Member, (member) => member.img)
+  @OneToOne(() => Member, (member) => member.profileImg)
   @JoinColumn()
   member: Member;
 }

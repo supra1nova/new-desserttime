@@ -5,7 +5,7 @@ export enum MemberEnum {
 }
 
 export enum MemberGenderEnum {
-  MALE = 'm',
-  FEMALE = 'f',
-  NONE = 'n',
+  MALE = 'M',
+  FEMALE = 'F',
+  NONE = 'N',
 }

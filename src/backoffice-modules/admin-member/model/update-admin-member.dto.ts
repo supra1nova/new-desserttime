@@ -1,20 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { MemberGenderEnum } from './member.enum';
 
 export class UpdateAdminMemberDto {
   @ApiProperty({
-    example: '홍길동.',
-    description: '회원 이름입니다.',
+    example: '홍길동',
+    description: '회원 이름',
     required: true,
   })
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   readonly nickName: string;
 
   @ApiProperty({
     example: '자주 부정적인 후기를 등록하는 회원임',
-    description: '관리자의 메모입니다.',
+    description: '관리자 메모',
     required: false,
   })
   @IsString()
@@ -22,8 +28,8 @@ export class UpdateAdminMemberDto {
   readonly memo: string;
 
   @ApiProperty({
-    example: 'MALE',
-    description: '회원의 성별입니다 : m:남성 / f:여성 / n:선택안함',
+    example: 'M',
+    description: '회원 성별( M:남성 / F:여성 / N:선택안함 )',
     required: false,
   })
   @IsEnum(MemberGenderEnum)
@@ -36,7 +42,7 @@ export class UpdateAdminMemberDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   firstCity: string;
 
   @ApiProperty({
@@ -45,7 +51,7 @@ export class UpdateAdminMemberDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   secondaryCity: string;
 
   @ApiProperty({
@@ -54,14 +60,15 @@ export class UpdateAdminMemberDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   thirdCity: string;
 
-  /*@ApiProperty({
-    example: `[{UIDid: 1},{UIDid: 2},{UIDid: 3},{UIDid: 4}]`,
+  @ApiProperty({
+    example: '[1, 2, 3, 4]',
     description: '1차 디저트 카테고리 id 배열',
     required: true,
   })
-  @ArrayNotEmpty()
-  uids: UserInterestDessert[];*/
+  @IsArray()
+  @IsOptional()
+  uidIdArr: number[];
 }

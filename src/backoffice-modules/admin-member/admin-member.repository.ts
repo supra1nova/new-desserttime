@@ -86,10 +86,10 @@ export class AdminMemberRepository {
         'dessertCategory.dessertCategoryId',
         'dessertCategory.dessertName',
         'dessertCategory.sessionNum',
-        'memberImg.memberImgId',
-        'memberImg.middlePath',
-        'memberImg.path',
-        'memberImg.imgName',
+        'profileImg.profileImgId',
+        'profileImg.middlePath',
+        'profileImg.path',
+        'profileImg.imgName',
       ])
       .leftJoin('member.point', 'point')
       .leftJoin('member.uids', 'userInterestDessert')
@@ -98,7 +98,7 @@ export class AdminMemberRepository {
         'dessertCategory',
         'dessertCategory.isUsable = 1',
       )
-      .leftJoin('member.img', 'memberImg', 'memberImg.isUsable = 1')
+      .leftJoin('member.profileImg', 'profileImg', 'profileImg.isUsable = 1')
       .where('member.memberId = :memberId', { memberId: true })
       .setParameter('memberId', memberId)
       .orderBy('member.createdDate', 'DESC')
