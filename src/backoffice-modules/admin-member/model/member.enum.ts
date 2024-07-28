@@ -9,3 +9,8 @@ export enum MemberGenderEnum {
   FEMALE = 'F',
   NONE = 'N',
 }
+
+export enum MemberTypeEnum {
+  NORMAL = 'N',
+  PRO = 'P',
+}

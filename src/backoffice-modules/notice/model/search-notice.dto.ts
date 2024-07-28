@@ -1,7 +1,7 @@
 import { PageRequest } from '../../common/dto/page.request';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { NoticeSearchEnum } from '../../common/enum/notice.enum';
+import { NoticeSearchEnum } from './notice.enum';
 
 export class SearchNoticeDto extends PageRequest {
   @IsEnum(NoticeSearchEnum)

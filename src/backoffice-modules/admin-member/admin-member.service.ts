@@ -56,6 +56,9 @@ export class AdminMemberService {
       firstCity: updateAdminMemberDto.firstCity,
       secondaryCity: updateAdminMemberDto.secondaryCity,
       thirdCity: updateAdminMemberDto.thirdCity,
+      type: updateAdminMemberDto.type,
+      isAgreeAD: updateAdminMemberDto.isAgreeAD,
+      isAgreeAlarm: updateAdminMemberDto.isAgreeAlarm,
     };
 
     const userInterestDessertData: number[] = updateAdminMemberDto.uidIdArr;
