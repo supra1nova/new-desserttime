@@ -11,7 +11,7 @@ import { Notice } from '../entities/notice.entity';
 import { Accusation } from '../entities/accusation.entity';
 import { DessertCategory } from '../entities/dessert.category.entity';
 import { Like } from '../entities/like.entity';
-import { PointTotalCount } from '../entities/point.total.count.entity';
+import { Point } from '../entities/point.entity';
 import { PointHistory } from '../entities/point.history.entity';
 import { ReceiptImg } from '../entities/receipt.Img.entity';
 
@@ -35,7 +35,7 @@ export const typeORMConfig = async (
       Notice,
       Accusation,
       DessertCategory,
-      PointTotalCount,
+      Point,
       PointHistory,
       ReceiptImg,
     ],

@@ -9,15 +9,15 @@ import {
 } from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
-import { PointTotalCount } from './point.total.count.entity';
+import { Point } from './point.entity';
 
 @Entity()
 export class PointHistory {
   @PrimaryGeneratedColumn()
-  pointHisotryId: number;
+  pointHistoryId: number;
 
   @Column()
-  pointCount: number;
+  newPoint: number;
 
   @Column()
   menuName: string;
@@ -31,11 +31,8 @@ export class PointHistory {
   @ManyToOne(() => Member, (member) => member.likes)
   member: Member;
 
-  @ManyToOne(
-    () => PointTotalCount,
-    (pointTotalCount) => pointTotalCount.potinHistory,
-  )
-  pointTotalCount: PointTotalCount;
+  @ManyToOne(() => Point, (pointTotalCount) => pointTotalCount.pointHistory)
+  point: Point;
 
   @OneToOne(() => Review, (review) => review.pointHistory)
   review: Review;

@@ -29,6 +29,9 @@ export class DessertCategory {
   @UpdateDateColumn()
   updateDate: Date;
 
+  @Column({ nullable: true, default: true })
+  isUsable: boolean;
+
   @OneToMany(() => UserInterestDessert, (uid) => uid.dc)
   uid: UserInterestDessert[];
 
