@@ -5,12 +5,7 @@ export class Page<T> {
   totalPage: number;
   items: T[];
 
-  constructor(
-    pageNo: number,
-    totalCount: number,
-    limitSize: number,
-    items: T[],
-  ) {
+  constructor(pageNo: number, totalCount: number, limitSize: number, items: T[]) {
     this.pageNo = pageNo;
     this.totalItem = totalCount;
     this.limitSize = limitSize;

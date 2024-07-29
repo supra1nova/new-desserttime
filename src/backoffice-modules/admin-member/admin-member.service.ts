@@ -21,8 +21,7 @@ export class AdminMemberService {
    */
   async findAll(searchAdminMemberDto: SearchAdminMemberDto) {
     const total = await this.adminMemberRepository.count(searchAdminMemberDto);
-    const items =
-      await this.adminMemberRepository.findAll(searchAdminMemberDto);
+    const items = await this.adminMemberRepository.findAll(searchAdminMemberDto);
 
     const pageNo = searchAdminMemberDto.pageNo;
     const limitSize = searchAdminMemberDto.limitSize;
@@ -63,16 +62,10 @@ export class AdminMemberService {
 
     const userInterestDessertData: number[] = updateAdminMemberDto.uidIdArr;
 
-    const result = await this.adminMemberRepository.update(
-      memberId,
-      memberData,
-    );
+    const result = await this.adminMemberRepository.update(memberId, memberData);
 
     if (result && userInterestDessertData !== undefined) {
-      await this.userInterestDessertService.processInsertMultipleData(
-        memberId,
-        userInterestDessertData,
-      );
+      await this.userInterestDessertService.processInsertMultipleData(memberId, userInterestDessertData);
     }
 
     return result;

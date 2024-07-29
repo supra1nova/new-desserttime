@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AdminMemberService } from './admin-member.service';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -31,10 +23,7 @@ export class AdminMemberController {
 
   @ApiOperation({ summary: '회원 정보 수정' })
   @Patch(':memberId')
-  update(
-    @Param('memberId') memberId: number,
-    @Body() updateAdminMemberDto: UpdateAdminMemberDto,
-  ) {
+  update(@Param('memberId') memberId: number, @Body() updateAdminMemberDto: UpdateAdminMemberDto) {
     return this.adminMemberService.update(+memberId, updateAdminMemberDto);
   }
 

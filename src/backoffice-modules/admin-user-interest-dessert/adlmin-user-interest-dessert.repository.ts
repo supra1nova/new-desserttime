@@ -15,9 +15,7 @@ export class AdminUserInterestDessertRepository {
    * @returns Promise<InsertResult>
    */
   async insert(userInterestDessert: UserInterestDessert) {
-    return await this.adminUserInterestDessertRepository.insert(
-      userInterestDessert,
-    );
+    return await this.adminUserInterestDessertRepository.insert(userInterestDessert);
   }
 
   /**
@@ -52,10 +50,6 @@ export class AdminUserInterestDessertRepository {
    * @returns Promise<DeleteResult>
    */
   async delete(savedUserInterestDessertArr: UserInterestDessert[]) {
-    return await this.adminUserInterestDessertRepository
-      .createQueryBuilder()
-      .delete()
-      .whereInIds(savedUserInterestDessertArr)
-      .execute();
+    return await this.adminUserInterestDessertRepository.createQueryBuilder().delete().whereInIds(savedUserInterestDessertArr).execute();
   }
 }
