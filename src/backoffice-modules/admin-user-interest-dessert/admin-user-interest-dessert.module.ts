@@ -8,9 +8,6 @@ import { AdminUserInterestDessertRepository } from './adlmin-user-interest-desse
   imports: [TypeOrmModule.forFeature([UserInterestDessert])],
   exports: [AdminUserInterestDessertService],
   controllers: [],
-  providers: [
-    AdminUserInterestDessertService,
-    AdminUserInterestDessertRepository,
-  ],
+  providers: [AdminUserInterestDessertService, AdminUserInterestDessertRepository],
 })
 export class AdminUserInterestDessertModule {}

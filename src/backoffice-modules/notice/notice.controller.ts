@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Query,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Patch, Param, Delete } from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { CreateNoticeDto } from './model/create-notice.dto';
 import { SearchNoticeDto } from './model/search-notice.dto';

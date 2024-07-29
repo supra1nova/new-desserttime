@@ -34,11 +34,7 @@ export class PageRequest {
       this.pageNo = 1;
     }
 
-    if (
-      this.limitSize < 1 ||
-      this.limitSize === null ||
-      this.limitSize === undefined
-    ) {
+    if (this.limitSize < 1 || this.limitSize === null || this.limitSize === undefined) {
       this.limitSize = DEFAULT_LIMIT_SIZE;
     }
 
@@ -50,11 +46,7 @@ export class PageRequest {
    * @returns number
    */
   getTake(): number {
-    if (
-      this.limitSize < 1 ||
-      this.limitSize === null ||
-      this.limitSize === undefined
-    ) {
+    if (this.limitSize < 1 || this.limitSize === null || this.limitSize === undefined) {
       this.limitSize = DEFAULT_LIMIT_SIZE;
     }
     return Number(this.limitSize);

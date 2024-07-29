@@ -71,15 +71,13 @@ export class NoticeRepository {
 
   /**
    * 공지사항 수정
+   * @param noticeIdFromParam
    * @param updateNoticeDto
    * @returns Promise<boolean>
    */
   async update(noticeIdFromParam: number, updateNoticeDto: UpdateNoticeDto) {
     const { ...elements } = updateNoticeDto;
-    const updateResult = await this.noticeRepository.update(
-      { noticeId: noticeIdFromParam },
-      { ...elements },
-    );
+    const updateResult = await this.noticeRepository.update({ noticeId: noticeIdFromParam }, { ...elements });
     return !!updateResult.affected;
   }
 
@@ -90,17 +88,14 @@ export class NoticeRepository {
    */
   async delete(deleteDto: DeleteNoticeDto) {
     const { noticeId, ...elements } = deleteDto;
-    const updateResult = await this.noticeRepository.update(
-      { noticeId: noticeId },
-      { ...elements },
-    );
+    const updateResult = await this.noticeRepository.update({ noticeId: noticeId }, { ...elements });
     return !!updateResult.affected;
   }
 
   /**
    * repository 내에서 사용할 where 절 구성
    * @param searchNoticeDto
-   * @returns {string: T}
+   * @returns {string: string}
    */
   private setWhereClause(searchNoticeDto: SearchNoticeDto) {
     const searchType = searchNoticeDto.searchType;

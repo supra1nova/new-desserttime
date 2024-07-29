@@ -6,9 +6,7 @@ import { MemberEnum } from './model/member.enum';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 
 export class AdminMemberRepository {
-  constructor(
-    @InjectRepository(Member) private adminMemberRepository: Repository<Member>,
-  ) {}
+  constructor(@InjectRepository(Member) private adminMemberRepository: Repository<Member>) {}
 
   /**
    * 회원 수량 조회
@@ -93,11 +91,7 @@ export class AdminMemberRepository {
       ])
       .leftJoin('member.point', 'point')
       .leftJoin('member.uids', 'userInterestDessert')
-      .leftJoin(
-        'userInterestDessert.dc',
-        'dessertCategory',
-        'dessertCategory.isUsable = 1',
-      )
+      .leftJoin('userInterestDessert.dc', 'dessertCategory', 'dessertCategory.isUsable = 1')
       .leftJoin('member.profileImg', 'profileImg', 'profileImg.isUsable = 1')
       .where('member.memberId = :memberId', { memberId: true })
       .setParameter('memberId', memberId)
@@ -113,10 +107,7 @@ export class AdminMemberRepository {
    * @returns Promise<boolean>
    */
   async update(memberId: number, partialMember: Partial<Member>) {
-    const updateResult = await this.adminMemberRepository.update(
-      memberId,
-      partialMember,
-    );
+    const updateResult = await this.adminMemberRepository.update(memberId, partialMember);
     return !!updateResult.affected;
   }
 
@@ -127,10 +118,7 @@ export class AdminMemberRepository {
    */
   async delete(deleteAdminMemberDto: DeleteAdminMemberDto) {
     const { memberId, ...elements } = deleteAdminMemberDto;
-    const updateResult = await this.adminMemberRepository.update(
-      { memberId: memberId },
-      { ...elements },
-    );
+    const updateResult = await this.adminMemberRepository.update({ memberId: memberId }, { ...elements });
     return !!updateResult.affected;
   }
 
@@ -167,8 +155,7 @@ export class AdminMemberRepository {
     }
 
     if (searchType === status) {
-      whereClause['isUsable'] =
-        1 === Number.parseInt(searchAdminMemberDto.searchValue) ? 1 : 0;
+      whereClause['isUsable'] = 1 === Number.parseInt(searchAdminMemberDto.searchValue) ? 1 : 0;
     }
 
     return whereClause;
