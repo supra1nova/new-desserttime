@@ -11,6 +11,8 @@ import * as path from 'path';
 import { AdminLoginModule } from './backoffice-modules/admin-login/admin-login.module';
 import { AdminMemberModule } from './backoffice-modules/admin-member/admin-member.module';
 import { AdminUserInterestDessertModule } from './backoffice-modules/admin-user-interest-dessert/admin-user-interest-dessert.module';
+import { AdminPointModule } from './backoffice-modules/admin-point/admin-point.module';
+import { AdminPointHistoryModule } from './backoffice-modules/admin-point-history/admin-point-history.module';
 import { NoticeModule } from './backoffice-modules/notice/notice.module';
 import { MemberModule } from './client-modules/member/member.module';
 import { DessertCategoryModule } from './client-modules/dessert-category/dessert-category.module';
@@ -33,6 +35,8 @@ import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
     AdminLoginModule,
     AdminMemberModule,
     AdminUserInterestDessertModule,
+    AdminPointModule,
+    AdminPointHistoryModule,
     NoticeModule,
     MemberModule,
     DessertCategoryModule,

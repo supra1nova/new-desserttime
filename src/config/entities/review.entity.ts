@@ -55,7 +55,7 @@ export class Review {
   createdDate: Date;
 
   @UpdateDateColumn()
-  updateDate: Date;
+  updatedDate: Date;
 
   @OneToMany(() => Accusation, (accusation) => accusation.review)
   accusations: Accusation[];

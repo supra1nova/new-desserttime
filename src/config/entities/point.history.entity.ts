@@ -1,15 +1,7 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  OneToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
-import { Point } from './point.entity';
+import { PointType } from '../../backoffice-modules/admin-point-history/model/admin-point-history.enum';
 
 @Entity()
 export class PointHistory {
@@ -19,21 +11,19 @@ export class PointHistory {
   @Column()
   newPoint: number;
 
-  @Column()
-  menuName: string;
+  @Column({ nullable: true, default: PointType.REVIEW })
+  pointType: PointType;
 
   @CreateDateColumn()
   createdDate: Date;
 
   @UpdateDateColumn()
-  updateDate: Date;
+  updatedDate: Date;
 
   @ManyToOne(() => Member, (member) => member.likes)
   member: Member;
 
-  @ManyToOne(() => Point, (pointTotalCount) => pointTotalCount.pointHistory)
-  point: Point;
-
   @OneToOne(() => Review, (review) => review.pointHistory)
+  @JoinColumn()
   review: Review;
 }
