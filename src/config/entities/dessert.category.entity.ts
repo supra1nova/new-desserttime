@@ -23,6 +23,9 @@ export class DessertCategory {
   @Column()
   sessionNum: number;
 
+  @Column()
+  sortNum: number;
+
   @CreateDateColumn()
   createdDate: Date;
 
