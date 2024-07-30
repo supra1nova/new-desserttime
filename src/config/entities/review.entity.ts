@@ -15,6 +15,7 @@ import { ReviewImg } from './review.img.entity';
 import { DessertCategory } from './dessert.category.entity';
 import { PointHistory } from './point.history.entity';
 import { ReceiptImg } from './receipt.Img.entity';
+import { ReviewIngredient } from './review.ingredient.entity';
 
 @Entity()
 export class Review {
@@ -80,4 +81,10 @@ export class Review {
 
   @ManyToOne(() => ReceiptImg, (receiptImg) => receiptImg.review)
   receiptImg: ReceiptImg;
+
+  @OneToMany(
+    () => ReviewIngredient,
+    (reviewIngredients) => reviewIngredients.review,
+  )
+  reviewIngredients: ReviewIngredient[];
 }
