@@ -29,6 +29,7 @@ import { TransactionInterceptor } from './config/interceptor/transaction.interce
 import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
 import { ReviewModule } from './client-modules/review/review.module';
 import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
+import { AccusationModule } from './client-modules/accusation/accusation.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
     QnAModule,
     InitModule,
     ReviewModule,
+    AccusationModule,
     //AuthModule,
     ConfigModule.forRoot({
       envFilePath: [
