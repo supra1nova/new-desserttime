@@ -14,6 +14,8 @@ import { Like } from '../entities/like.entity';
 import { Point } from '../entities/point.entity';
 import { PointHistory } from '../entities/point.history.entity';
 import { ReceiptImg } from '../entities/receipt.Img.entity';
+import { ReviewIngredient } from '../entities/review.ingredient.entity';
+import { Ingredient } from '../entities/ingredient.entity';
 
 export const typeORMConfig = async (
   configService: ConfigService,
@@ -38,6 +40,8 @@ export const typeORMConfig = async (
       Point,
       PointHistory,
       ReceiptImg,
+      Ingredient,
+      ReviewIngredient,
     ],
     synchronize: false,
     logging: true,
