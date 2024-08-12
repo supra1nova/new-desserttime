@@ -3,7 +3,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class PostAccusationDto {
   @ApiProperty({
-    example: '',
+    example: 'ETC',
     description: '신고사유-라디오버튼항목',
     required: true,
   })
