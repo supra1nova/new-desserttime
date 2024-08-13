@@ -3,6 +3,7 @@ import { ReviewRepository } from './review.repository';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { MemberIdDto } from './dto/member.id.dto';
+import { typeORMConfig } from 'src/config/typeorm/typeorm.config';
 
 @Injectable()
 export class ReviewService {
@@ -53,7 +54,30 @@ export class ReviewService {
    * @returns
    */
   async getGenerableReviewCount(memberIdDto: MemberIdDto) {
-    const generableReviewCount = await this.reviewRepository.findGenerableReviewCount(memberIdDto);
-    return { generableReviewCount };
+    try {
+      const generableReviewCount = await this.reviewRepository.findGenerableReviewCount(memberIdDto);
+      return { generableReviewCount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 후기 작성 가능한 일수
+   * @param memberIdDto
+   * @returns
+   */
+  async getGenerableReviewDate() {
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+      const currentDay = today.getDate();
+      // 남은 일수 계산
+      const remainingDays = lastDayOfMonth - currentDay;
+
+      return { remainingDays };
+    } catch (error) {}
   }
 }

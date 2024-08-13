@@ -27,4 +27,10 @@ export class ReviewController {
   async getGenerableReviewCount(@Param() memberIdDto: MemberIdDto) {
     return await this.reviewService.getGenerableReviewCount(memberIdDto);
   }
+
+  @ApiOperation({ summary: '후기 작성가능한 일수' })
+  @Get('generable/date')
+  async getGenerableReviewDate() {
+    return await this.reviewService.getGenerableReviewDate();
+  }
 }
