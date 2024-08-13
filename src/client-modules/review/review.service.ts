@@ -108,10 +108,7 @@ export class ReviewService {
         member: { memberId: reviewCreateDto.memberId },
         menuName,
       }));
-      console.log('insertData:::::::::::', insertData);
-
-      const result = await this.reviewRepository.insertGernerableReviewList(insertData);
-      console.log('result:::::::::::', result);
+      await this.reviewRepository.insertGernerableReviewList(insertData);
     } catch (error) {
       throw error;
     }
