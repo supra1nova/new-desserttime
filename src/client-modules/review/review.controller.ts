@@ -4,6 +4,7 @@ import { ReviewCategoryDto } from './dto/review.category.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LikeDto } from './dto/like.dto';
 import { TransactionInterceptor } from 'src/config/interceptor/transaction.interceptor';
+import { MemberIdDto } from './dto/member.id.dto';
 
 @Controller('review')
 @ApiTags('Review')
@@ -20,5 +21,10 @@ export class ReviewController {
   @Post('like/:memberId/:reviewId/:isLike')
   async postLikeItem(@Param() likeDto: LikeDto) {
     await this.reviewService.postLikeItem(likeDto);
+  }
+  @ApiOperation({ summary: '후기작성가능한 후기 갯수' })
+  @Get('generable/count/:memberId')
+  async getGenerableReviewCount(@Param() memberIdDto: MemberIdDto) {
+    return await this.reviewService.getGenerableReviewCount(memberIdDto);
   }
 }

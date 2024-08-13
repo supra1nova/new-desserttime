@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ReviewRepository } from './review.repository';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
+import { MemberIdDto } from './dto/member.id.dto';
 
 @Injectable()
 export class ReviewService {
@@ -14,14 +15,8 @@ export class ReviewService {
    */
   async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
     try {
-      if (reviewCategoryDto.selectedOrder === 'D')
-        return await this.reviewRepository.findReviewCategoryDateList(
-          reviewCategoryDto,
-        );
-      else if (reviewCategoryDto.selectedOrder === 'L')
-        return await this.reviewRepository.findReviewCategoryLikeList(
-          reviewCategoryDto,
-        );
+      if (reviewCategoryDto.selectedOrder === 'D') return await this.reviewRepository.findReviewCategoryDateList(reviewCategoryDto);
+      else if (reviewCategoryDto.selectedOrder === 'L') return await this.reviewRepository.findReviewCategoryLikeList(reviewCategoryDto);
     } catch (error) {
       throw error;
     }
@@ -50,5 +45,15 @@ export class ReviewService {
     } catch (error) {
       throw error;
     }
+  }
+
+  /**
+   * 리뷰작성가능한 후기 갯수 조회
+   * @param memberIdDto
+   * @returns
+   */
+  async getGenerableReviewCount(memberIdDto: MemberIdDto) {
+    const generableReviewCount = await this.reviewRepository.findGenerableReviewCount(memberIdDto);
+    return { generableReviewCount };
   }
 }
