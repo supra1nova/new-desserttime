@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { AdminUserInterestDessertRepository } from './adlmin-user-interest-dessert.repository';
+import { AdminUserInterestDessertRepository } from './admin-user-interest-dessert.repository';
 import { UserInterestDessert } from '../../config/entities/user.interest.dessert.entity';
 import { Member } from '../../config/entities/member.entity';
 import { DessertCategory } from '../../config/entities/dessert.category.entity';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AdminUserInterestDessertService {
@@ -16,6 +17,7 @@ export class AdminUserInterestDessertService {
    * @param memberId
    * @param uidIdArr
    * */
+  @Transactional()
   async processInsertMultipleData(memberId: number, uidIdArr: number[]) {
     //  memberId를 이용해서 해당하는 인원의 UserInterestDessert 를 가져와서 savedUserInterestDessertArr 에 저장
     const savedUserInterestDessertArr = await this.findByMemberId(memberId);
@@ -51,6 +53,7 @@ export class AdminUserInterestDessertService {
    * 특정 회원 취향 정보 리스트 삽입
    * @param userInterestDessertArr
    * */
+  @Transactional()
   async insertMultipleItems(userInterestDessertArr: UserInterestDessert[]) {
     return await this.adminUserInterestDessertRepository.insertMultipleItems(userInterestDessertArr);
   }
@@ -69,6 +72,7 @@ export class AdminUserInterestDessertService {
    * @param savedUserInterestDessertArr
    * @return Promise<DeleteResult>
    * */
+  @Transactional()
   async delete(savedUserInterestDessertArr: UserInterestDessert[]) {
     return this.adminUserInterestDessertRepository.delete(savedUserInterestDessertArr);
   }
