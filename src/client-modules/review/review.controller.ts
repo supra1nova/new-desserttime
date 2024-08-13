@@ -24,24 +24,28 @@ export class ReviewController {
     await this.reviewService.postLikeItem(likeDto);
   }
   @ApiOperation({ summary: '후기작성가능한 후기 갯수' })
+  @UseInterceptors(TransactionInterceptor)
   @Get('generable/count/:memberId')
   async getGenerableReviewCount(@Param() memberIdDto: MemberIdDto) {
     return await this.reviewService.getGenerableReviewCount(memberIdDto);
   }
 
   @ApiOperation({ summary: '후기 작성가능한 일수' })
+  @UseInterceptors(TransactionInterceptor)
   @Get('generable/date')
   async getGenerableReviewDate() {
     return await this.reviewService.getGenerableReviewDate();
   }
 
   @ApiOperation({ summary: '후기 작성가능한 후기 목록' })
+  @UseInterceptors(TransactionInterceptor)
   @Get('generable/list/:memberId')
   async getGenerableReviewList(@Param() memberIdDto: MemberIdDto) {
     return await this.reviewService.getGenerableReviewList(memberIdDto);
   }
 
   @ApiOperation({ summary: '후기 작성목록 등록' })
+  @UseInterceptors(TransactionInterceptor)
   @Post('generable')
   async postGernerableReviewList(@Body() reviewCreateDto: ReviewCreateDto) {
     return await this.reviewService.postGernerableReviewList(reviewCreateDto);
