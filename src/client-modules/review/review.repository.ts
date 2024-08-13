@@ -295,6 +295,21 @@ export class ReviewRepository {
    * @param memberIdDto
    */
   async findGenerableReviewCount(memberIdDto: MemberIdDto) {
-    return await this.review.count({ where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } } });
+    return await this.review.count({
+      where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } },
+    });
+  }
+
+  /**
+   * 후기작성가능훈 후기 목록조회
+   * @param memberIdDto
+   * @returns
+   */
+  async findGenerableReviewList(memberIdDto: MemberIdDto) {
+    return await this.review.find({
+      select: { reviewId: true, menuName: true, storeName: true },
+      where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } },
+      order: { createdDate: 'ASC', menuName: 'ASC' },
+    });
   }
 }

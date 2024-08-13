@@ -33,4 +33,10 @@ export class ReviewController {
   async getGenerableReviewDate() {
     return await this.reviewService.getGenerableReviewDate();
   }
+
+  @ApiOperation({ summary: '후기 작성가능한 후기 목록' })
+  @Get('generable/list/:memberId')
+  async getGenerableReviewList(@Param() memberIdDto: MemberIdDto) {
+    return await this.reviewService.getGenerableReviewList(memberIdDto);
+  }
 }

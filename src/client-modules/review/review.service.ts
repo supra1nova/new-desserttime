@@ -78,6 +78,21 @@ export class ReviewService {
       const remainingDays = lastDayOfMonth - currentDay;
 
       return { remainingDays };
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 후기작성 가능한 후기목록 조회
+   * @param memberIdDto
+   * @returns
+   */
+  async getGenerableReviewList(memberIdDto: MemberIdDto) {
+    try {
+      return await this.reviewRepository.findGenerableReviewList(memberIdDto);
+    } catch (error) {
+      throw error;
+    }
   }
 }
