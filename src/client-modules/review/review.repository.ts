@@ -312,4 +312,13 @@ export class ReviewRepository {
       order: { createdDate: 'ASC', menuName: 'ASC' },
     });
   }
+
+  /**
+   * 후기 작성리스트 등록
+   * @param insertData
+   * @returns
+   */
+  async insertGernerableReviewList(insertData) {
+    return await this.review.save(insertData);
+  }
 }

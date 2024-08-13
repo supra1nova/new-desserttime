@@ -1,10 +1,11 @@
-import { Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LikeDto } from './dto/like.dto';
 import { TransactionInterceptor } from 'src/config/interceptor/transaction.interceptor';
 import { MemberIdDto } from './dto/member.id.dto';
+import { ReviewCreateDto } from './dto/review.create.dto';
 
 @Controller('review')
 @ApiTags('Review')
@@ -38,5 +39,11 @@ export class ReviewController {
   @Get('generable/list/:memberId')
   async getGenerableReviewList(@Param() memberIdDto: MemberIdDto) {
     return await this.reviewService.getGenerableReviewList(memberIdDto);
+  }
+
+  @ApiOperation({ summary: '후기 작성목록 등록' })
+  @Post('generable')
+  async postGernerableReviewList(@Body() reviewCreateDto: ReviewCreateDto) {
+    return await this.reviewService.postGernerableReviewList(reviewCreateDto);
   }
 }

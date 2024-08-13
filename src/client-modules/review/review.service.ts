@@ -4,6 +4,7 @@ import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { MemberIdDto } from './dto/member.id.dto';
 import { typeORMConfig } from 'src/config/typeorm/typeorm.config';
+import { ReviewCreateDto } from './dto/review.create.dto';
 
 @Injectable()
 export class ReviewService {
@@ -91,6 +92,26 @@ export class ReviewService {
   async getGenerableReviewList(memberIdDto: MemberIdDto) {
     try {
       return await this.reviewRepository.findGenerableReviewList(memberIdDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 후기 작성 목록 등록
+   * @param reviewCreateDto
+   */
+  async postGernerableReviewList(reviewCreateDto: ReviewCreateDto) {
+    try {
+      const insertData = reviewCreateDto.menuNames.map((menuName) => ({
+        storeName: reviewCreateDto.storeName,
+        member: { memberId: reviewCreateDto.memberId },
+        menuName,
+      }));
+      console.log('insertData:::::::::::', insertData);
+
+      const result = await this.reviewRepository.insertGernerableReviewList(insertData);
+      console.log('result:::::::::::', result);
     } catch (error) {
       throw error;
     }
