@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -6,6 +6,7 @@ import { LikeDto } from './dto/like.dto';
 import { TransactionInterceptor } from 'src/config/interceptor/transaction.interceptor';
 import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewCreateDto } from './dto/review.create.dto';
+import { ReviewIdDto } from './dto/review.id.dto';
 
 @Controller('review')
 @ApiTags('Review')
@@ -48,6 +49,13 @@ export class ReviewController {
   @UseInterceptors(TransactionInterceptor)
   @Post('generable')
   async postGernerableReviewList(@Body() reviewCreateDto: ReviewCreateDto) {
-    return await this.reviewService.postGernerableReviewList(reviewCreateDto);
+    return await this.reviewService.postGenerableReviewList(reviewCreateDto);
+  }
+
+  @ApiOperation({ summary: '작성가능한 후기 삭제' })
+  @UseInterceptors(TransactionInterceptor)
+  @Delete('generable')
+  async deleteGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
+    return await this.reviewService.deleteGenerableReview(reviewIdDto);
   }
 }

@@ -10,6 +10,7 @@ import { ProfileImg } from 'src/config/entities/profile.img.entity';
 import { ReviewImg } from 'src/config/entities/review.img.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 import { MemberIdDto } from './dto/member.id.dto';
+import { ReviewIdDto } from './dto/review.id.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -296,19 +297,19 @@ export class ReviewRepository {
    */
   async findGenerableReviewCount(memberIdDto: MemberIdDto) {
     return await this.review.count({
-      where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } },
+      where: { isUsable: true, isUpdated: false, member: { memberId: memberIdDto.memberId } },
     });
   }
 
   /**
-   * 후기작성가능훈 후기 목록조회
+   * 후기작성가능한 후기 목록조회
    * @param memberIdDto
    * @returns
    */
   async findGenerableReviewList(memberIdDto: MemberIdDto) {
     return await this.review.find({
-      select: { reviewId: true, menuName: true, storeName: true },
-      where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } },
+      select: { reviewId: true, menuName: true, storeName: true, isInitalized: true },
+      where: { isUsable: true, isUpdated: false, member: { memberId: memberIdDto.memberId } },
       order: { createdDate: 'ASC', menuName: 'ASC' },
     });
   }
@@ -318,7 +319,15 @@ export class ReviewRepository {
    * @param insertData
    * @returns
    */
-  async insertGernerableReviewList(insertData) {
+  async insertGenerableReviewList(insertData) {
     return await this.review.save(insertData);
+  }
+
+  /**
+   * 작성가능한 후기 하나 삭제
+   * @returns
+   */
+  async deleteGenerableReview(reviewIdDto: ReviewIdDto) {
+    return await this.review.delete(reviewIdDto);
   }
 }
