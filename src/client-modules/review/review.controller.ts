@@ -58,4 +58,11 @@ export class ReviewController {
   async deleteGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
     return await this.reviewService.deleteGenerableReview(reviewIdDto);
   }
+
+  @ApiOperation({ summary: '작성가능한 후기 하나 조회' })
+  @UseInterceptors(TransactionInterceptor)
+  @Get('generable/:reviewId')
+  async getGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
+    return await this.reviewService.getGenerableReview(reviewIdDto);
+  }
 }

@@ -330,4 +330,32 @@ export class ReviewRepository {
   async deleteGenerableReview(reviewIdDto: ReviewIdDto) {
     return await this.review.delete(reviewIdDto);
   }
+
+  /**
+   * 작성 가능한 후기 하나 조회
+   * @param reviewIdDto
+   * @returns
+   */
+  async findGenerableReview(reviewIdDto: ReviewIdDto) {
+    return await this.review.findOne({
+      select: {
+        reviewId: true,
+        content: true,
+        menuName: true,
+        storeName: true,
+        score: true,
+        dessertCategory: { dessertCategoryId: true },
+        reviewImg: { reviewImgId: true, middlepath: true, path: true, extention: true, isMain: true, num: true, imgName: true },
+      },
+      where: { reviewId: reviewIdDto.reviewId, isUpdated: false, isUsable: true },
+    });
+  }
+  /**
+   * 작성가능한 리뷰 하나 조회
+   * 재료 목록 조회
+   * 카테고리 검색 조회
+   * 작성가능한 리뷰 그냥 저장
+   * 작성완료 저장
+   * 이미지 저장
+   */
 }

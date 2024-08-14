@@ -127,4 +127,19 @@ export class ReviewService {
       throw error;
     }
   }
+
+  /**
+   * 작성 가능한 후기 하나 조회
+   * @param reviewIdDto
+   * @returns
+   */
+  async getGenerableReview(reviewIdDto: ReviewIdDto) {
+    try {
+      const result = await this.reviewRepository.findGenerableReview(reviewIdDto);
+      console.log('result ::::::::::::;', result);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
