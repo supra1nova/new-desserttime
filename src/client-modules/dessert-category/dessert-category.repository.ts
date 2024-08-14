@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
-import { In, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { DessertSessionDto } from './dto/dessertsession.dto';
 import { FirstCategoryAppendDto } from './dto/firstcategory.append.dto';
 import { ParentIdDto } from './dto/parent.id.dto';
 import { DessertCategoryIdDto } from './dto/dessert.category.dto';
+import { DessertCategoryNameDto } from './dto/dessert.category.name.dto';
 
 @Injectable()
 export class DessertCategoryRepository {
@@ -59,5 +60,19 @@ export class DessertCategoryRepository {
     await this.dessertCategory.delete({
       dessertCategoryId: dessertCategoryIdDto.dessertCategoryId,
     });
+  }
+  /**
+   * 작성가능한 후기 - 카테고리명 검색
+   */
+  async findSearchCategoryList(dessertCategoryNameDto: DessertCategoryNameDto) {
+    const searchTerm = dessertCategoryNameDto.dessertName;
+    return await this.dessertCategory
+      .createQueryBuilder('dessertCategory')
+      .select(['dessertCategory.dessertCategoryId', 'dessertCategory.dessertName'])
+      .where('dessertCategory.dessertName LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+      .orderBy(`CASE WHEN dessertCategory.dessertName LIKE :exactTerm THEN 1 ELSE 2 END`, 'ASC')
+      .addOrderBy('dessertCategory.dessertName', 'ASC')
+      .setParameters({ exactTerm: `${searchTerm}%` })
+      .getMany();
   }
 }
