@@ -62,7 +62,9 @@ export class DessertCategoryRepository {
     });
   }
   /**
-   * 작성가능한 후기 - 카테고리명 검색
+   * 후기작성- 카테고리명 검색
+   * @param dessertCategoryNameDto
+   * @returns
    */
   async findSearchCategoryList(dessertCategoryNameDto: DessertCategoryNameDto) {
     const searchTerm = dessertCategoryNameDto.dessertName;
