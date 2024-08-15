@@ -9,6 +9,7 @@ import { Member } from 'src/config/entities/member.entity';
 import { ProfileImg } from 'src/config/entities/profile.img.entity';
 import { ReviewImg } from 'src/config/entities/review.img.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
+import { MemberIdDto } from './dto/member.id.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -287,5 +288,37 @@ export class ReviewRepository {
    */
   async decrementTotalLikeNum(likeDto: LikeDto) {
     await this.review.decrement({ reviewId: likeDto.reviewId }, 'totalLikedNum', 1);
+  }
+
+  /**
+   * 후기작성가능한 후기 갯수
+   * @param memberIdDto
+   */
+  async findGenerableReviewCount(memberIdDto: MemberIdDto) {
+    return await this.review.count({
+      where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } },
+    });
+  }
+
+  /**
+   * 후기작성가능훈 후기 목록조회
+   * @param memberIdDto
+   * @returns
+   */
+  async findGenerableReviewList(memberIdDto: MemberIdDto) {
+    return await this.review.find({
+      select: { reviewId: true, menuName: true, storeName: true },
+      where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } },
+      order: { createdDate: 'ASC', menuName: 'ASC' },
+    });
+  }
+
+  /**
+   * 후기 작성리스트 등록
+   * @param insertData
+   * @returns
+   */
+  async insertGernerableReviewList(insertData) {
+    return await this.review.save(insertData);
   }
 }
