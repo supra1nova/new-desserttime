@@ -7,9 +7,7 @@ import { AccusationRecordDto } from './dto/accusation.record.dto';
 
 @Injectable()
 export class AccusationRepository {
-  constructor(
-    @InjectRepository(Accusation) private accustion: Repository<Accusation>,
-  ) {}
+  constructor(@InjectRepository(Accusation) private accustion: Repository<Accusation>) {}
 
   /**
    * 신고 등록
@@ -19,6 +17,7 @@ export class AccusationRepository {
   async insertAccusation(postAccusationDto: PostAccusationDto) {
     return await this.accustion.insert({
       reason: postAccusationDto.reason,
+      content: postAccusationDto.content,
       member: { memberId: postAccusationDto.memberId },
       review: { reviewId: postAccusationDto.revieiwId },
     });
@@ -33,7 +32,7 @@ export class AccusationRepository {
     return await this.accustion.findOne({
       where: {
         member: { memberId: accusationRecordDto.memberId },
-        review: { reviewId: accusationRecordDto.revieiwId },
+        review: { reviewId: accusationRecordDto.reviewId },
       },
       select: { accusationId: true },
     });

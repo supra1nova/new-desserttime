@@ -16,5 +16,5 @@ export class AccusationRecordDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly revieiwId: number;
+  readonly reviewId: number;
 }
