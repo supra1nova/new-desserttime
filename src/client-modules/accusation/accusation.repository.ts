@@ -19,7 +19,7 @@ export class AccusationRepository {
       reason: postAccusationDto.reason,
       content: postAccusationDto.content,
       member: { memberId: postAccusationDto.memberId },
-      review: { reviewId: postAccusationDto.revieiwId },
+      review: { reviewId: postAccusationDto.reviewId },
     });
   }
 

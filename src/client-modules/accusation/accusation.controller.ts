@@ -21,7 +21,7 @@ export class AccusationController {
     reason: 선택된 신고사유 {    "COPYRIGHT_INFRINGEMENT": "저작권 침해", "OBSCENE": "음란/선정적", "ABUSE": "욕설", "PRIVATE": "개인정보 노출", "ETC": "기타(직접입력)"    }\n
     content : ETC (기타) - 신고사유내용, \n 
     memberId : 사용자 id, \n
-    revieiwId : 리뷰 id`,
+    reviewId : 리뷰 id`,
     type: PostAccusationDto,
   })
   @Post()
