@@ -34,11 +34,11 @@ export class Review {
   @Column({ default: false }) //승인여부
   isUpdated: boolean;
 
-  @Column({ default: false }) //영수증 등록후 수정여부
+  @Column({ default: false }) //영수증 등록후 최초 수정여부
   isInitalized: boolean;
 
-  // @Column({ default: false }) //영수증 등록후 작성완료여부
-  // isSaved: boolean;
+  @Column({ default: false }) //영수증 등록후 작성완료여부
+  isSaved: boolean;
 
   @Column({ default: 0 })
   point: number;
