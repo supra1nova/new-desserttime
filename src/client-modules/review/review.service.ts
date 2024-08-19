@@ -6,6 +6,7 @@ import { MemberIdDto } from './dto/member.id.dto';
 import { typeORMConfig } from 'src/config/typeorm/typeorm.config';
 import { ReviewCreateDto } from './dto/review.create.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
+import { ReviewUpdateDto } from './dto/review.update.dto';
 
 @Injectable()
 export class ReviewService {
@@ -138,6 +139,24 @@ export class ReviewService {
       const result = await this.reviewRepository.findGenerableReview(reviewIdDto);
       console.log('result ::::::::::::;', result);
       return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 후기 작성 수정 및 작성완료
+   * @param reviewUpdateDto
+   * @returns
+   */
+  async patchGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
+    try {
+      //1. 재료 저장
+      //2. 이미지 저장
+      //   (생성일 경우 reviewImgId 0, 유지/ 수정일 경우 reviewImgId 넣어서)
+      //   [{isMain:true, extention:'jpg', imgName:'벌꿀스틱', num:1, reviewImgId: 123}]
+      const updatedReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
+      return;
     } catch (error) {
       throw error;
     }

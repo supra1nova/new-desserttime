@@ -11,6 +11,7 @@ import { ReviewImg } from 'src/config/entities/review.img.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
+import { ReviewUpdateDto } from './dto/review.update.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -351,6 +352,25 @@ export class ReviewRepository {
     });
   }
 
+  /**
+   * 후기 작성 내용 수정/ 작성 완료
+   * @param reviewUpdateDto
+   * @returns
+   */
+  async updateGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
+    const saveReview = new Review();
+    saveReview.content = reviewUpdateDto.content;
+    saveReview.isInitalized = reviewUpdateDto.isInitalized;
+    saveReview.isSaved = reviewUpdateDto.isSaved;
+    saveReview.menuName = reviewUpdateDto.menuName;
+    saveReview.score = reviewUpdateDto.score;
+    saveReview.storeName = reviewUpdateDto.storeName;
+    saveReview.reviewId = reviewUpdateDto.reviewId;
+    saveReview.member.memberId = reviewUpdateDto.memberId;
+    saveReview.dessertCategory.dessertCategoryId = reviewUpdateDto.dessertCategoryId;
+
+    return await this.review.save(saveReview);
+  }
   /**
    * okay - 작성가능한 리뷰 하나 조회
    * 재료 목록 조회

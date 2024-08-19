@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { TransactionInterceptor } from 'src/config/interceptor/transaction.inter
 import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewCreateDto } from './dto/review.create.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
+import { ReviewUpdateDto } from './dto/review.update.dto';
 
 @Controller('review')
 @ApiTags('Review')
@@ -64,5 +65,12 @@ export class ReviewController {
   @Get('generable/:reviewId')
   async getGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
     return await this.reviewService.getGenerableReview(reviewIdDto);
+  }
+
+  @ApiOperation({ summary: '후기 작성목록 수정/ 작성완료' })
+  @UseInterceptors(TransactionInterceptor)
+  @Patch('generable')
+  async patchGenerableReview(@Body() reviewUpdateDto: ReviewUpdateDto) {
+    return await this.reviewService.patchGenerableReview(reviewUpdateDto);
   }
 }
