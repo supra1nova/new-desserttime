@@ -1,9 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -30,6 +25,7 @@ import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
 import { ReviewModule } from './client-modules/review/review.module';
 import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
 import { AccusationModule } from './client-modules/accusation/accusation.module';
+import { FileTransModule } from './config/file/filetrans.module';
 
 @Module({
   imports: [
@@ -45,13 +41,10 @@ import { AccusationModule } from './client-modules/accusation/accusation.module'
     InitModule,
     ReviewModule,
     AccusationModule,
+    FileTransModule,
     //AuthModule,
     ConfigModule.forRoot({
-      envFilePath: [
-        process.env.NODE_ENV === 'production'
-          ? path.join(process.cwd(), 'config', '.env.production')
-          : path.join(process.cwd(), 'config', '.env.development'),
-      ],
+      envFilePath: [process.env.NODE_ENV === 'production' ? path.join(process.cwd(), 'config', '.env.production') : path.join(process.cwd(), 'config', '.env.development')],
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
@@ -71,8 +64,7 @@ import { AccusationModule } from './client-modules/accusation/accusation.module'
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) =>
-        await typeORMConfig(configService),
+      useFactory: async (configService: ConfigService) => await typeORMConfig(configService),
     }),
   ],
   controllers: [AppController],
@@ -91,8 +83,6 @@ import { AccusationModule } from './client-modules/accusation/accusation.module'
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void {
     consumer.apply(LoggerMiddleware).forRoutes('*'); // '*'는 모든 라우트에 대한 적용을 의미합니다.
-    consumer
-      .apply(helmet())
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+    consumer.apply(helmet()).forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
