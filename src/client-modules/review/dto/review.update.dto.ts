@@ -51,12 +51,12 @@ export class ReviewUpdateDto {
   readonly score: number;
 
   @ApiProperty({
-    example: '1',
-    description: '재료 Id',
+    example: '[1,2,3]',
+    description: '선택된 재료Id list',
     required: true,
   })
   @IsNotEmpty()
-  readonly ingredientId: number;
+  readonly ingredientId: number[];
 
   @ApiProperty({
     example: '정말정말 맛있습니다. 분위기도 좋고요. 사장님도 친절했어요. 또 올게요! 단골예약~',
@@ -73,12 +73,4 @@ export class ReviewUpdateDto {
   })
   @IsNotEmpty()
   readonly isSaved: boolean;
-
-  @ApiProperty({
-    example: 'true',
-    description: '수정여부 확인',
-    required: true,
-  })
-  @IsNotEmpty()
-  readonly isInitalized: boolean;
 }

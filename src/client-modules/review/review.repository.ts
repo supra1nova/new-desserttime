@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/config/entities/review.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { Like } from 'src/config/entities/like.entity';
@@ -12,6 +12,7 @@ import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
 import { ReviewUpdateDto } from './dto/review.update.dto';
+import { ReviewIngredient } from 'src/config/entities/review.ingredient.entity';
 
 @Injectable()
 export class ReviewRepository {
@@ -19,6 +20,7 @@ export class ReviewRepository {
     @InjectRepository(Review) private review: Repository<Review>,
     @InjectRepository(Like) private like: Repository<Like>,
     @InjectRepository(Member) private member: Repository<Member>,
+    @InjectRepository(ReviewIngredient) private reviewIngredient: Repository<ReviewIngredient>,
   ) {}
 
   /**
@@ -353,6 +355,22 @@ export class ReviewRepository {
   }
 
   /**
+   * 기존 리뷰에 선택된 재료 삭제
+   * @param reviewUpdateDto
+   */
+  async deleteReviewIngredient(reviewUpdateDto: ReviewUpdateDto) {
+    await this.reviewIngredient.delete({ review: { reviewId: reviewUpdateDto.reviewId } });
+  }
+
+  /**
+   * 리뷰에 선택된 재료 추가
+   * @param saveReviewIngre
+   */
+  async insertReviewIngredient(saveReviewIngre) {
+    await this.reviewIngredient.insert(saveReviewIngre);
+  }
+
+  /**
    * 후기 작성 내용 수정/ 작성 완료
    * @param reviewUpdateDto
    * @returns
@@ -360,7 +378,7 @@ export class ReviewRepository {
   async updateGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
     const saveReview = new Review();
     saveReview.content = reviewUpdateDto.content;
-    saveReview.isInitalized = reviewUpdateDto.isInitalized;
+    saveReview.isInitalized = true;
     saveReview.isSaved = reviewUpdateDto.isSaved;
     saveReview.menuName = reviewUpdateDto.menuName;
     saveReview.score = reviewUpdateDto.score;
