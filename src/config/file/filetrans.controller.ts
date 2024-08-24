@@ -18,8 +18,11 @@ export class FileTransController {
       type: 'object',
       properties: {
         files: {
-          type: 'string',
-          format: 'binary',
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
         },
       },
     },
@@ -32,6 +35,17 @@ export class FileTransController {
   @ApiOperation({ summary: '파일 하나 저장' })
   @Post('file/upload')
   @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @UseInterceptors(FileInterceptor('file', multerOptionsFactory()))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     return this.fileService.uploadFile(file);
@@ -43,7 +57,7 @@ export class FileTransController {
    */
   @Cron(CronExpression.EVERY_5_HOURS)
   async deleteFile() {
-    const filepath = process.env.dumpfile;
-    return this.fileService.deleteFiles(filepath);
+    // const filepath = process.env.dumpfile;
+    // return this.fileService.deleteFiles(filepath);
   }
 }
