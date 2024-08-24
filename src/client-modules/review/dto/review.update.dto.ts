@@ -55,7 +55,6 @@ export class ReviewUpdateDto {
     description: '선택된 재료Id list',
     required: true,
   })
-  @IsNotEmpty()
   readonly ingredientId: number[];
 
   @ApiProperty({

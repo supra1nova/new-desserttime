@@ -355,6 +355,14 @@ export class ReviewRepository {
   }
 
   /**
+   * 기존 리뷰에 선택된 재료가 있는지 확인
+   * @param reviewUpdateDto
+   */
+  async findReviewIngredient(reviewUpdateDto: ReviewUpdateDto) {
+    return await this.reviewIngredient.find({ where: { review: { reviewId: reviewUpdateDto.reviewId } } });
+  }
+
+  /**
    * 기존 리뷰에 선택된 재료 삭제
    * @param reviewUpdateDto
    */

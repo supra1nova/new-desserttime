@@ -152,13 +152,14 @@ export class ReviewService {
   async patchGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
     try {
       //1. 재료 삭제
-      await this.reviewRepository.deleteReviewIngredient(reviewUpdateDto);
+      const ingredientList = await this.reviewRepository.findReviewIngredient(reviewUpdateDto);
+      if (ingredientList.length > 0) await this.reviewRepository.deleteReviewIngredient(reviewUpdateDto);
       //2. 재료 저장
-      const saveReviewIngre = reviewUpdateDto.ingredientId.map((data) => ({ ingredientId: data, reviewId: reviewUpdateDto.reviewId }));
-      await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
-      //2. 이미지 저장
-      //   (생성일 경우 reviewImgId 0, 유지/ 수정일 경우 reviewImgId 넣어서)
-      //   [{isMain:true, extention:'jpg', imgName:'벌꿀스틱', num:1, reviewImgId: 123}]
+      if (reviewUpdateDto.ingredientId.length > 0) {
+        const saveReviewIngre = reviewUpdateDto.ingredientId.map((data) => ({ ingredientId: data, reviewId: reviewUpdateDto.reviewId }));
+        await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
+      }
+      //마지막. 리뷰 저장
       const updatedReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
       return;
     } catch (error) {

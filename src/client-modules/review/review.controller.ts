@@ -1,13 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewCategoryDto } from './dto/review.category.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LikeDto } from './dto/like.dto';
 import { TransactionInterceptor } from 'src/config/interceptor/transaction.interceptor';
 import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewCreateDto } from './dto/review.create.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
 import { ReviewUpdateDto } from './dto/review.update.dto';
+import { multerOptionsFactory } from 'src/config/file/multer.option.factory';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('review')
 @ApiTags('Review')
