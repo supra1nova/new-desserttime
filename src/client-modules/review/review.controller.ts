@@ -10,7 +10,9 @@ import { ReviewIdDto } from './dto/review.id.dto';
 import { ReviewUpdateDto } from './dto/review.update.dto';
 import { multerOptionsFactory } from 'src/config/file/multer.option.factory';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { ReviewImgSaveDto } from './dto/review.img.save.dto';
+import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
+import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
+import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 
 @Controller('review')
 @ApiTags('Review')
@@ -90,10 +92,24 @@ export class ReviewController {
     },
   })
   @UseInterceptors(FileInterceptor('file', multerOptionsFactory()))
-  @ApiOperation({ summary: '리뷰이미지 저장' })
+  @ApiOperation({ summary: '리뷰이미지 하나 저장' })
   @UseInterceptors(TransactionInterceptor)
   @Post('generable/img/:reviewId/:num/:isMain')
   async postReviewImg(@UploadedFile() file: Express.Multer.File, @Param() reviewImgSaveDto: ReviewImgSaveDto) {
     return await this.reviewService.postReviewImg(reviewImgSaveDto, file);
+  }
+
+  @ApiOperation({ summary: '리뷰이미지 하나 삭제' })
+  @UseInterceptors(TransactionInterceptor)
+  @Delete('generable/img/:reviewImgId')
+  async deleteReviewImg(@Param() reviewImgIdDto: ReviewImgIdDto) {
+    await this.reviewService.deleteReviewImg(reviewImgIdDto);
+  }
+
+  @ApiOperation({ summary: '리뷰이미지 삭제후/순서변경/메인변경 수정' })
+  @UseInterceptors(TransactionInterceptor)
+  @Patch('generable/img')
+  async updateReviewImg(@Body() updateReviewImgListDto: UpdateReviewImgListDto) {
+    await this.reviewService.updateReviewImg(updateReviewImgListDto);
   }
 }

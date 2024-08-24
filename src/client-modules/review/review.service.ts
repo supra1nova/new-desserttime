@@ -7,8 +7,10 @@ import { typeORMConfig } from 'src/config/typeorm/typeorm.config';
 import { ReviewCreateDto } from './dto/review.create.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
 import { ReviewUpdateDto } from './dto/review.update.dto';
-import { ReviewImgSaveDto } from './dto/review.img.save.dto';
+import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import * as path from 'path';
+import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
+import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 
 @Injectable()
 export class ReviewService {
@@ -189,6 +191,42 @@ export class ReviewService {
       const savedData = await this.reviewRepository.insertReviewImg(reviewImgSaveDto, fileData);
       console.log('저장후 반환 데이터 :::::::::::::', savedData);
       return { reviewImgId: savedData['raw']['reviewImgId'] };
+    } catch (error) {
+      throw error;
+    }
+  }
+  /**
+   * 리뷰이미지 하나 삭제
+   * @param reviewImgIdDto
+   */
+  async deleteReviewImg(reviewImgIdDto: ReviewImgIdDto) {
+    try {
+      await this.reviewRepository.deleteReviewImg(reviewImgIdDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 리뷰이미지 순서/메인 변경
+   * @param updateReviewImgListDto
+   */
+  async updateReviewImg(updateReviewImgListDto: UpdateReviewImgListDto) {
+    try {
+      const entitiesToSave = [];
+      for (const updateDto of updateReviewImgListDto.reviewImg) {
+        const reviewImg = await this.reviewRepository.findReviewImgId(updateDto.reviewImgId);
+
+        if (reviewImg) {
+          // DTO 데이터를 엔티티에 매핑
+          reviewImg.num = updateDto.num;
+          reviewImg.isMain = updateDto.isMain;
+
+          // 저장할 엔티티 목록에 추가
+          entitiesToSave.push(reviewImg);
+        }
+      }
+      await this.reviewRepository.saveReviewImg(entitiesToSave);
     } catch (error) {
       throw error;
     }
