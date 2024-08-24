@@ -8,14 +8,14 @@ import { v1 as uuid } from 'uuid';
 // 폴더가 존재하지 않으면 폴더를 생성하고, 존재하면 생성하지 않음
 const mkdir = (directory: string) => {
   try {
-    const directories = [process.env.REVIEW_IMG_MIDDLE_PATH];
+    const directories = ['reviewImg']; //process.env.REVIEW_IMG_MIDDLE_PATH
 
-    if (!fs.existsSync(path.join(process.env.ROOT_PATH))) {
-      fs.mkdirSync(path.join(process.env.ROOT_PATH));
+    if (!fs.existsSync(path.join(String(process.cwd()), directory))) {
+      fs.mkdirSync(path.join(String(process.cwd()), directory));
     }
     for (const dir of directories) {
-      if (!fs.existsSync(path.join(process.env.ROOT_PATH, dir))) {
-        fs.mkdirSync(path.join(process.env.ROOT_PATH, dir));
+      if (!fs.existsSync(path.join(String(process.cwd()), directory, String(dir)))) {
+        fs.mkdirSync(path.join(String(process.cwd()), directory, String(dir)));
       }
     }
   } catch (err) {
@@ -23,18 +23,18 @@ const mkdir = (directory: string) => {
   }
 };
 
-mkdir('uploads');
+mkdir('uploads'); //process.env.ROOT_PATH
 
 export const multerOptionsFactory = (): MulterOptions => {
   const destinationMappings = {
-    reviewImg: process.env.REVIEW_IMG_MIDDLE_PATH,
+    reviewImg: 'reviewImg', //process.env.REVIEW_IMG_MIDDLE_PATH,
   };
   return {
     storage: multer.diskStorage({
       destination(req, file, cd) {
         //const prefix = file.originalname.slice(0, 5);
         const destination = destinationMappings['reviewImg']; // || process.env.dumpfile;
-        cd(null, path.join(process.env.ROOT_PATH, destination));
+        cd(null, path.join(String(process.cwd()), 'uploads', String(destination)));
       },
 
       filename(req, file, cd) {
