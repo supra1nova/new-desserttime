@@ -7,6 +7,8 @@ import { typeORMConfig } from 'src/config/typeorm/typeorm.config';
 import { ReviewCreateDto } from './dto/review.create.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
 import { ReviewUpdateDto } from './dto/review.update.dto';
+import { ReviewImgSaveDto } from './dto/review.img.save.dto';
+import * as path from 'path';
 
 @Injectable()
 export class ReviewService {
@@ -162,6 +164,31 @@ export class ReviewService {
       //마지막. 리뷰 저장
       const updatedReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
       return;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 리뷰 이미지 하나 저장
+   * @param reviewImgSaveDto
+   * @param file
+   * @returns
+   */
+  async postReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
+    try {
+      console.log('file :::::', file);
+      const extention = path.extname(file.originalname); // 파일 확장자 추출
+      const imgName = path.basename(file.originalname, extention); // 파일 이름
+      const lastpath = file.originalname;
+      const fileData = {
+        imgName,
+        extention,
+        path: lastpath,
+      };
+      const savedData = await this.reviewRepository.insertReviewImg(reviewImgSaveDto, fileData);
+      console.log('저장후 반환 데이터 :::::::::::::', savedData);
+      return { reviewImgId: savedData['raw']['reviewImgId'] };
     } catch (error) {
       throw error;
     }

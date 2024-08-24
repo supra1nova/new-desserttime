@@ -13,6 +13,7 @@ import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
 import { ReviewUpdateDto } from './dto/review.update.dto';
 import { ReviewIngredient } from 'src/config/entities/review.ingredient.entity';
+import { ReviewImgSaveDto } from './dto/review.img.save.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -21,6 +22,7 @@ export class ReviewRepository {
     @InjectRepository(Like) private like: Repository<Like>,
     @InjectRepository(Member) private member: Repository<Member>,
     @InjectRepository(ReviewIngredient) private reviewIngredient: Repository<ReviewIngredient>,
+    @InjectRepository(ReviewImg) private reviewImg: Repository<ReviewImg>,
   ) {}
 
   /**
@@ -397,12 +399,30 @@ export class ReviewRepository {
 
     return await this.review.save(saveReview);
   }
+
+  /**
+   * 리뷰 이미지 파일 하나 저장
+   * @param reviewImgSaveDto
+   * @param file
+   */
+  async insertReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
+    return await this.reviewImg.insert({
+      middlepath: 'reviewImg', //process.env.REVIEW_IMG_MIDDLE_PATH,
+      path: file.path,
+      extention: file.extention,
+      imgName: file.imgName,
+      isMain: reviewImgSaveDto.isMain,
+      num: reviewImgSaveDto.reviewId,
+      reviewImg: { reviewId: reviewImgSaveDto.reviewId },
+    });
+  }
+
   /**
    * okay - 작성가능한 리뷰 하나 조회
    * 재료 목록 조회
    * okay - 카테고리 검색 조회
-   * 작성가능한 리뷰 그냥 저장
-   * 작성완료 저장
-   * 이미지 저장
+   * okay - 작성가능한 리뷰 그냥 저장
+   * okay - 작성완료 저장
+   * 이미지 저장, 삭제, 순서변경, 메인변경
    */
 }
