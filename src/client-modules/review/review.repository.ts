@@ -515,8 +515,8 @@ export class ReviewRepository {
 
   /**
    * okay - 작성가능한 리뷰 하나 조회
-   * 이미지 조회
-   * 재료 목록 조회
+   * okay - 이미지 조회
+   * okay - 재료 목록 조회
    * okay - 카테고리 검색 조회
    * okay - 작성가능한 리뷰 그냥 저장
    * okay - 작성완료 저장
