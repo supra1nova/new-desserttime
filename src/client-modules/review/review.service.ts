@@ -164,6 +164,8 @@ export class ReviewService {
   async getGenerableReview(reviewIdDto: ReviewIdDto) {
     try {
       const result = await this.reviewRepository.findGenerableReview(reviewIdDto);
+      //result['ingredientList'] = await this.reviewRepository.lll(result.reviewIngredients);
+
       console.log('result ::::::::::::;', result);
       return result;
     } catch (error) {
@@ -184,11 +186,9 @@ export class ReviewService {
       //2. 재료 저장
       if (reviewUpdateDto.ingredientId.length > 0) {
         const saveReviewIngre = reviewUpdateDto.ingredientId.map((data) => ({ ingredient: { ingredientId: data }, review: { reviewId: reviewUpdateDto.reviewId } }));
-        console.log('saveReviewIngre :::::::::', saveReviewIngre); //[ { ingredientId: 1, reviewId: 4 }, { ingredientId: 2, reviewId: 4 } ]
         await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
       }
       //마지막. 리뷰 저장
-      console.log('adsasdadasdasdsdsdsadadadsadasda');
       const updatedReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
       return;
     } catch (error) {

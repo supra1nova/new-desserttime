@@ -363,20 +363,67 @@ export class ReviewRepository {
    * @returns
    */
   async findGenerableReview(reviewIdDto: ReviewIdDto) {
-    return await this.review.findOne({
-      select: {
-        reviewId: true,
-        content: true,
-        menuName: true,
-        storeName: true,
-        score: true,
-        dessertCategory: { dessertCategoryId: true },
-        reviewImg: { reviewImgId: true, middlepath: true, path: true, extention: true, isMain: true, num: true, imgName: true },
-      },
-      where: { reviewId: reviewIdDto.reviewId, isUpdated: false, isUsable: true },
-    });
-  }
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.dessertCategory', 'dessertCategory')
+      .leftJoinAndSelect('review.reviewImg', 'reviewImg')
+      .leftJoinAndSelect('review.reviewIngredients', 'reviewIngredient')
+      .leftJoinAndSelect('reviewIngredient.ingredient', 'ingredient')
+      .where('review.reviewId = :reviewId', { reviewId: reviewIdDto.reviewId })
+      .andWhere('review.isUpdated = :isUpdated', { isUpdated: false })
+      .andWhere('review.isUsable = :isUsable', { isUsable: true })
+      // .select([
+      //   'review.reviewId',
+      //   'review.content',
+      //   'review.menuName',
+      //   'review.storeName',
+      //   'review.score',
+      //   'dessertCategory.dessertCategoryId',
+      //   'reviewImg.reviewImgId',
+      //   'reviewImg.middlepath',
+      //   'reviewImg.path',
+      //   'reviewImg.extention',
+      //   'reviewImg.isMain',
+      //   'reviewImg.num',
+      //   'reviewImg.imgName',
+      //   'ingredient.ingredientId',
+      // ])
+      .getOne();
 
+    // findOne({
+    //   where: {
+    //     reviewId: reviewIdDto.reviewId,
+    //     isUpdated: false,
+    //     isUsable: true,
+    //   },
+    //   relations: ['dessertCategory', 'reviewImg', 'reviewIngredients'],
+    //   select: {
+    //     reviewId: true,
+    //     content: true,
+    //     menuName: true,
+    //     storeName: true,
+    //     score: true,
+    //     dessertCategory: {
+    //       dessertCategoryId: true,
+    //     },
+    //     reviewImg: {
+    //       reviewImgId: true,
+    //       middlepath: true,
+    //       path: true,
+    //       extention: true,
+    //       isMain: true,
+    //       num: true,
+    //       imgName: true,
+    //     },
+    //     reviewIngredients: {
+    //       reviewIngredientId: true,
+    //     },
+    //   },
+    // });
+  }
+  async lll(data: any) {
+    return await this.reviewIngredient.find();
+  }
   /**
    * 기존 리뷰에 선택된 재료가 있는지 확인
    * @param reviewUpdateDto
@@ -409,33 +456,20 @@ export class ReviewRepository {
   async updateGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
     const saveReview = new Review();
     saveReview.content = reviewUpdateDto.content;
-    console.log('*******************content', saveReview);
     saveReview.isInitalized = true;
-    console.log('*******************isInitalized', saveReview);
     saveReview.isSaved = reviewUpdateDto.isSaved;
-    console.log('*******************isSaved', saveReview);
     saveReview.menuName = reviewUpdateDto.menuName;
-    console.log('*******************menuName', saveReview);
     saveReview.score = reviewUpdateDto.score;
-    console.log('*******************score', saveReview);
     saveReview.storeName = reviewUpdateDto.storeName;
-    console.log('*******************storeName', saveReview);
     saveReview.reviewId = reviewUpdateDto.reviewId;
-    console.log('*******************reviewId', saveReview);
+
     const member = new Member();
     member.memberId = reviewUpdateDto.memberId;
     saveReview.member = member;
-    console.log('*******************memberId', saveReview);
 
-    // DessertCategory 엔티티 인스턴스 생성 및 할당
     const dessertCategory = new DessertCategory();
     dessertCategory.dessertCategoryId = reviewUpdateDto.dessertCategoryId;
     saveReview.dessertCategory = dessertCategory;
-
-    // saveReview.member.memberId = reviewUpdateDto.memberId;
-    // console.log('*******************memberId', saveReview);
-    // saveReview.dessertCategory.dessertCategoryId = reviewUpdateDto.dessertCategoryId;
-    // console.log('*******************dessertCategoryId', saveReview);
 
     return await this.review.save(saveReview);
   }
