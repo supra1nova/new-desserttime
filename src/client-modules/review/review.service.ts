@@ -183,10 +183,12 @@ export class ReviewService {
       if (ingredientList.length > 0) await this.reviewRepository.deleteReviewIngredient(reviewUpdateDto);
       //2. 재료 저장
       if (reviewUpdateDto.ingredientId.length > 0) {
-        const saveReviewIngre = reviewUpdateDto.ingredientId.map((data) => ({ ingredientId: data, reviewId: reviewUpdateDto.reviewId }));
+        const saveReviewIngre = reviewUpdateDto.ingredientId.map((data) => ({ ingredient: { ingredientId: data }, review: { reviewId: reviewUpdateDto.reviewId } }));
+        console.log('saveReviewIngre :::::::::', saveReviewIngre); //[ { ingredientId: 1, reviewId: 4 }, { ingredientId: 2, reviewId: 4 } ]
         await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
       }
       //마지막. 리뷰 저장
+      console.log('adsasdadasdasdsdsdsadadadsadasda');
       const updatedReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
       return;
     } catch (error) {
