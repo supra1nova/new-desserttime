@@ -9,7 +9,7 @@ export class Ingredient {
   @Column()
   ingredientName: string;
 
-  @Column()
+  @Column({ default: true })
   usable: boolean;
 
   @CreateDateColumn()

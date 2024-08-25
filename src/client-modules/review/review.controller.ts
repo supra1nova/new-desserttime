@@ -13,6 +13,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
+import { IngredientNameDto } from './dto/ingredient.name.dto';
 
 @Controller('review')
 @ApiTags('Review')
@@ -24,6 +25,7 @@ export class ReviewController {
   async getReviewCategoryList(@Param() reviewCategoryDto: ReviewCategoryDto) {
     return await this.reviewService.findReviewCategoryList(reviewCategoryDto);
   }
+
   @ApiOperation({ summary: '리뷰 좋아요' })
   @UseInterceptors(TransactionInterceptor)
   @Post('like/:memberId/:reviewId/:isLike')
@@ -63,6 +65,20 @@ export class ReviewController {
   @Delete('generable')
   async deleteGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
     return await this.reviewService.deleteGenerableReview(reviewIdDto);
+  }
+
+  @ApiOperation({ summary: 'test용 API - 재료 하나 생성' })
+  @UseInterceptors(TransactionInterceptor)
+  @Post('ingredient/:ingredientName')
+  async postIngredientList(@Param() ingredientNameDto: IngredientNameDto) {
+    return await this.reviewService.postIngredientList(ingredientNameDto);
+  }
+
+  @ApiOperation({ summary: '재료목록조회' })
+  @UseInterceptors(TransactionInterceptor)
+  @Get('ingredient/list')
+  async getIngredientList() {
+    return await this.reviewService.getIngredientList();
   }
 
   @ApiOperation({ summary: '작성가능한 후기 하나 조회' })

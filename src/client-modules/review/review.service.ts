@@ -11,6 +11,7 @@ import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import * as path from 'path';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
+import { IngredientNameDto } from './dto/ingredient.name.dto';
 
 @Injectable()
 export class ReviewService {
@@ -133,6 +134,28 @@ export class ReviewService {
     }
   }
 
+  /**
+   * 재료 하나 생성하기
+   */
+  async postIngredientList(ingredientNameDto: IngredientNameDto) {
+    try {
+      await this.reviewRepository.insertIngredientList(ingredientNameDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 재료 목록 조회
+   * @returns
+   */
+  async getIngredientList() {
+    try {
+      return await this.reviewRepository.findIngredientList();
+    } catch (error) {
+      throw error;
+    }
+  }
   /**
    * 작성 가능한 후기 하나 조회
    * @param reviewIdDto

@@ -13,7 +13,11 @@ import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
 import { ReviewUpdateDto } from './dto/review.update.dto';
 import { ReviewIngredient } from 'src/config/entities/review.ingredient.entity';
-import { ReviewImgSaveDto } from './dto/review.img.save.dto';
+import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
+import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
+import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
+import { Ingredient } from 'src/config/entities/ingredient.entity';
+import { IngredientNameDto } from './dto/ingredient.name.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -21,6 +25,7 @@ export class ReviewRepository {
     @InjectRepository(Review) private review: Repository<Review>,
     @InjectRepository(Like) private like: Repository<Like>,
     @InjectRepository(Member) private member: Repository<Member>,
+    @InjectRepository(Ingredient) private ingredient: Repository<Ingredient>,
     @InjectRepository(ReviewIngredient) private reviewIngredient: Repository<ReviewIngredient>,
     @InjectRepository(ReviewImg) private reviewImg: Repository<ReviewImg>,
   ) {}
@@ -337,6 +342,22 @@ export class ReviewRepository {
   }
 
   /**
+   * 재료 하나 생성
+   * @param ingredientNameDto
+   */
+  async insertIngredientList(ingredientNameDto: IngredientNameDto) {
+    await this.ingredient.insert({
+      ingredientName: ingredientNameDto.ingredientName,
+    });
+  }
+  /**
+   * 재료 목록 조회
+   * @returns
+   */
+  async findIngredientList() {
+    return await this.ingredient.find({ select: { ingredientId: true, ingredientName: true }, where: { usable: true }, order: { ingredientId: 'ASC' } });
+  }
+  /**
    * 작성 가능한 후기 하나 조회
    * @param reviewIdDto
    * @returns
@@ -418,11 +439,34 @@ export class ReviewRepository {
   }
 
   /**
+   * 리뷰이미지 하나 삭제
+   * @param reviewImgIdDto
+   */
+  async deleteReviewImg(reviewImgIdDto: ReviewImgIdDto) {
+    await this.reviewImg.delete(reviewImgIdDto);
+  }
+
+  async findReviewImgId(reviewImgId) {
+    return await this.reviewImg.findOne({
+      where: { reviewImgId },
+    });
+  }
+
+  /**
+   * 리뷰이미지 순서/메인 변경
+   * @param reviewImgChangeDto
+   */
+  async saveReviewImg(entitiesToSave) {
+    await this.reviewImg.save(entitiesToSave);
+  }
+
+  /**
    * okay - 작성가능한 리뷰 하나 조회
+   * 이미지 조회
    * 재료 목록 조회
    * okay - 카테고리 검색 조회
    * okay - 작성가능한 리뷰 그냥 저장
    * okay - 작성완료 저장
-   * 이미지 저장, 삭제, 순서변경, 메인변경
+   * okay - 이미지 저장, 삭제, 순서변경, 메인변경
    */
 }
