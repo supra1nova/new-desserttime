@@ -4,6 +4,7 @@ import { DessertSessionDto } from './dto/dessertsession.dto';
 import { FirstCategoryAppendDto } from './dto/firstcategory.append.dto';
 import { ParentIdDto } from './dto/parent.id.dto';
 import { DessertCategoryIdDto } from './dto/dessert.category.dto';
+import { DessertCategoryNameDto } from './dto/dessert.category.name.dto';
 
 @Injectable()
 export class DessertCategoryService {
@@ -15,8 +16,7 @@ export class DessertCategoryService {
    */
   async getAllDessertCategory() {
     try {
-      const firstCategoryList =
-        await this.dessertCategoryRepository.findAllDessertCategoryList();
+      const firstCategoryList = await this.dessertCategoryRepository.findAllDessertCategoryList();
 
       const itemMap = new Map();
       const rootItems = [];
@@ -52,10 +52,7 @@ export class DessertCategoryService {
    */
   async getSessionDessertCategory(dessertSessionDto: DessertSessionDto) {
     try {
-      const firstCategoryList =
-        await this.dessertCategoryRepository.findDessertCategoryList(
-          dessertSessionDto,
-        );
+      const firstCategoryList = await this.dessertCategoryRepository.findDessertCategoryList(dessertSessionDto);
       return firstCategoryList;
     } catch (error) {
       throw error;
@@ -69,10 +66,7 @@ export class DessertCategoryService {
    */
   async getSessionSubDessertCategory(parentIdDto: ParentIdDto) {
     try {
-      const subCategoryList =
-        await this.dessertCategoryRepository.findSessionSubDessertCategoryList(
-          parentIdDto,
-        );
+      const subCategoryList = await this.dessertCategoryRepository.findSessionSubDessertCategoryList(parentIdDto);
       return subCategoryList;
     } catch (error) {
       throw error;
@@ -84,9 +78,7 @@ export class DessertCategoryService {
    */
   async postDessertCategory(firstCategoryAppendDto: FirstCategoryAppendDto) {
     try {
-      await this.dessertCategoryRepository.insertDessertCategory(
-        firstCategoryAppendDto,
-      );
+      await this.dessertCategoryRepository.insertDessertCategory(firstCategoryAppendDto);
     } catch (error) {
       throw error;
     }
@@ -99,9 +91,20 @@ export class DessertCategoryService {
   async deleteDessertCategory(dessertCategoryIdDto: DessertCategoryIdDto) {
     try {
       console.log('여기');
-      await this.dessertCategoryRepository.deleteDessertCategory(
-        dessertCategoryIdDto,
-      );
+      await this.dessertCategoryRepository.deleteDessertCategory(dessertCategoryIdDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 후기작성 - 카테고리명 검색
+   * @param dessertCategoryNameDto
+   * @returns
+   */
+  async getSearchCategoryList(dessertCategoryNameDto: DessertCategoryNameDto) {
+    try {
+      return await this.dessertCategoryRepository.findSearchCategoryList(dessertCategoryNameDto);
     } catch (error) {
       throw error;
     }

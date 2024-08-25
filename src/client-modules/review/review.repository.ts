@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/config/entities/review.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { Like } from 'src/config/entities/like.entity';
@@ -10,6 +10,14 @@ import { ProfileImg } from 'src/config/entities/profile.img.entity';
 import { ReviewImg } from 'src/config/entities/review.img.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 import { MemberIdDto } from './dto/member.id.dto';
+import { ReviewIdDto } from './dto/review.id.dto';
+import { ReviewUpdateDto } from './dto/review.update.dto';
+import { ReviewIngredient } from 'src/config/entities/review.ingredient.entity';
+import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
+import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
+import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
+import { Ingredient } from 'src/config/entities/ingredient.entity';
+import { IngredientNameDto } from './dto/ingredient.name.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -17,6 +25,9 @@ export class ReviewRepository {
     @InjectRepository(Review) private review: Repository<Review>,
     @InjectRepository(Like) private like: Repository<Like>,
     @InjectRepository(Member) private member: Repository<Member>,
+    @InjectRepository(Ingredient) private ingredient: Repository<Ingredient>,
+    @InjectRepository(ReviewIngredient) private reviewIngredient: Repository<ReviewIngredient>,
+    @InjectRepository(ReviewImg) private reviewImg: Repository<ReviewImg>,
   ) {}
 
   /**
@@ -296,19 +307,19 @@ export class ReviewRepository {
    */
   async findGenerableReviewCount(memberIdDto: MemberIdDto) {
     return await this.review.count({
-      where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } },
+      where: { isUsable: true, isUpdated: false, member: { memberId: memberIdDto.memberId } },
     });
   }
 
   /**
-   * 후기작성가능훈 후기 목록조회
+   * 후기작성가능한 후기 목록조회
    * @param memberIdDto
    * @returns
    */
   async findGenerableReviewList(memberIdDto: MemberIdDto) {
     return await this.review.find({
-      select: { reviewId: true, menuName: true, storeName: true },
-      where: { isUsable: true, isUpdated: false, isInitalized: false, member: { memberId: memberIdDto.memberId } },
+      select: { reviewId: true, menuName: true, storeName: true, isInitalized: true },
+      where: { isUsable: true, isUpdated: false, member: { memberId: memberIdDto.memberId } },
       order: { createdDate: 'ASC', menuName: 'ASC' },
     });
   }
@@ -318,7 +329,197 @@ export class ReviewRepository {
    * @param insertData
    * @returns
    */
-  async insertGernerableReviewList(insertData) {
+  async insertGenerableReviewList(insertData) {
     return await this.review.save(insertData);
   }
+
+  /**
+   * 작성가능한 후기 하나 삭제
+   * @returns
+   */
+  async deleteGenerableReview(reviewIdDto: ReviewIdDto) {
+    return await this.review.delete(reviewIdDto);
+  }
+
+  /**
+   * 재료 하나 생성
+   * @param ingredientNameDto
+   */
+  async insertIngredientList(ingredientNameDto: IngredientNameDto) {
+    await this.ingredient.insert({
+      ingredientName: ingredientNameDto.ingredientName,
+    });
+  }
+  /**
+   * 재료 목록 조회
+   * @returns
+   */
+  async findIngredientList() {
+    return await this.ingredient.find({ select: { ingredientId: true, ingredientName: true }, where: { usable: true }, order: { ingredientId: 'ASC' } });
+  }
+  /**
+   * 작성 가능한 후기 하나 조회
+   * @param reviewIdDto
+   * @returns
+   */
+  async findGenerableReview(reviewIdDto: ReviewIdDto) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.dessertCategory', 'dessertCategory')
+      .leftJoinAndSelect('review.reviewImg', 'reviewImg')
+      .leftJoinAndSelect('review.reviewIngredients', 'reviewIngredient')
+      .leftJoinAndSelect('reviewIngredient.ingredient', 'ingredient')
+      .where('review.reviewId = :reviewId', { reviewId: reviewIdDto.reviewId })
+      .andWhere('review.isUpdated = :isUpdated', { isUpdated: false })
+      .andWhere('review.isUsable = :isUsable', { isUsable: true })
+      // .select([
+      //   'review.reviewId',
+      //   'review.content',
+      //   'review.menuName',
+      //   'review.storeName',
+      //   'review.score',
+      //   'dessertCategory.dessertCategoryId',
+      //   'reviewImg.reviewImgId',
+      //   'reviewImg.middlepath',
+      //   'reviewImg.path',
+      //   'reviewImg.extention',
+      //   'reviewImg.isMain',
+      //   'reviewImg.num',
+      //   'reviewImg.imgName',
+      //   'ingredient.ingredientId',
+      // ])
+      .getOne();
+
+    // findOne({
+    //   where: {
+    //     reviewId: reviewIdDto.reviewId,
+    //     isUpdated: false,
+    //     isUsable: true,
+    //   },
+    //   relations: ['dessertCategory', 'reviewImg', 'reviewIngredients'],
+    //   select: {
+    //     reviewId: true,
+    //     content: true,
+    //     menuName: true,
+    //     storeName: true,
+    //     score: true,
+    //     dessertCategory: {
+    //       dessertCategoryId: true,
+    //     },
+    //     reviewImg: {
+    //       reviewImgId: true,
+    //       middlepath: true,
+    //       path: true,
+    //       extention: true,
+    //       isMain: true,
+    //       num: true,
+    //       imgName: true,
+    //     },
+    //     reviewIngredients: {
+    //       reviewIngredientId: true,
+    //     },
+    //   },
+    // });
+  }
+  async lll(data: any) {
+    return await this.reviewIngredient.find();
+  }
+  /**
+   * 기존 리뷰에 선택된 재료가 있는지 확인
+   * @param reviewUpdateDto
+   */
+  async findReviewIngredient(reviewUpdateDto: ReviewUpdateDto) {
+    return await this.reviewIngredient.find({ where: { review: { reviewId: reviewUpdateDto.reviewId } } });
+  }
+
+  /**
+   * 기존 리뷰에 선택된 재료 삭제
+   * @param reviewUpdateDto
+   */
+  async deleteReviewIngredient(reviewUpdateDto: ReviewUpdateDto) {
+    await this.reviewIngredient.delete({ review: { reviewId: reviewUpdateDto.reviewId } });
+  }
+
+  /**
+   * 리뷰에 선택된 재료 추가
+   * @param saveReviewIngre
+   */
+  async insertReviewIngredient(saveReviewIngre) {
+    await this.reviewIngredient.save(saveReviewIngre);
+  }
+
+  /**
+   * 후기 작성 내용 수정/ 작성 완료
+   * @param reviewUpdateDto
+   * @returns
+   */
+  async updateGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
+    const saveReview = new Review();
+    saveReview.content = reviewUpdateDto.content;
+    saveReview.isInitalized = true;
+    saveReview.isSaved = reviewUpdateDto.isSaved;
+    saveReview.menuName = reviewUpdateDto.menuName;
+    saveReview.score = reviewUpdateDto.score;
+    saveReview.storeName = reviewUpdateDto.storeName;
+    saveReview.reviewId = reviewUpdateDto.reviewId;
+
+    const member = new Member();
+    member.memberId = reviewUpdateDto.memberId;
+    saveReview.member = member;
+
+    const dessertCategory = new DessertCategory();
+    dessertCategory.dessertCategoryId = reviewUpdateDto.dessertCategoryId;
+    saveReview.dessertCategory = dessertCategory;
+
+    return await this.review.save(saveReview);
+  }
+
+  /**
+   * 리뷰 이미지 파일 하나 저장
+   * @param reviewImgSaveDto
+   * @param file
+   */
+  async insertReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
+    return await this.reviewImg.insert({
+      middlepath: 'reviewImg', //process.env.REVIEW_IMG_MIDDLE_PATH,
+      path: file.path,
+      extention: file.extention,
+      imgName: file.imgName,
+      isMain: reviewImgSaveDto.isMain,
+      num: reviewImgSaveDto.reviewId,
+      reviewImg: { reviewId: reviewImgSaveDto.reviewId },
+    });
+  }
+
+  /**
+   * 리뷰이미지 하나 삭제
+   * @param reviewImgIdDto
+   */
+  async deleteReviewImg(reviewImgIdDto: ReviewImgIdDto) {
+    await this.reviewImg.delete(reviewImgIdDto);
+  }
+
+  async findReviewImgId(reviewImgId) {
+    return await this.reviewImg.findOne({
+      where: { reviewImgId },
+    });
+  }
+
+  /**
+   * 리뷰이미지 순서/메인 변경
+   * @param reviewImgChangeDto
+   */
+  async saveReviewImg(entitiesToSave) {
+    await this.reviewImg.save(entitiesToSave);
+  }
+
+  /**
+   * okay - 작성가능한 리뷰 하나 조회
+   * okay - 이미지 조회
+   * okay - 재료 목록 조회
+   * okay - 카테고리 검색 조회
+   * okay - 작성가능한 리뷰 그냥 저장
+   * okay - 작성완료 저장
+   * okay - 이미지 저장, 삭제, 순서변경, 메인변경
+   */
 }

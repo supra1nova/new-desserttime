@@ -5,6 +5,13 @@ import { LikeDto } from './dto/like.dto';
 import { MemberIdDto } from './dto/member.id.dto';
 import { typeORMConfig } from 'src/config/typeorm/typeorm.config';
 import { ReviewCreateDto } from './dto/review.create.dto';
+import { ReviewIdDto } from './dto/review.id.dto';
+import { ReviewUpdateDto } from './dto/review.update.dto';
+import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
+import * as path from 'path';
+import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
+import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
+import { IngredientNameDto } from './dto/ingredient.name.dto';
 
 @Injectable()
 export class ReviewService {
@@ -101,14 +108,150 @@ export class ReviewService {
    * 후기 작성 목록 등록
    * @param reviewCreateDto
    */
-  async postGernerableReviewList(reviewCreateDto: ReviewCreateDto) {
+  async postGenerableReviewList(reviewCreateDto: ReviewCreateDto) {
     try {
       const insertData = reviewCreateDto.menuNames.map((menuName) => ({
         storeName: reviewCreateDto.storeName,
         member: { memberId: reviewCreateDto.memberId },
         menuName,
       }));
-      await this.reviewRepository.insertGernerableReviewList(insertData);
+      await this.reviewRepository.insertGenerableReviewList(insertData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 작성가능한 리뷰 하나 삭제
+   * @param reviewIdDto
+   * @returns
+   */
+  async deleteGenerableReview(reviewIdDto: ReviewIdDto) {
+    try {
+      return await this.reviewRepository.deleteGenerableReview(reviewIdDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 재료 하나 생성하기
+   */
+  async postIngredientList(ingredientNameDto: IngredientNameDto) {
+    try {
+      await this.reviewRepository.insertIngredientList(ingredientNameDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 재료 목록 조회
+   * @returns
+   */
+  async getIngredientList() {
+    try {
+      return await this.reviewRepository.findIngredientList();
+    } catch (error) {
+      throw error;
+    }
+  }
+  /**
+   * 작성 가능한 후기 하나 조회
+   * @param reviewIdDto
+   * @returns
+   */
+  async getGenerableReview(reviewIdDto: ReviewIdDto) {
+    try {
+      const result = await this.reviewRepository.findGenerableReview(reviewIdDto);
+      //result['ingredientList'] = await this.reviewRepository.lll(result.reviewIngredients);
+
+      console.log('result ::::::::::::;', result);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 후기 작성 수정 및 작성완료
+   * @param reviewUpdateDto
+   * @returns
+   */
+  async patchGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
+    try {
+      //1. 재료 삭제
+      const ingredientList = await this.reviewRepository.findReviewIngredient(reviewUpdateDto);
+      if (ingredientList.length > 0) await this.reviewRepository.deleteReviewIngredient(reviewUpdateDto);
+      //2. 재료 저장
+      if (reviewUpdateDto.ingredientId.length > 0) {
+        const saveReviewIngre = reviewUpdateDto.ingredientId.map((data) => ({ ingredient: { ingredientId: data }, review: { reviewId: reviewUpdateDto.reviewId } }));
+        await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
+      }
+      //마지막. 리뷰 저장
+      const updatedReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
+      return;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 리뷰 이미지 하나 저장
+   * @param reviewImgSaveDto
+   * @param file
+   * @returns
+   */
+  async postReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
+    try {
+      console.log('file :::::', file);
+      const extention = path.extname(file.originalname); // 파일 확장자 추출
+      const imgName = path.basename(file.originalname, extention); // 파일 이름
+      const lastpath = file.originalname;
+      const fileData = {
+        imgName,
+        extention,
+        path: lastpath,
+      };
+      const savedData = await this.reviewRepository.insertReviewImg(reviewImgSaveDto, fileData);
+      console.log('저장후 반환 데이터 :::::::::::::', savedData);
+      return { reviewImgId: savedData['raw']['reviewImgId'] };
+    } catch (error) {
+      throw error;
+    }
+  }
+  /**
+   * 리뷰이미지 하나 삭제
+   * @param reviewImgIdDto
+   */
+  async deleteReviewImg(reviewImgIdDto: ReviewImgIdDto) {
+    try {
+      await this.reviewRepository.deleteReviewImg(reviewImgIdDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 리뷰이미지 순서/메인 변경
+   * @param updateReviewImgListDto
+   */
+  async updateReviewImg(updateReviewImgListDto: UpdateReviewImgListDto) {
+    try {
+      const entitiesToSave = [];
+      for (const updateDto of updateReviewImgListDto.reviewImg) {
+        const reviewImg = await this.reviewRepository.findReviewImgId(updateDto.reviewImgId);
+
+        if (reviewImg) {
+          // DTO 데이터를 엔티티에 매핑
+          reviewImg.num = updateDto.num;
+          reviewImg.isMain = updateDto.isMain;
+
+          // 저장할 엔티티 목록에 추가
+          entitiesToSave.push(reviewImg);
+        }
+      }
+      await this.reviewRepository.saveReviewImg(entitiesToSave);
     } catch (error) {
       throw error;
     }
