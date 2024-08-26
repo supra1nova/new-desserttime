@@ -19,18 +19,18 @@ export class ReviewImg {
   @Column()
   imgName: string;
 
-  @Column({default:false})
-  isMain:boolean;
+  @Column({ default: false })
+  isMain: boolean;
 
   @Column()
-  num:number;
+  num: number;
 
   @CreateDateColumn()
   createdDate: Date;
-  
+
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(()=>Review, review => review.reviewImg)
-  reviewImg:Review[]
+  @ManyToOne(() => Review, (review) => review.reviewImg)
+  reviewImg: Review;
 }

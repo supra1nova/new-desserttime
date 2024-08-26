@@ -23,11 +23,17 @@ export class DessertCategory {
   @Column()
   sessionNum: number;
 
+  @Column()
+  sortNum: number;
+
   @CreateDateColumn()
   createdDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;
+
+  @Column({ nullable: true, default: true })
+  isUsable: boolean;
 
   @OneToMany(() => UserInterestDessert, (uid) => uid.dc)
   uid: UserInterestDessert[];

@@ -1,10 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { UserInterestDessert } from './user.interest.dessert.entity';
 import { QnA } from './qna.entity';
 import { Review } from './review.entity';
 import { Like } from './like.entity';
-import { MemberImg } from './member.img.entity';
+import { ProfileImg } from './profile.img.entity';
 import { Accusation } from './accusation.entity';
+import { Point } from './point.entity';
 
 @Entity()
 export class Member {
@@ -12,18 +21,18 @@ export class Member {
   memberId: number;
 
   @Column()
-  snsId:string;
+  snsId: string;
 
   @Column()
-  signInSns:string;
+  signInSns: string;
 
   @Column()
   memberEmail: string;
-  
+
   @Column()
   memberName: string;
 
-  @Column({nullable:true})
+  @Column()
   nickName: string;
 
   @Column()
@@ -31,43 +40,61 @@ export class Member {
 
   @Column()
   gender: string;
-  
-  @Column({nullable:true,default:false})
+
+  @Column({ nullable: true, default: false })
   isHavingImg: boolean;
-  
+
+  @Column({ nullable: true, default: true })
+  isUsable: boolean;
+
   @CreateDateColumn()
   createdDate: Date;
-  
+
   @UpdateDateColumn()
   updateDate: Date;
-  
-  @Column()
-  firstCity:string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  lastAccessDate: Date;
+
+  @Column({ nullable: true })
+  memo: string;
+
+  @Column({ nullable: true, default: 'user' })
+  type: string;
 
   @Column()
-  secondaryCity:string;
+  firstCity: string;
 
   @Column()
-  thirdCity:string;
- 
+  secondaryCity: string;
+
   @Column()
-  isAgreeAD:boolean
+  thirdCity: string;
 
-  @OneToMany(()=>UserInterestDessert, udi => udi.member)
-  uids:UserInterestDessert[];
+  @Column()
+  isAgreeAD: boolean;
 
-  @OneToMany(()=>QnA, qna=>qna.member)
-  qnas:QnA[];
+  @Column({ nullable: true, default: true })
+  isAgreeAlarm: boolean;
 
-  @OneToMany(()=>Accusation, accusation => accusation.member)
-  accusations:Accusation[]
+  @OneToMany(() => UserInterestDessert, (udi) => udi.member)
+  uids: UserInterestDessert[];
 
-  @OneToMany(()=>Review, reviews => reviews.member)
-  reviews:Review[];
+  @OneToMany(() => QnA, (qna) => qna.member)
+  qnas: QnA[];
 
-  @OneToMany(()=>Like, likes => likes.member)
-  likes:Like[];
+  @OneToMany(() => Accusation, (accusation) => accusation.member)
+  accusations: Accusation[];
 
-  @OneToOne(()=>MemberImg, img => img.member)
-  img:MemberImg
+  @OneToMany(() => Review, (reviews) => reviews.member)
+  reviews: Review[];
+
+  @OneToMany(() => Like, (likes) => likes.member)
+  likes: Like[];
+
+  @OneToOne(() => ProfileImg, (profileImg) => profileImg.member)
+  profileImg: ProfileImg;
+
+  @OneToOne(() => Point, (point) => point.member)
+  point: Point;
 }

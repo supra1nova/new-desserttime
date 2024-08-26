@@ -1,27 +1,22 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  ManyToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, OneToOne } from 'typeorm';
 import { Member } from './member.entity';
 import { Accusation } from './accusation.entity';
 import { Like } from './like.entity';
 import { ReviewImg } from './review.img.entity';
 import { DessertCategory } from './dessert.category.entity';
+import { PointHistory } from './point.history.entity';
+import { ReceiptImg } from './receipt.Img.entity';
+import { ReviewIngredient } from './review.ingredient.entity';
 
 @Entity()
 export class Review {
   @PrimaryGeneratedColumn()
   reviewId: number;
 
-  @Column()
+  @Column({ nullable: true })
   totalLikedNum: number;
 
-  @Column()
+  @Column({ nullable: true })
   content: string;
 
   @Column()
@@ -30,7 +25,7 @@ export class Review {
   @Column()
   storeName: string;
 
-  @Column()
+  @Column({ nullable: true })
   score: number;
 
   @Column({ default: true }) //삭제여부
@@ -39,17 +34,23 @@ export class Review {
   @Column({ default: false }) //승인여부
   isUpdated: boolean;
 
-  @Column({ default: false }) //영수증 등록후 수정여부
+  @Column({ default: false }) //영수증 등록후 최초 수정여부
   isInitalized: boolean;
+
+  @Column({ default: false }) //영수증 등록후 작성완료여부
+  isSaved: boolean;
 
   @Column({ default: 0 })
   point: number;
+
+  @Column({ nullable: true })
+  adminMemo: string;
 
   @CreateDateColumn()
   createdDate: Date;
 
   @UpdateDateColumn()
-  updateDate: Date;
+  updatedDate: Date;
 
   @OneToMany(() => Accusation, (accusation) => accusation.review)
   accusations: Accusation[];
@@ -57,10 +58,7 @@ export class Review {
   @ManyToOne(() => Member, (member) => member.reviews)
   member: Member;
 
-  @ManyToOne(
-    () => DessertCategory,
-    (dessertCategory) => dessertCategory.reviews,
-  )
+  @ManyToOne(() => DessertCategory, (dessertCategory) => dessertCategory.reviews)
   dessertCategory: DessertCategory;
 
   @OneToMany(() => Like, (likes) => likes.review)
@@ -68,4 +66,13 @@ export class Review {
 
   @OneToMany(() => ReviewImg, (rImg) => rImg.reviewImg)
   reviewImg: ReviewImg[];
+
+  @OneToOne(() => PointHistory, (pointHistory) => pointHistory.review)
+  pointHistory: PointHistory;
+
+  @ManyToOne(() => ReceiptImg, (receiptImg) => receiptImg.review)
+  receiptImg: ReceiptImg;
+
+  @OneToMany(() => ReviewIngredient, (reviewIngredients) => reviewIngredients.review)
+  reviewIngredients: ReviewIngredient[];
 }

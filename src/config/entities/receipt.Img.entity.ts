@@ -1,12 +1,20 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToOne,
+  OneToMany,
+} from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
-import { ReviewImg } from './review.img.entity';
 
 @Entity()
-export class MemberImg {
+export class ReceiptImg {
   @PrimaryGeneratedColumn()
-  memberImgId: number;
+  rereceiptImgId: number;
 
   @Column()
   middlepath: string;
@@ -22,10 +30,10 @@ export class MemberImg {
 
   @CreateDateColumn()
   createdDate: Date;
-  
+
   @UpdateDateColumn()
   updateDate: Date;
 
-  @OneToOne(()=>Member, member => member.img)
-  member:Member
+  @OneToMany(() => Review, (review) => review.receiptImg)
+  review: Review[];
 }
