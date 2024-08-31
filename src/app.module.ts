@@ -79,10 +79,6 @@ import { DataSource } from 'typeorm';
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggerInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
   ],
