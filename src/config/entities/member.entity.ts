@@ -1,12 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { UserInterestDessert } from './user.interest.dessert.entity';
 import { QnA } from './qna.entity';
 import { Review } from './review.entity';
@@ -32,13 +24,13 @@ export class Member {
   @Column()
   memberName: string;
 
-  @Column()
+  @Column({ nullable: true })
   nickName: string;
 
-  @Column()
+  @Column({ nullable: true })
   birthYear: number;
 
-  @Column()
+  @Column({ nullable: true })
   gender: string;
 
   @Column({ nullable: true, default: false })
@@ -62,16 +54,16 @@ export class Member {
   @Column({ nullable: true, default: 'user' })
   type: string;
 
-  @Column()
+  @Column({ nullable: true })
   firstCity: string;
 
-  @Column()
+  @Column({ nullable: true })
   secondaryCity: string;
 
-  @Column()
+  @Column({ nullable: true })
   thirdCity: string;
 
-  @Column()
+  @Column({ nullable: true })
   isAgreeAD: boolean;
 
   @Column({ nullable: true, default: true })
