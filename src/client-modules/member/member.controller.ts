@@ -10,11 +10,8 @@ export class MemberController {
   constructor(private readonly memberService: MemberService) {}
 
   @ApiOperation({ summary: '회원가입' })
-  //@UseGuards(JwtAuthGuard)
-  //@ApiBearerAuth()
   @Post('signin')
   async memberSignIn(@Body() signInDto: SignInDto) {
-    console.log('::::::::::::::::::::::::::::::::::::::::::::::::::', signInDto);
     return await this.memberService.memberSignIn(signInDto);
   }
 

@@ -18,7 +18,6 @@ export class MemberRepository {
    * @returns
    */
   async findMemberOne(snsId: string, memberEmail: string) {
-    console.log(' ::::snsId :::: ', snsId, ' :::memberEmail ::::', memberEmail);
     return await this.memberRepository.findOne({
       select: {
         memberId: true,

@@ -1,14 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  Length,
-  IsNotEmpty,
-  Matches,
-  IsOptional,
-} from 'class-validator';
+import { IsString, Length, IsNotEmpty, Matches, IsOptional } from 'class-validator';
 
 export class SignInDto {
-
   @ApiProperty({
     example: '김디저트',
     description: '회원 명',
@@ -46,7 +39,6 @@ export class SignInDto {
     description: '출생년도',
     required: true,
   })
-  @IsNotEmpty()
   readonly birthYear: number;
 
   @ApiProperty({
@@ -54,15 +46,13 @@ export class SignInDto {
     description: '성별',
     required: true,
   })
-  @IsNotEmpty()
   readonly memberGender: string;
 
   @ApiProperty({
     example: '서울광역시',
-    description: '첫 주소', 
+    description: '첫 주소',
     required: true,
   })
-  @IsNotEmpty()
   readonly firstCity: string;
 
   @ApiProperty({
@@ -70,7 +60,6 @@ export class SignInDto {
     description: '두번째 주소',
     required: true,
   })
-  @IsNotEmpty()
   readonly secondaryCity: string;
 
   @ApiProperty({
@@ -78,7 +67,6 @@ export class SignInDto {
     description: '세번째 주소',
     required: true,
   })
-  @IsNotEmpty()
   readonly thirdCity: string;
 
   @ApiProperty({
@@ -94,7 +82,6 @@ export class SignInDto {
     description: '사용자가 선택한 디저트카테고리',
     required: true,
   })
-  @IsNotEmpty()
   readonly memberPickCategory1: number;
 
   @ApiProperty({
@@ -102,7 +89,6 @@ export class SignInDto {
     description: '사용자가 선택한 디저트카테고리',
     required: true,
   })
-  @IsNotEmpty()
   readonly memberPickCategory2: number;
 
   @ApiProperty({
@@ -110,7 +96,6 @@ export class SignInDto {
     description: '사용자가 선택한 디저트카테고리',
     required: true,
   })
-  @IsNotEmpty()
   readonly memberPickCategory3: number;
 
   @ApiProperty({
@@ -118,7 +103,6 @@ export class SignInDto {
     description: '사용자가 선택한 디저트카테고리',
     required: true,
   })
-  @IsNotEmpty()
   readonly memberPickCategory4: number;
 
   @ApiProperty({
@@ -126,6 +110,5 @@ export class SignInDto {
     description: '사용자가 선택한 디저트카테고리',
     required: true,
   })
-  @IsNotEmpty()
   readonly memberPickCategory5: number;
 }

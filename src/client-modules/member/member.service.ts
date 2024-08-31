@@ -16,11 +16,10 @@ export class MemberService {
       } else {
         throw new BadRequestException('중복정보', {
           cause: new Error(),
-          description: '사용중인 사용자입니다.',
+          description: '이미 등록된 사용자입니다.',
         });
       }
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
