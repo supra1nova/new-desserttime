@@ -3,6 +3,7 @@ import { PostAccusationDto } from './dto/post.accusation.dto';
 import { AccusationRecordDto } from './dto/accusation.record.dto';
 import { AccusationRepository } from './accusation.repository';
 import { AccusationEnum } from './enum/accusation.enum';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AccusationService {
@@ -11,6 +12,7 @@ export class AccusationService {
   /**
    * 신고 사유 목록 조회
    */
+  @Transactional()
   async getAccuList() {
     return AccusationEnum;
   }
@@ -20,6 +22,7 @@ export class AccusationService {
    * @param postAccusationDto
    * @returns
    */
+  @Transactional()
   async postAccusation(postAccusationDto: PostAccusationDto) {
     await this.accusationRepository.insertAccusation(postAccusationDto);
   }
@@ -29,6 +32,7 @@ export class AccusationService {
    * @param accusationRecordDto
    * @returns
    */
+  @Transactional()
   async getPreAccuRecord(accusationRecordDto: AccusationRecordDto) {
     let isPreAccuRecord = false;
 

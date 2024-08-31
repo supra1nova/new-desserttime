@@ -5,6 +5,7 @@ import { FirstCategoryAppendDto } from './dto/firstcategory.append.dto';
 import { ParentIdDto } from './dto/parent.id.dto';
 import { DessertCategoryIdDto } from './dto/dessert.category.dto';
 import { DessertCategoryNameDto } from './dto/dessert.category.name.dto';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class DessertCategoryService {
@@ -14,6 +15,7 @@ export class DessertCategoryService {
    * 전체 디저트카테고리 목록 조회(1,2차만)
    * @returns
    */
+  @Transactional()
   async getAllDessertCategory() {
     try {
       const firstCategoryList = await this.dessertCategoryRepository.findAllDessertCategoryList();
@@ -50,6 +52,7 @@ export class DessertCategoryService {
    * @param dessertSessionDto
    * @returns
    */
+  @Transactional()
   async getSessionDessertCategory(dessertSessionDto: DessertSessionDto) {
     try {
       const firstCategoryList = await this.dessertCategoryRepository.findDessertCategoryList(dessertSessionDto);
@@ -64,6 +67,7 @@ export class DessertCategoryService {
    * @param parentIdDto
    * @returns
    */
+  @Transactional()
   async getSessionSubDessertCategory(parentIdDto: ParentIdDto) {
     try {
       const subCategoryList = await this.dessertCategoryRepository.findSessionSubDessertCategoryList(parentIdDto);
@@ -76,6 +80,7 @@ export class DessertCategoryService {
    * 디저트 카테고리 하나 생성
    * @param firstCategoryAppendDto
    */
+  @Transactional()
   async postDessertCategory(firstCategoryAppendDto: FirstCategoryAppendDto) {
     try {
       await this.dessertCategoryRepository.insertDessertCategory(firstCategoryAppendDto);
@@ -88,6 +93,7 @@ export class DessertCategoryService {
    * 디저트 카테고리 하나 삭제
    * @param dessertCategoryIdDto
    */
+  @Transactional()
   async deleteDessertCategory(dessertCategoryIdDto: DessertCategoryIdDto) {
     try {
       console.log('여기');
@@ -102,6 +108,7 @@ export class DessertCategoryService {
    * @param dessertCategoryNameDto
    * @returns
    */
+  @Transactional()
   async getSearchCategoryList(dessertCategoryNameDto: DessertCategoryNameDto) {
     try {
       return await this.dessertCategoryRepository.findSearchCategoryList(dessertCategoryNameDto);
