@@ -2,9 +2,9 @@ import { Body, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/com
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/signin.dto';
 import { MemberService } from './member.service';
-import { LoginDto } from './dto/login.dto';
+import { UserValidationDto } from './dto/login.dto';
 
-@ApiTags('MEMBER')
+@ApiTags('Member')
 @Controller('member')
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
@@ -15,10 +15,9 @@ export class MemberController {
     return await this.memberService.memberSignIn(signInDto);
   }
 
-  @ApiOperation({ summary: '로그인' })
-  @Get('login/:snsId/:memberEmail')
-  async memberLogIn(@Param() loginDto: LoginDto) {
-    console.log('::::::::::::::::::::::::::::::::::::::::::::::::::', loginDto);
-    return await this.memberService.memberLogIn(loginDto);
+  @ApiOperation({ summary: '사용자 유효성 검사' })
+  @Get('validation/:snsId')
+  async memberValidate(@Param() userValidationDto: UserValidationDto) {
+    return await this.memberService.memberValidate(userValidationDto);
   }
 }
