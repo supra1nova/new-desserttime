@@ -15,8 +15,10 @@ export class MemberService {
   @Transactional()
   async memberSignIn(signInDto: SignInDto) {
     try {
-      const isMember = await this.memberRepository.findMemberOne(signInDto.snsId, signInDto.memberEmail);
-      if (!isMember) {
+      const isEmail = await this.memberRepository.findEmailOne(signInDto.memberEmail);
+      const isSnsId = await this.memberRepository.findSnsIdOne(signInDto.snsId);
+
+      if (!isEmail && !isSnsId) {
         await this.memberRepository.insertMember(signInDto);
       } else {
         throw new BadRequestException('중복정보', {

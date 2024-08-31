@@ -17,13 +17,28 @@ export class MemberRepository {
    * @param loginDto
    * @returns
    */
-  async findMemberOne(snsId: string, memberEmail: string) {
+  async findEmailOne(memberEmail: string) {
     return await this.memberRepository.findOne({
       select: {
         memberId: true,
         memberEmail: true,
       },
-      where: { snsId, memberEmail: memberEmail },
+      where: { memberEmail },
+    });
+  }
+
+  /**
+   * 회원가입시 사용자 검사
+   * @param loginDto
+   * @returns
+   */
+  async findSnsIdOne(snsId: string) {
+    return await this.memberRepository.findOne({
+      select: {
+        memberId: true,
+        memberEmail: true,
+      },
+      where: { snsId },
     });
   }
 
