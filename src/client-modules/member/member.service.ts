@@ -2,16 +2,15 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { SignInDto } from './dto/signin.dto';
 import { MemberRepository } from './member.repository';
 import { LoginDto } from './dto/login.dto';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class MemberService {
   constructor(private memberRepository: MemberRepository) {}
+  @Transactional()
   async memberSignIn(signInDto: SignInDto) {
     try {
-      const isMember = await this.memberRepository.findMemberOne(
-        signInDto.snsId,
-        signInDto.memberEmail,
-      );
+      const isMember = await this.memberRepository.findMemberOne(signInDto.snsId, signInDto.memberEmail);
       if (!isMember) {
         await this.memberRepository.insertMember(signInDto);
       } else {
@@ -26,6 +25,7 @@ export class MemberService {
     }
   }
 
+  @Transactional()
   async memberLogIn(loginDto: LoginDto) {
     try {
       const memberData = await this.memberRepository.memberLogin(loginDto);

@@ -12,6 +12,7 @@ import * as path from 'path';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class ReviewService {
@@ -178,6 +179,7 @@ export class ReviewService {
    * @param reviewUpdateDto
    * @returns
    */
+  @Transactional()
   async patchGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
     try {
       //1. 재료 삭제
@@ -202,6 +204,7 @@ export class ReviewService {
    * @param file
    * @returns
    */
+  @Transactional()
   async postReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
     try {
       console.log('file :::::', file);
@@ -220,10 +223,12 @@ export class ReviewService {
       throw error;
     }
   }
+
   /**
    * 리뷰이미지 하나 삭제
    * @param reviewImgIdDto
    */
+  @Transactional()
   async deleteReviewImg(reviewImgIdDto: ReviewImgIdDto) {
     try {
       await this.reviewRepository.deleteReviewImg(reviewImgIdDto);
@@ -236,6 +241,7 @@ export class ReviewService {
    * 리뷰이미지 순서/메인 변경
    * @param updateReviewImgListDto
    */
+  @Transactional()
   async updateReviewImg(updateReviewImgListDto: UpdateReviewImgListDto) {
     try {
       const entitiesToSave = [];

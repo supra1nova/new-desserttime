@@ -20,12 +20,13 @@ import { LoggerMiddleware } from './config/middleware/logger.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TransactionInterceptor } from './config/interceptor/transaction.interceptor';
 import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
 import { ReviewModule } from './client-modules/review/review.module';
 import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
 import { AccusationModule } from './client-modules/accusation/accusation.module';
 import { FileTransModule } from './config/file/filetrans.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -65,6 +66,12 @@ import { FileTransModule } from './config/file/filetrans.module';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => await typeORMConfig(configService),
+      dataSourceFactory: async (options) => {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
   ],
   controllers: [AppController],
