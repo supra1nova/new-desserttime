@@ -1,41 +1,51 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { SignInDto } from './dto/signin.dto';
 import { MemberRepository } from './member.repository';
-import { LoginDto } from './dto/login.dto';
 import { Transactional } from 'typeorm-transactional';
+import { UserValidationDto } from './dto/login.dto';
 
 @Injectable()
 export class MemberService {
   constructor(private memberRepository: MemberRepository) {}
+
+  /**
+   * 회원가입
+   * @param signInDto
+   */
   @Transactional()
   async memberSignIn(signInDto: SignInDto) {
     try {
-      const isMember = await this.memberRepository.findMemberOne(signInDto.snsId, signInDto.memberEmail);
-      if (!isMember) {
+      const isEmail = await this.memberRepository.findEmailOne(signInDto.memberEmail);
+      const isSnsId = await this.memberRepository.findSnsIdOne(signInDto.snsId);
+
+      if (!isEmail && !isSnsId) {
         await this.memberRepository.insertMember(signInDto);
       } else {
         throw new BadRequestException('중복정보', {
           cause: new Error(),
-          description: '사용중인 사용자입니다.',
+          description: '이미 등록된 사용자입니다.',
         });
       }
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
 
+  /**
+   * 사용자 유효성검사
+   * @param userValidationDto
+   * @returns
+   */
   @Transactional()
-  async memberLogIn(loginDto: LoginDto) {
+  async memberValidate(userValidationDto: UserValidationDto) {
     try {
-      const memberData = await this.memberRepository.memberLogin(loginDto);
+      const memberData = await this.memberRepository.memberValidate(userValidationDto);
       if (!memberData) {
         throw new BadRequestException('미등록정보', {
           cause: new Error(),
           description: '가입되지않은 정보입니다.',
         });
       }
-      memberData.nickName = '1번째 상큼한 복숭아';
       return memberData;
     } catch (error) {
       console.log(error);

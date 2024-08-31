@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/config/entities/member.entity';
 import { Repository } from 'typeorm';
-import { LoginDto } from './dto/login.dto';
+import { UserValidationDto } from './dto/login.dto';
 import { SignInDto } from './dto/signin.dto';
 
 @Injectable()
@@ -13,30 +13,43 @@ export class MemberRepository {
   ) {}
 
   /**
-   * 로그인
+   * 회원가입시 사용자 검사
    * @param loginDto
    * @returns
    */
-  async findMemberOne(snsId: string, memberEmail: string) {
-    console.log(' ::::snsId :::: ', snsId, ' :::memberEmail ::::', memberEmail);
+  async findEmailOne(memberEmail: string) {
     return await this.memberRepository.findOne({
       select: {
         memberId: true,
         memberEmail: true,
       },
-      where: { snsId, memberEmail: memberEmail },
+      where: { memberEmail },
     });
   }
 
   /**
-   * 로그인
+   * 회원가입시 사용자 검사
    * @param loginDto
    * @returns
    */
-  async memberLogin(loginDto: LoginDto) {
-    console.log(loginDto);
+  async findSnsIdOne(snsId: string) {
     return await this.memberRepository.findOne({
-      where: { snsId: loginDto.snsId, memberEmail: loginDto.memberEmail },
+      select: {
+        memberId: true,
+        memberEmail: true,
+      },
+      where: { snsId },
+    });
+  }
+
+  /**
+   * 사용자 로그인시도시 유효성 검사
+   * @param loginDto
+   * @returns
+   */
+  async memberValidate(userValidationDto: UserValidationDto) {
+    return await this.memberRepository.findOne({
+      where: { snsId: userValidationDto.snsId },
     });
   }
 
@@ -46,7 +59,6 @@ export class MemberRepository {
    * @returns
    */
   async insertMember(signInDto: SignInDto) {
-    console.log('signInDto ::::::', signInDto);
     return await this.memberRepository.insert({
       snsId: signInDto.snsId,
       memberName: signInDto.memberName,
