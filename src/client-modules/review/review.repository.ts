@@ -38,29 +38,29 @@ export class ReviewRepository {
     return await this.review
       .createQueryBuilder('review')
       .select([
-        'review.reviewId AS reviewId',
-        'review.totalLikedNum AS totalLikedNum',
-        'review.menuName AS menuName',
-        'review.content AS content',
-        'review.storeName AS storeName',
-        'review.score AS score',
-        'review.createdDate AS createdDate',
-        'dessertCategory.dessertCategoryId AS dessertCategoryId',
-        'member.nickName AS memberNickName',
-        'member.isHavingImg AS memberIsHavingImg',
-        'memberImg.middlepath AS memberImgMiddlepath',
-        'memberImg.path AS memberImgPath',
-        'memberImg.extention AS memberImgExtention',
-        'reviewImg.isMain AS reviewImgIsMain',
-        'reviewImg.num AS reviewImgNum',
-        'reviewImg.middlepath AS reviewImgMiddlepath',
-        'reviewImg.path AS reviewImgPath',
-        'reviewImg.extention AS reviewImgExtention',
-        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS isLiked',
+        'review.reviewId AS "reviewId"',
+        'review.totalLikedNum AS "totalLikedNum"',
+        'review.menuName AS "menuName"',
+        'review.content AS "content"',
+        'review.storeName AS "storeName"',
+        'review.score AS "score"',
+        'review.createdDate AS "createdDate"',
+        'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
+        'member.nickName AS "memberNickName"',
+        'member.isHavingImg AS "memberIsHavingImg"',
+        //'memberImg.middlepath AS memberImgMiddlepath',
+        //'memberImg.path AS memberImgPath',
+        //'memberImg.extention AS memberImgExtention',
+        'reviewImg.isMain AS "reviewImgIsMain"',
+        'reviewImg.num AS "reviewImgNum"',
+        'reviewImg.middlepath AS "reviewImgMiddlepath"',
+        'reviewImg.path AS "reviewImgPath"',
+        'reviewImg.extention AS "reviewImgExtention"',
+        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
       ])
       .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      .leftJoin(ProfileImg, 'memberImg', 'member.memberId = memberImg.memberImgId')
+      //.leftJoin(ProfileImg, 'memberImg', 'memberImg.profileImgId = member.profileImgId')
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })

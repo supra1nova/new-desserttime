@@ -25,8 +25,11 @@ export class ReviewService {
    */
   async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
     try {
-      if (reviewCategoryDto.selectedOrder === 'D') return await this.reviewRepository.findReviewCategoryDateList(reviewCategoryDto);
-      else if (reviewCategoryDto.selectedOrder === 'L') return await this.reviewRepository.findReviewCategoryLikeList(reviewCategoryDto);
+      let result;
+      if (reviewCategoryDto.selectedOrder === 'D') result = await this.reviewRepository.findReviewCategoryDateList(reviewCategoryDto);
+      else if (reviewCategoryDto.selectedOrder === 'L') result = await this.reviewRepository.findReviewCategoryLikeList(reviewCategoryDto);
+      console.log('result ::::::::::::', result);
+      return result;
     } catch (error) {
       throw error;
     }
