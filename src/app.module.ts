@@ -8,6 +8,7 @@ import { AdminMemberModule } from './backoffice-modules/admin-member/admin-membe
 import { AdminUserInterestDessertModule } from './backoffice-modules/admin-user-interest-dessert/admin-user-interest-dessert.module';
 import { AdminPointModule } from './backoffice-modules/admin-point/admin-point.module';
 import { AdminPointHistoryModule } from './backoffice-modules/admin-point-history/admin-point-history.module';
+import { AdminQnaModule } from './backoffice-modules/admin-qna/admin-qna.module';
 import { NoticeModule } from './backoffice-modules/notice/notice.module';
 import { MemberModule } from './client-modules/member/member.module';
 import { DessertCategoryModule } from './client-modules/dessert-category/dessert-category.module';
@@ -35,6 +36,7 @@ import { DataSource } from 'typeorm';
     AdminUserInterestDessertModule,
     AdminPointModule,
     AdminPointHistoryModule,
+    AdminQnaModule,
     NoticeModule,
     MemberModule,
     DessertCategoryModule,
