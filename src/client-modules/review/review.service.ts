@@ -164,11 +164,43 @@ export class ReviewService {
    */
   async getGenerableReview(reviewIdDto: ReviewIdDto) {
     try {
-      const result = await this.reviewRepository.findGenerableReview(reviewIdDto);
-      //result['ingredientList'] = await this.reviewRepository.lll(result.reviewIngredients);
+      const reviewData = await this.reviewRepository.findGenerableReview(reviewIdDto);
+      const resultData = {};
+      if (reviewData) {
+        resultData['reviewId'] = reviewData.reviewId;
+        resultData['content'] = reviewData.content;
+        resultData['menuName'] = reviewData.menuName;
+        resultData['storeName'] = reviewData.storeName;
+        resultData['score'] = reviewData.score;
+        resultData['dessertCategory'] = { dessertCategoryId: reviewData.dessertCategory.dessertCategoryId, dessertName: reviewData.dessertCategory.dessertName };
 
-      console.log('result ::::::::::::;', result);
-      return result;
+        if (reviewData.reviewImg.length > 0) {
+          const reviewImg = reviewData.reviewImg.map((imgData) => {
+            return {
+              reviewImgId: imgData.reviewImgId,
+              middlepath: imgData.middlepath,
+              path: imgData.path,
+              extention: imgData.extention,
+              imgName: imgData.imgName,
+              isMain: imgData.isMain,
+              num: imgData.num,
+            };
+          });
+          resultData['reviewImg'] = reviewImg;
+        }
+
+        if (reviewData.reviewIngredients.length > 0) {
+          const reviewIngredients = reviewData.reviewIngredients.map((ingredientData) => {
+            return {
+              reviewIngredientId: ingredientData.reviewIngredientId,
+              ingredientId: ingredientData.ingredient.ingredientId,
+              ingredientName: ingredientData.ingredient.ingredientName,
+            };
+          });
+          resultData['reviewIngredients'] = reviewIngredients;
+        }
+      }
+      return resultData;
     } catch (error) {
       throw error;
     }
@@ -207,7 +239,6 @@ export class ReviewService {
   @Transactional()
   async postReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
     try {
-      console.log('file :::::', file);
       const extention = path.extname(file.originalname); // 파일 확장자 추출
       const imgName = path.basename(file.originalname, extention); // 파일 이름
       const lastpath = file.originalname;
@@ -217,7 +248,6 @@ export class ReviewService {
         path: lastpath,
       };
       const savedData = await this.reviewRepository.insertReviewImg(reviewImgSaveDto, fileData);
-      console.log('저장후 반환 데이터 :::::::::::::', savedData);
       return { reviewImgId: savedData['raw']['reviewImgId'] };
     } catch (error) {
       throw error;
