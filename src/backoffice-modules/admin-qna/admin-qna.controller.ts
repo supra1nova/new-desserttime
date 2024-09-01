@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { AdminQnaService } from './admin-qna.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SearchAdminQnaDto } from './model/search-admin-qna.dto';
+import { ReplyAdminQnaDto } from './model/reply-admin-qna.dto';
 
-@ApiTags('Admin review')
+@ApiTags('Admin qna')
 @Controller('admin/qna')
 export class AdminQnaController {
   constructor(private readonly adminQnaService: AdminQnaService) {}
@@ -14,23 +15,22 @@ export class AdminQnaController {
     return this.adminQnaService.findAll(searchAdminQnaDto);
   }
 
-  /*@Post()
-  create(@Body() createAdminQnaDto: CreateAdminQnaDto) {
-    return this.adminQnaService.create(createAdminQnaDto);
+  @ApiOperation({ summary: 'qna 답글 등록/수정' })
+  @ApiBody({
+    description: `
+      replyContent: 내용 (string, not null),\n
+      replyAdminId: 어드민계정Id (number)
+    `,
+    type: ReplyAdminQnaDto,
+  })
+  @Post(':qnaId')
+  reply(@Param('qnaId') qnaId: number, @Body() replyAdminQnaDto: ReplyAdminQnaDto) {
+    return this.adminQnaService.processCreateUpdateReply(+qnaId, replyAdminQnaDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminQnaService.findOne(+id);
+  @ApiOperation({ summary: 'qna 정보 단건 조회' })
+  @Get(':qnaId')
+  findOne(@Param('qnaId') qnaId: number) {
+    return this.adminQnaService.findOneById(+qnaId);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdminQnaDto: UpdateAdminQnaDto) {
-    return this.adminQnaService.update(+id, updateAdminQnaDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adminQnaService.remove(+id);
-  }*/
 }
