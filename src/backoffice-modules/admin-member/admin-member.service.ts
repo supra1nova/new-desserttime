@@ -6,6 +6,7 @@ import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 import { Member } from '../../config/entities/member.entity';
 import { AdminUserInterestDessertService } from '../admin-user-interest-dessert/admin-user-interest-dessert.service';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AdminMemberService {
@@ -47,6 +48,7 @@ export class AdminMemberService {
   /*async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
     return this.adminMemberRepository.update(memberId, updateAdminMemberDto);
   }*/
+  @Transactional()
   async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
     const memberData: Partial<Member> = {
       nickName: updateAdminMemberDto.nickName,
@@ -76,6 +78,7 @@ export class AdminMemberService {
    * @param memberId
    * @returns Promise<boolean>
    */
+  @Transactional()
   async delete(memberId: number) {
     const deleteDto = new DeleteAdminMemberDto(memberId, false);
     return this.adminMemberRepository.delete(deleteDto);
