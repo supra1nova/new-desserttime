@@ -15,7 +15,6 @@ import { ReviewUpdateDto } from './dto/review.update.dto';
 import { ReviewIngredient } from 'src/config/entities/review.ingredient.entity';
 import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
-import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 import { Ingredient } from 'src/config/entities/ingredient.entity';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
 
@@ -73,78 +72,6 @@ export class ReviewRepository {
       .setParameter('memberId', reviewCategoryDto.memberId)
       .orderBy('review.createdDate', 'DESC')
       .getRawMany();
-
-    // .select([
-    //   'review.reviewId AS reviewId',
-    //   'review.totalLikedNum AS totalLikedNum',
-    //   'review.menuName AS menuName',
-    //   'review.content AS content',
-    //   'review.storeName AS storeName',
-    //   'review.score AS score',
-    //   'review.createdDate AS createdDate',
-    //   'dessertCategory.dessertCategoryId AS dessertCategoryId',
-    //   'member.nickName AS memberNickName',
-    //   'member.isHavingImg AS memberIsHavingImg',
-    //   'memberImg.middlepath AS memberImgMiddlepath',
-    //   'memberImg.path AS memberImgPath',
-    //   'memberImg.extention AS memberImgExtention',
-    //   'reviewImg.isMain AS reviewImgIsMain',
-    //   'reviewImg.num AS reviewImgNum',
-    //   'reviewImg.middlepath AS reviewImgMiddlepath',
-    //   'reviewImg.path AS reviewImgPath',
-    //   'reviewImg.extention AS reviewImgExtention',
-    //   'CASE WHEN like.memberId = :memberId THEN true ELSE false END AS isLiked',
-    // ])
-    // .leftJoin('review.dessertCategory', 'dessertCategory')
-    // .leftJoin('review.member', 'member')
-    // .leftJoin('member.memberImg', 'memberImg')
-    // .leftJoin('review.reviewImg', 'reviewImg')
-    // .leftJoin('review.likes', 'like')
-    // .where('review.isUsable = :isUsable', { isUsable: true })
-    // .andWhere('review.isUpdated = :isUpdated', { isUpdated: true })
-    // .andWhere('review.isInitalized = :isInitalized', { isInitalized: true })
-    // .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
-    //   dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-    // })
-    // .setParameters({ memberId: reviewCategoryDto.memberId }) // memberId를 전달합니다
-    // .orderBy('review.createdDate', 'DESC')
-    // .getRawMany();
-
-    // find({
-    //   select: {
-    //     reviewId: true,
-    //     totalLikedNum: true,
-    //     menuName: true,
-    //     content: true,
-    //     storeName: true,
-    //     score: true,
-    //     createdDate: true,
-    //     dessertCategory: { dessertCategoryId: true },
-    //     member: {
-    //       nickName: true,
-    //       isHavingImg: true,
-    //       img: { middlepath: true, path: true, extention: true },
-    //     },
-    //     reviewImg: {
-    //       isMain: true,
-    //       num: true,
-    //       middlepath: true,
-    //       path: true,
-    //       extention: true,
-    //     },
-
-    //   },
-    //   where: {
-    //     isUsable: true,
-    //     isUpdated: true,
-    //     isInitalized: true,
-    //     dessertCategory: {
-    //       dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-    //     }
-    //   },
-    //   relations: ['member', 'reviewImg', 'dessertCategory','likes'],
-    //   order: { createdDate: 'DESC' },
-    // });
   }
 
   /**
@@ -190,41 +117,6 @@ export class ReviewRepository {
       .setParameter('memberId', reviewCategoryDto.memberId)
       .orderBy('review.totalLikedNum', 'DESC')
       .getRawMany();
-
-    // .find({
-    //   select: {
-    //     reviewId: true,
-    //     totalLikedNum: true,
-    //     menuName: true,
-    //     content: true,
-    //     storeName: true,
-    //     score: true,
-    //     createdDate: true,
-    //     dessertCategory: { dessertCategoryId: true },
-    //     member: {
-    //       nickName: true,
-    //       isHavingImg: true,
-    //       img: { middlepath: true, path: true, extention: true },
-    //     },
-    //     reviewImg: {
-    //       isMain: true,
-    //       num: true,
-    //       middlepath: true,
-    //       path: true,
-    //       extention: true,
-    //     },
-    //   },
-    //   where: {
-    //     isUsable: true,
-    //     isUpdated: true,
-    //     isInitalized: true,
-    //     dessertCategory: {
-    //       dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-    //     },
-    //   },
-    //   relations: ['member', 'reviewImg', 'dessertCategory'],
-    //   order: { totalLikedNum: 'DESC' },
-    // });
   }
 
   /**
@@ -389,41 +281,8 @@ export class ReviewRepository {
       //   'ingredient.ingredientId',
       // ])
       .getOne();
+  }
 
-    // findOne({
-    //   where: {
-    //     reviewId: reviewIdDto.reviewId,
-    //     isUpdated: false,
-    //     isUsable: true,
-    //   },
-    //   relations: ['dessertCategory', 'reviewImg', 'reviewIngredients'],
-    //   select: {
-    //     reviewId: true,
-    //     content: true,
-    //     menuName: true,
-    //     storeName: true,
-    //     score: true,
-    //     dessertCategory: {
-    //       dessertCategoryId: true,
-    //     },
-    //     reviewImg: {
-    //       reviewImgId: true,
-    //       middlepath: true,
-    //       path: true,
-    //       extention: true,
-    //       isMain: true,
-    //       num: true,
-    //       imgName: true,
-    //     },
-    //     reviewIngredients: {
-    //       reviewIngredientId: true,
-    //     },
-    //   },
-    // });
-  }
-  async lll(data: any) {
-    return await this.reviewIngredient.find();
-  }
   /**
    * 기존 리뷰에 선택된 재료가 있는지 확인
    * @param reviewUpdateDto
@@ -512,14 +371,4 @@ export class ReviewRepository {
   async saveReviewImg(entitiesToSave) {
     await this.reviewImg.save(entitiesToSave);
   }
-
-  /**
-   * okay - 작성가능한 리뷰 하나 조회
-   * okay - 이미지 조회
-   * okay - 재료 목록 조회
-   * okay - 카테고리 검색 조회
-   * okay - 작성가능한 리뷰 그냥 저장
-   * okay - 작성완료 저장
-   * okay - 이미지 저장, 삭제, 순서변경, 메인변경
-   */
 }

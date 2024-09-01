@@ -165,9 +165,7 @@ export class ReviewService {
   async getGenerableReview(reviewIdDto: ReviewIdDto) {
     try {
       const result = await this.reviewRepository.findGenerableReview(reviewIdDto);
-      //result['ingredientList'] = await this.reviewRepository.lll(result.reviewIngredients);
 
-      console.log('result ::::::::::::;', result);
       return result;
     } catch (error) {
       throw error;
@@ -207,7 +205,6 @@ export class ReviewService {
   @Transactional()
   async postReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
     try {
-      console.log('file :::::', file);
       const extention = path.extname(file.originalname); // 파일 확장자 추출
       const imgName = path.basename(file.originalname, extention); // 파일 이름
       const lastpath = file.originalname;
@@ -217,7 +214,6 @@ export class ReviewService {
         path: lastpath,
       };
       const savedData = await this.reviewRepository.insertReviewImg(reviewImgSaveDto, fileData);
-      console.log('저장후 반환 데이터 :::::::::::::', savedData);
       return { reviewImgId: savedData['raw']['reviewImgId'] };
     } catch (error) {
       throw error;
