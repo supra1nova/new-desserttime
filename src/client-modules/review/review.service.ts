@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ReviewRepository } from './review.repository';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
@@ -37,20 +37,25 @@ export class ReviewService {
    */
   async postLikeItem(likeDto: LikeDto) {
     try {
-      if (likeDto.isLike === false) {
-        const isLikedData = await this.reviewRepository.findLikeId(likeDto);
-        if (isLikedData) {
-          await this.reviewRepository.deleteReviewLike(isLikedData.likeId);
-          await this.reviewRepository.decrementTotalLikeNum(likeDto);
-        }
-      } else if (likeDto.isLike === true) {
-        const isMemberData = await this.reviewRepository.findMemberId(likeDto);
-        const isReviewData = await this.reviewRepository.findReviewId(likeDto);
+      const isMemberData = await this.reviewRepository.findMemberId(likeDto);
+      const isReviewData = await this.reviewRepository.findReviewId(likeDto);
 
-        if (isMemberData && isReviewData) {
+      if (isMemberData && isReviewData) {
+        if (likeDto.isLike === false) {
+          const isLikedData = await this.reviewRepository.findLikeId(likeDto);
+          if (isLikedData) {
+            await this.reviewRepository.deleteReviewLike(isLikedData.likeId);
+            await this.reviewRepository.decrementTotalLikeNum(likeDto);
+          }
+        } else if (likeDto.isLike === true) {
           await this.reviewRepository.insertReviewLike(likeDto);
           await this.reviewRepository.incrementTotalLikeNum(likeDto);
         }
+      } else {
+        throw new BadRequestException('존재하지 않는 정보', {
+          cause: new Error(),
+          description: '입력하신 리뷰 혹은 회원이 존재하지 않습니다',
+        });
       }
     } catch (error) {
       throw error;
