@@ -1,4 +1,4 @@
-export enum MemberEnum {
+export enum MemberSearchEnum {
   ID = 'memberId',
   NICKNAME = 'nickName',
   STATUS = 'status',

@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { Member } from '../../config/entities/member.entity';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
-import { MemberEnum } from './model/member.enum';
+import { MemberSearchEnum } from './model/member.enum';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 
 export class AdminMemberRepository {
@@ -133,9 +133,9 @@ export class AdminMemberRepository {
 
     const whereClause = {};
 
-    const memberId = MemberEnum.ID;
-    const nickname = MemberEnum.NICKNAME;
-    const status = MemberEnum.STATUS;
+    const memberId = MemberSearchEnum.ID;
+    const nickname = MemberSearchEnum.NICKNAME;
+    const status = MemberSearchEnum.STATUS;
 
     if (searchValue === undefined || searchValue === null) {
       return {};

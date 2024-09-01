@@ -1,7 +1,7 @@
 import { Controller, Get, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AdminMemberService } from './admin-member.service';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
 
 @ApiTags('Admin member')
@@ -18,10 +18,25 @@ export class AdminMemberController {
   @ApiOperation({ summary: '회원 정보 단건 조회' })
   @Get(':memberId')
   findOne(@Param('memberId') memberId: number) {
-    return this.adminMemberService.processFindOneById(+memberId);
+    return this.adminMemberService.findOneById(+memberId);
   }
 
   @ApiOperation({ summary: '회원 정보 수정' })
+  @ApiBody({
+    description: `
+      nickName: 회원 이름
+      memo: 관리자 메모
+      gender: 회원 성별( M:남성 / F:여성 / N:선택안함 )
+      firstCity: 1차 지역
+      secondaryCity: 2차 지역
+      thirdCity: 3차 지역
+      type: 회원 유형( N: 일반회원 normal user, P: 프로회원 pro user, A: 관리자 admin)
+      isAgreeAD: 광고 수신 동의 여부( true: 동의, false: 비동의 )
+      isAgreeAlarm: 알림 수신 동의 여부( true: 동의, false: 비동의 )
+      uidIdArr: 관심디저트 - 1차 디저트 카테고리 id 배열
+  `,
+    type: UpdateAdminMemberDto,
+  })
   @Patch(':memberId')
   update(@Param('memberId') memberId: number, @Body() updateAdminMemberDto: UpdateAdminMemberDto) {
     return this.adminMemberService.update(+memberId, updateAdminMemberDto);
