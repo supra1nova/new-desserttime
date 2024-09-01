@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UpdateAdminPointDto } from './model/update-admin-point.dto';
 import { AdminPointRepository } from './admin-point.repository';
 import { AdminPointHistoryService } from '../admin-point-history/admin-point-history.service';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AdminPointService {
@@ -15,6 +16,7 @@ export class AdminPointService {
    * @param memberId
    * @param updateAdminPointDto
    * */
+  @Transactional()
   async processUpdatePoint(memberId: number, updateAdminPointDto: UpdateAdminPointDto) {
     // PointHistory 에 신규 포인트 내역 적재
     await this.adminPointHistoryService.insert(memberId, updateAdminPointDto);

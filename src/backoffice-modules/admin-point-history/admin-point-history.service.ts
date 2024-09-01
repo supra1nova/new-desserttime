@@ -3,6 +3,7 @@ import { AdminPointHistoryRepository } from './admin-point-history.repository';
 import { UpdateAdminPointDto } from '../admin-point/model/update-admin-point.dto';
 import { Page } from '../common/dto/page.dto';
 import { SearchAdminPointHistoryDto } from './model/search-admin-point-history.dto';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AdminPointHistoryService {
@@ -14,6 +15,7 @@ export class AdminPointHistoryService {
    * @param updateAdminPointDto
    * @return Promise<boolean>
    * */
+  @Transactional()
   async insert(memberId: number, updateAdminPointDto: UpdateAdminPointDto) {
     const member = {};
     member['memberId'] = memberId;
