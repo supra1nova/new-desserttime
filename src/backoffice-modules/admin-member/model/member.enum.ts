@@ -11,6 +11,7 @@ export enum MemberGenderEnum {
 }
 
 export enum MemberTypeEnum {
-  NORMAL = 'N',
-  PRO = 'P',
+  NORMAL_USER = 'N',
+  PRO_USER = 'P',
+  ADMIN = 'A',
 }
