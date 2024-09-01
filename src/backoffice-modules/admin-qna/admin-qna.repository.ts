@@ -2,9 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QnA } from '../../config/entities/qna.entity';
 import { Like, Repository } from 'typeorm';
 import { SearchAdminQnaDto } from './model/search-admin-qna.dto';
-import { MemberEnum } from '../admin-member/model/member.enum';
-import { SearchAdminMemberDto } from '../admin-member/model/search-admin-member.dto';
-import { NoticeSearchEnum } from '../notice/model/notice.enum';
 import { SearchQnaEnum } from './model/search-admin-qna.enum';
 
 export class AdminQnaRepository {
@@ -34,6 +31,9 @@ export class AdminQnaRepository {
       email: true,
       content: true,
       createdDate: true,
+      replyContent: true,
+      replyCreatedDate: true,
+      replyUpdateDate: true,
     };
     const whereClause = this.setWhereClause(searchAdminQnaDto);
 
@@ -46,6 +46,34 @@ export class AdminQnaRepository {
         createdDate: 'DESC',
       },
     });
+  }
+
+  /**
+   * qna 답변 생성
+   * @param qnaId
+   * @param qnaData
+   * */
+  async create(qnaId: number, qnaData: Partial<QnA>) {
+    // await this.adminQnaRepository.update(qnaId, qnaData);
+    await this.adminQnaRepository.update({ qnaId: qnaId }, { isAnswered: true, replyContent: qnaData.replyContent, replyAdminId: qnaData.replyAdminId, replyCreatedDate: new Date() });
+  }
+
+  /**
+   * qna 단건 조회
+   * @param qnaId
+   * @returns Promise<QnA>
+   */
+  async findOneById(qnaId: number) {
+    return await this.adminQnaRepository.createQueryBuilder('qna').select().where('qna.qnaId = :qnaId', { qnaId: true }).setParameter('qnaId', qnaId).orderBy('qna.createdDate', 'DESC').getOne();
+  }
+
+  /**
+   * qna 답변 수정
+   * @param qnaId
+   * @param qnaData
+   * */
+  async update(qnaId: number, qnaData: Partial<QnA>) {
+    await this.adminQnaRepository.update({ qnaId: qnaId }, { replyContent: qnaData.replyContent, replyAdminId: qnaData.replyAdminId, replyUpdateDate: new Date() });
   }
 
   /**
