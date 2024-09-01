@@ -264,22 +264,6 @@ export class ReviewRepository {
       .where('review.reviewId = :reviewId', { reviewId: reviewIdDto.reviewId })
       .andWhere('review.isUpdated = :isUpdated', { isUpdated: false })
       .andWhere('review.isUsable = :isUsable', { isUsable: true })
-      // .select([
-      //   'review.reviewId',
-      //   'review.content',
-      //   'review.menuName',
-      //   'review.storeName',
-      //   'review.score',
-      //   'dessertCategory.dessertCategoryId',
-      //   'reviewImg.reviewImgId',
-      //   'reviewImg.middlepath',
-      //   'reviewImg.path',
-      //   'reviewImg.extention',
-      //   'reviewImg.isMain',
-      //   'reviewImg.num',
-      //   'reviewImg.imgName',
-      //   'ingredient.ingredientId',
-      // ])
       .getOne();
   }
 

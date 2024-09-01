@@ -164,9 +164,43 @@ export class ReviewService {
    */
   async getGenerableReview(reviewIdDto: ReviewIdDto) {
     try {
-      const result = await this.reviewRepository.findGenerableReview(reviewIdDto);
+      const reviewData = await this.reviewRepository.findGenerableReview(reviewIdDto);
+      const resultData = {};
+      if (reviewData) {
+        resultData['reviewId'] = reviewData.reviewId;
+        resultData['content'] = reviewData.content;
+        resultData['menuName'] = reviewData.menuName;
+        resultData['storeName'] = reviewData.storeName;
+        resultData['score'] = reviewData.score;
+        resultData['dessertCategory'] = { dessertCategoryId: reviewData.dessertCategory.dessertCategoryId, dessertName: reviewData.dessertCategory.dessertName };
 
-      return result;
+        if (reviewData.reviewImg.length > 0) {
+          const reviewImg = reviewData.reviewImg.map((imgData) => {
+            return {
+              reviewImgId: imgData.reviewImgId,
+              middlepath: imgData.middlepath,
+              path: imgData.path,
+              extention: imgData.extention,
+              imgName: imgData.imgName,
+              isMain: imgData.isMain,
+              num: imgData.num,
+            };
+          });
+          resultData['reviewImg'] = reviewImg;
+        }
+
+        if (reviewData.reviewIngredients.length > 0) {
+          const reviewIngredients = reviewData.reviewIngredients.map((ingredientData) => {
+            return {
+              reviewIngredientId: ingredientData.reviewIngredientId,
+              ingredientId: ingredientData.ingredient.ingredientId,
+              ingredientName: ingredientData.ingredient.ingredientName,
+            };
+          });
+          resultData['reviewIngredients'] = reviewIngredients;
+        }
+      }
+      return resultData;
     } catch (error) {
       throw error;
     }
