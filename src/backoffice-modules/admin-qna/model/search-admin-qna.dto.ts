@@ -1,15 +1,18 @@
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PageRequest } from '../../common/dto/page.request';
+import { Transform } from 'class-transformer';
 
 export class SearchAdminQnaDto extends PageRequest {
   @IsBoolean()
+  @IsOptional()
+  @Transform(({ obj }) => obj.isAnswered === 'true')
   @ApiProperty({
     type: () => Boolean,
-    description: '답변 상태',
+    isArray: false,
+    description: '상태',
     required: false,
   })
-  @IsOptional()
   readonly isAnswered?: boolean;
 
   @IsString()

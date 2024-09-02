@@ -5,15 +5,15 @@ import { MemberSearchEnum } from './member.enum';
 import { Transform } from 'class-transformer';
 
 export class SearchAdminMemberDto extends PageRequest {
+  @IsBoolean()
+  @IsOptional()
+  @Transform(({ obj }) => obj.isUsable === 'true')
   @ApiProperty({
     type: () => Boolean,
     isArray: false,
     description: '상태',
     required: false,
   })
-  @IsBoolean()
-  @IsOptional()
-  @Transform(({ obj }) => obj.isUsable === 'true')
   readonly isUsable?: string;
 
   @IsEnum(MemberSearchEnum)
