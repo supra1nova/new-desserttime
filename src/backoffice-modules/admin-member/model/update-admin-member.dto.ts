@@ -37,7 +37,7 @@ export class UpdateAdminMemberDto {
   })
   @IsString()
   @IsOptional()
-  firstCity: string;
+  readonly firstCity: string;
 
   @ApiProperty({
     example: 'OO구',
@@ -46,7 +46,7 @@ export class UpdateAdminMemberDto {
   })
   @IsString()
   @IsOptional()
-  secondaryCity: string;
+  readonly secondaryCity: string;
 
   @ApiProperty({
     example: 'OO동',
@@ -55,16 +55,16 @@ export class UpdateAdminMemberDto {
   })
   @IsString()
   @IsOptional()
-  thirdCity: string;
+  readonly thirdCity: string;
 
   @ApiProperty({
     example: 'N',
-    description: '회원 유형( N: 일반회원 normal, P: 프로회원 pro )',
+    description: '회원 유형( N: 일반회원 normal user, P: 프로회원 pro user, A: 관리자 admin)',
     required: true,
   })
   @IsEnum(MemberTypeEnum)
   @IsNotEmpty()
-  type: MemberTypeEnum;
+  readonly type: MemberTypeEnum;
 
   @ApiProperty({
     example: 'true',
@@ -73,7 +73,7 @@ export class UpdateAdminMemberDto {
   })
   @IsBoolean()
   @IsNotEmpty()
-  isAgreeAD: boolean;
+  readonly isAgreeAD: boolean;
 
   @ApiProperty({
     example: 'true',
@@ -82,7 +82,7 @@ export class UpdateAdminMemberDto {
   })
   @IsBoolean()
   @IsNotEmpty()
-  isAgreeAlarm: boolean;
+  readonly isAgreeAlarm: boolean;
 
   @ApiProperty({
     example: '[1, 2, 3, 4]',
@@ -91,5 +91,5 @@ export class UpdateAdminMemberDto {
   })
   @IsArray()
   @IsOptional()
-  uidIdArr: number[];
+  readonly uidIdArr: number[];
 }

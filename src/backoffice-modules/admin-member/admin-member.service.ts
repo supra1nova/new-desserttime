@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Page } from '../common/dto/page.dto';
 import { AdminMemberRepository } from './admin-member.repository';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
@@ -35,8 +35,12 @@ export class AdminMemberService {
    * @param memberId
    * @returns Promise<Member>
    */
-  async processFindOneById(memberId: number) {
-    return await this.adminMemberRepository.findOneById(memberId);
+  async findOneById(memberId: number) {
+    const member = await this.adminMemberRepository.findOneById(memberId);
+    if (member === null) {
+      throw new NotFoundException('일치하는 회원 정보를 찾을 수 없습니다');
+    }
+    return member;
   }
 
   /**
@@ -45,11 +49,10 @@ export class AdminMemberService {
    * @param updateAdminMemberDto
    * @returns Promise<boolean>
    */
-  /*async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
-    return this.adminMemberRepository.update(memberId, updateAdminMemberDto);
-  }*/
   @Transactional()
   async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
+    await this.findOneById(memberId);
+
     const memberData: Partial<Member> = {
       nickName: updateAdminMemberDto.nickName,
       memo: updateAdminMemberDto.memo,

@@ -1,7 +1,6 @@
-export enum MemberEnum {
-  ID = 'memberId',
+export enum MemberSearchEnum {
+  MEMBER_EMAIL = 'memberEmail',
   NICKNAME = 'nickName',
-  STATUS = 'status',
 }
 
 export enum MemberGenderEnum {

@@ -1,17 +1,30 @@
 import { PageRequest } from '../../common/dto/page.request';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { MemberEnum } from './member.enum';
+import { MemberSearchEnum } from './member.enum';
+import { Transform } from 'class-transformer';
 
 export class SearchAdminMemberDto extends PageRequest {
-  @IsEnum(MemberEnum)
+  @ApiProperty({
+    type: () => Boolean,
+    isArray: false,
+    description: '상태',
+    required: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+  @Transform(({ obj }) => obj.isUsable === 'true')
+  readonly isUsable?: string;
+
+  @IsEnum(MemberSearchEnum)
   @IsOptional()
   @ApiProperty({
-    type: MemberEnum,
+    enum: MemberSearchEnum,
+    isArray: false,
     description: '검색어 종류',
     required: false,
   })
-  readonly searchType?: MemberEnum;
+  readonly searchType?: MemberSearchEnum;
 
   @IsString()
   @IsOptional()
