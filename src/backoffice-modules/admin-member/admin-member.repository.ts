@@ -133,29 +133,34 @@ export class AdminMemberRepository {
 
     const whereClause = {};
 
-    const memberId = MemberSearchEnum.ID;
+    if (searchAdminMemberDto.isUsable !== undefined) {
+      whereClause['isUsable'] = searchAdminMemberDto.isUsable;
+    }
+
+    const memberEmail = MemberSearchEnum.MEMBER_EMAIL;
     const nickname = MemberSearchEnum.NICKNAME;
-    const status = MemberSearchEnum.STATUS;
 
     if (searchValue === undefined || searchValue === null) {
-      return {};
+      return whereClause;
     }
 
     if (searchType === undefined) {
-      whereClause[memberId] = Like(`%${searchAdminMemberDto.searchValue}%`);
-      whereClause[nickname] = Like(`%${searchAdminMemberDto.searchValue}%`);
+      const whereClause2 = JSON.parse(JSON.stringify(whereClause));
+
+      whereClause[memberEmail] = Like(`%${searchAdminMemberDto.searchValue}%`);
+      whereClause2[nickname] = Like(`%${searchAdminMemberDto.searchValue}%`);
+
+      return [whereClause, whereClause2];
     }
 
-    if (searchType === memberId) {
-      whereClause[memberId] = Like(`%${searchAdminMemberDto.searchValue}%`);
+    if (searchType === memberEmail) {
+      whereClause[memberEmail] = Like(`%${searchAdminMemberDto.searchValue}%`);
+      return whereClause;
     }
 
     if (searchType === nickname) {
       whereClause[nickname] = Like(`%${searchAdminMemberDto.searchValue}%`);
-    }
-
-    if (searchType === status) {
-      whereClause['isUsable'] = 1 === Number.parseInt(searchAdminMemberDto.searchValue) ? 1 : 0;
+      return whereClause;
     }
 
     return whereClause;
