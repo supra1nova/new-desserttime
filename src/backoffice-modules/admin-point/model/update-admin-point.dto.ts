@@ -4,8 +4,8 @@ import { PointType } from '../../admin-point-history/model/admin-point-history.e
 
 export class UpdateAdminPointDto {
   @ApiProperty({
-    example: '10',
     description: '적립 추가/회수 포인트( 양/음수 가능 )',
+    example: '10',
     required: true,
   })
   @IsNumber()
@@ -13,8 +13,8 @@ export class UpdateAdminPointDto {
   readonly newPoint: number;
 
   @ApiProperty({
-    example: 'A',
     description: '지급/회수 포인트 유형( R: 리뷰 통해 적립되는 포인트, A: admin 지급/회수 포인트)',
+    example: 'A',
     required: false,
   })
   @IsEnum(PointType)

@@ -5,33 +5,33 @@ import { MemberSearchEnum } from './member.enum';
 import { Transform } from 'class-transformer';
 
 export class SearchAdminMemberDto extends PageRequest {
-  @IsBoolean()
-  @IsOptional()
-  @Transform(({ obj }) => obj.isUsable === 'true')
   @ApiProperty({
     type: () => Boolean,
     isArray: false,
-    description: '상태',
+    description: '회원가입 상태: true / false',
     required: false,
   })
+  @IsBoolean()
+  @IsOptional()
+  @Transform(({ obj }) => obj.isUsable === 'true')
   readonly isUsable?: string;
 
-  @IsEnum(MemberSearchEnum)
-  @IsOptional()
   @ApiProperty({
     enum: MemberSearchEnum,
     isArray: false,
-    description: '검색어 종류',
+    description: '검색어 종류: memberEmail / nickName',
     required: false,
   })
+  @IsEnum(MemberSearchEnum)
+  @IsOptional()
   readonly searchType?: MemberSearchEnum;
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     type: String,
     description: '검색값',
     required: false,
   })
+  @IsString()
+  @IsOptional()
   readonly searchValue?: string;
 }

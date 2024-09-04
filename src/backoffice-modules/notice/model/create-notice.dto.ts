@@ -3,8 +3,9 @@ import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateNoticeDto {
   @ApiProperty({
-    example: '공지사항 제목입니다.',
+    type: String,
     description: '공지사항 제목',
+    example: '공지사항 제목입니다.',
     required: true,
   })
   @IsString()
@@ -12,8 +13,9 @@ export class CreateNoticeDto {
   readonly title: string;
 
   @ApiProperty({
-    example: '공지사항 본문입니다.',
+    type: String,
     description: '공지사항 본문',
+    example: '공지사항 본문입니다.',
     required: true,
   })
   @IsString()
@@ -21,8 +23,9 @@ export class CreateNoticeDto {
   readonly content: string;
 
   @ApiProperty({
-    example: 'false',
+    type: () => Boolean,
     description: '공지사항 상단고정 여부',
+    example: 'false',
     required: false,
   })
   @IsBoolean()
