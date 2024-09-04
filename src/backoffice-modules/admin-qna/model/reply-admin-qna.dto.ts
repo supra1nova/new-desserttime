@@ -3,8 +3,8 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class ReplyAdminQnaDto {
   @ApiProperty({
-    example: 'qna 답변 본문',
     description: 'qna 답변 본문',
+    example: 'qna 답변 본문',
     required: true,
   })
   @IsOptional()
@@ -12,13 +12,14 @@ export class ReplyAdminQnaDto {
   readonly replyContent: string;
 
   @ApiProperty({
+    readOnly: true,
     type: () => Number,
-    example: '1',
     description: '답변 admin member id',
+    example: '1',
     required: false,
     default: 1,
   })
   @IsOptional()
   @IsNumber()
-  readonly replyAdminId: number;
+  readonly replyAdminId?: number | 1;
 }

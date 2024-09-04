@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { AdminQnaService } from './admin-qna.service';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { SearchAdminQnaDto } from './model/search-admin-qna.dto';
 import { ReplyAdminQnaDto } from './model/reply-admin-qna.dto';
 
@@ -11,26 +11,33 @@ export class AdminQnaController {
 
   @ApiOperation({ summary: '전체 QnA 목록 조회' })
   @Get()
-  findAll(@Query() searchAdminQnaDto: SearchAdminQnaDto) {
+  async findAll(@Query() searchAdminQnaDto: SearchAdminQnaDto) {
     return this.adminQnaService.findAll(searchAdminQnaDto);
   }
 
   @ApiOperation({ summary: 'qna 답글 등록/수정' })
+  @ApiParam({
+    name: 'qnaId',
+    type: Number,
+    description: 'qna 아이디',
+  })
   @ApiBody({
-    description: `
-      replyContent: 내용 (string, not null),\n
-      replyAdminId: 어드민계정Id (number)
-    `,
     type: ReplyAdminQnaDto,
+    description: `replyContent: 내용 (string, not null)`,
   })
   @Post(':qnaId')
-  reply(@Param('qnaId') qnaId: number, @Body() replyAdminQnaDto: ReplyAdminQnaDto) {
+  async reply(@Param('qnaId') qnaId: number, @Body() replyAdminQnaDto: ReplyAdminQnaDto) {
     return this.adminQnaService.processCreateUpdateReply(+qnaId, replyAdminQnaDto);
   }
 
   @ApiOperation({ summary: 'qna 정보 단건 조회' })
+  @ApiParam({
+    name: 'qnaId',
+    type: Number,
+    description: 'qna 아이디',
+  })
   @Get(':qnaId')
-  findOne(@Param('qnaId') qnaId: number) {
+  async findOne(@Param('qnaId') qnaId: number) {
     return this.adminQnaService.findOneById(+qnaId);
   }
 }

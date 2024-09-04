@@ -10,7 +10,7 @@ export class SearchAdminQnaDto extends PageRequest {
   @ApiProperty({
     type: () => Boolean,
     isArray: false,
-    description: '상태',
+    description: '답변 여부 : true / false',
     required: false,
   })
   readonly isAnswered?: boolean;
