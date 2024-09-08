@@ -82,7 +82,7 @@ export class ReviewRepository {
       .addSelect('reviewImg.middlepath')
       .addSelect('reviewImg.path')
       .addSelect('reviewImg.extention')
-      .addSelect('reviewImg.middlepath')
+      .addSelect('reviewImg.imgName')
       .orderBy('review.createdDate', 'DESC')
       .limit(10)
       .getMany();
@@ -125,7 +125,7 @@ export class ReviewRepository {
       .addSelect('reviewImg.middlepath')
       .addSelect('reviewImg.path')
       .addSelect('reviewImg.extention')
-      .addSelect('reviewImg.middlepath')
+      .addSelect('reviewImg.imgName')
       .orderBy('review.createdDate', 'DESC')
       .limit(10)
       .getMany();
