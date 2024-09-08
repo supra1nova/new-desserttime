@@ -52,16 +52,14 @@ import { DataSource } from 'typeorm';
     }),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
-      rootPath: path.join(String(process.env.fileroot)),
+      rootPath: path.join(process.cwd(), 'uploads'), // 'uploads' 디렉토리를 제공
+      //rootPath: path.join(String(process.env.fileroot)),
+
       serveStaticOptions: {
         //index: false, // 디렉토리 색인 페이지 표시 비활성화
-        setHeaders: (res) => {
-          res.setHeader(
-            'Content-Security-Policy',
-            'upgrade-insecure-requests',
-            //  `attachment; filename=${encodeURIComponent(path)}`,
-          );
-          //res.setHeader('Content-Type', 'application/octet-stream'); // MIME 유형 설정
+        setHeaders: (res, filePath) => {
+          const filename = filePath.split('/').pop(); // 파일 경로에서 파일명 추출
+          res.setHeader('Content-Security-Policy', 'upgrade-insecure-requests', `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`);
         },
       },
     }),
