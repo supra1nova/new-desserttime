@@ -30,6 +30,108 @@ export class ReviewRepository {
   ) {}
 
   /**
+   * 사용자가 선택한 카테고리의 2차 목록 조회
+   * @param memberIdDto
+   * @returns
+   */
+  async findMemberInterestList(memberIdDto: MemberIdDto) {
+    return await this.member
+      .createQueryBuilder('member')
+      .leftJoin('member.uids', 'uids')
+      .leftJoin(DessertCategory, 'dc', 'dc.parentDCId = uids.dcDessertCategoryId')
+      .select('dc.dessertCategoryId')
+      .where('dc.sessionNum = :sessionNum', { sessionNum: 2 })
+      .andWhere('member.memberId =:memberId', { memberId: memberIdDto.memberId })
+      .getRawMany();
+  }
+
+  /**
+   * 사용자가 고른 카테고리중에 리뷰 수가 5개 이상인 디저트카테고리 조회.
+   * 리뷰갯수가 많은 순으로 총 25개만 조회
+   * @param dessertCategoryId
+   * @returns
+   */
+  async findUsablecategoryList(dessertCategoryId) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
+      .where({ isUpdated: true })
+      .andWhere({ isUsable: true })
+      .andWhere('dc.dessertCategoryId IN (:...dessertCategoryId)', { dessertCategoryId })
+      .groupBy('dc.dessertCategoryId, dc.dessertName')
+      .having('COUNT(review.reviewId) >= :minReviewCount', { minReviewCount: 5 })
+      .orderBy('COUNT(review.reviewId)', 'DESC')
+      .select(['dc.dessertCategoryId', 'dc.dessertName'])
+      .limit(25)
+      .getMany();
+  }
+
+  /**
+   * 각 카테고리별 리뷰이미지 10개씩 조회
+   * @param dessertCategoryId
+   * @returns
+   */
+  async findReviewImgList(dessertCategoryId) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoin(DessertCategory, 'dc')
+      .leftJoin(ReviewImg, 'reviewImg')
+      .where('dc.dessertCategoryId=:dessertCategoryId', { dessertCategoryId })
+      .andWhere('reviewImg.isMain=:isMain', { isMain: true })
+      .select('review.reviewId')
+      .addSelect('reviewImg.middlepath')
+      .addSelect('reviewImg.path')
+      .addSelect('reviewImg.extention')
+      .addSelect('reviewImg.middlepath')
+      .orderBy('review.createdDate', 'DESC')
+      .limit(10)
+      .getMany();
+  }
+
+  /**
+   * 사용자가 선택하지 않은 카테고리 중에서
+   * 리뷰수가 많은 2차 카테고리 목록 조회
+   * @param limitnum
+   * @returns
+   */
+  async findRandomCategoryList(limitnum: number) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
+      .where({ isUpdated: true })
+      .andWhere({ isUsable: true })
+      .andWhere('dc.sessionNum = :sessionNum', { sessionNum: 2 })
+      .groupBy('dc.dessertCategoryId, dc.dessertName')
+      .orderBy('COUNT(review.reviewId)', 'DESC')
+      .select(['dc.dessertCategoryId', 'dc.dessertName'])
+      .limit(limitnum)
+      .getMany();
+  }
+
+  /**
+   * 사용자가 선택하지 않은 카테고리의
+   * 리뷰이미지 리스트 조회
+   * @param dessertCategoryId
+   * @returns
+   */
+  async findRandomReviewImgList(dessertCategoryId) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoin(DessertCategory, 'dc')
+      .leftJoin(ReviewImg, 'reviewImg')
+      .where('dc.dessertCategoryId=:dessertCategoryId', { dessertCategoryId })
+      .andWhere('reviewImg.isMain=:isMain', { isMain: true })
+      .select('review.reviewId')
+      .addSelect('reviewImg.middlepath')
+      .addSelect('reviewImg.path')
+      .addSelect('reviewImg.extention')
+      .addSelect('reviewImg.middlepath')
+      .orderBy('review.createdDate', 'DESC')
+      .limit(10)
+      .getMany();
+  }
+
+  /**
    * 리뷰 카테코리 날짜순 목록 조회
    * @param reviewCategoryDto
    * @returns

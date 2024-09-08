@@ -19,6 +19,62 @@ export class ReviewService {
   constructor(private reviewRepository: ReviewRepository) {}
 
   /**
+   * 홈화면 리뷰이미지 목록 랜덤리스트
+   * @param memberIdDto
+   * @returns
+   */
+  @Transactional()
+  async getHomeReviewImgList(memberIdDto: MemberIdDto) {
+    try {
+      // 사용자가 선호하는 카테고리의 2차 카테고리ID 목록 조회
+      const memberInterestList = await this.reviewRepository.findMemberInterestList(memberIdDto);
+      const dessertCategoryList = memberInterestList.map((category) => category.dc_dessertCategoryId);
+
+      let randomReviewCount: number = 25;
+      let reviewImgList = [];
+
+      if (dessertCategoryList.length > 0) {
+        const usableCategoryList = await this.reviewRepository.findUsablecategoryList(dessertCategoryList);
+        randomReviewCount -= usableCategoryList.length;
+
+        if (usableCategoryList.length > 0) {
+          // 사용 가능한 카테고리가 있을 경우
+          const mainCategoryList = await Promise.all(
+            usableCategoryList.map(async (category) => {
+              const categoryReviewImgList = await this.reviewRepository.findReviewImgList(category['dc_dessertCategoryId']);
+              return {
+                dessertCategoryId: category['dc_dessertCategoryId'],
+                dessertName: category['dc_dessertName'],
+                categoryReviewImgList,
+              };
+            }),
+          );
+          reviewImgList = reviewImgList.concat(mainCategoryList);
+        }
+      }
+
+      if (randomReviewCount > 0) {
+        //사용가능한 카테고리가 없거나 25개보다 적은경우
+        const randomCategoryList = await this.reviewRepository.findRandomCategoryList(randomReviewCount);
+        const mainRandomCategoryList = await Promise.all(
+          randomCategoryList.map(async (category) => {
+            const randomCategoryReviewImgList = await this.reviewRepository.findRandomReviewImgList(category['dc_dessertCategoryId']);
+            return {
+              dessertCategoryId: category['dc_dessertCategoryId'],
+              dessertName: category['dc_dessertName'],
+              categoryReviewImgList: randomCategoryReviewImgList,
+            };
+          }),
+        );
+        reviewImgList = reviewImgList.concat(mainRandomCategoryList);
+      }
+      return reviewImgList;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * 선택한 카테고리의 리뷰 목록 조회
    * @param reviewCategoryDto
    * @returns

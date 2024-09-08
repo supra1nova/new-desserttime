@@ -18,7 +18,11 @@ import { IngredientNameDto } from './dto/ingredient.name.dto';
 @ApiTags('Review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
-
+  @ApiOperation({ summary: '홈화면 - 카테고리별 리뷰 이미지 목록 조회' })
+  @Get('home/list/:memberId')
+  async getHomeReviewImgList(@Param() memberIdDto: MemberIdDto) {
+    return await this.reviewService.getHomeReviewImgList(memberIdDto);
+  }
   @ApiOperation({ summary: '선택한 카테고리의 리뷰 목록 조회' })
   @Get('category/list/:dessertCategoryId/:selectedOrder/:memberId')
   async getReviewCategoryList(@Param() reviewCategoryDto: ReviewCategoryDto) {
