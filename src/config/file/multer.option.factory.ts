@@ -40,6 +40,7 @@ export const multerOptionsFactory = (): MulterOptions => {
       filename(req, file, cd) {
         // 파일의 이름을 설정
         const ext = path.extname(file.originalname); // 파일 확장자 추출
+        file.originalname = Buffer.from(file.originalname, 'ascii').toString('utf8');
         const basename = path.basename(file.originalname, ext); // 파일 이름
         // 파일 이름이 중복되는 것을 막기 위해 '파일이름_uuid.확장자' 의 형식으로 파일이름을 지정
         cd(null, `${basename}_${uuid().substring(0, 10)}${ext}`);
