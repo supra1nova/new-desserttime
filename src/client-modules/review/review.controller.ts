@@ -29,7 +29,7 @@ export class ReviewController {
     return await this.reviewService.findReviewCategoryList(reviewCategoryDto);
   }
 
-  @ApiOperation({ summary: '리뷰 좋아요' })
+  @ApiOperation({ summary: '리뷰에 좋아요 하기' })
   @Post('like/:memberId/:reviewId/:isLike')
   async postLikeItem(@Param() likeDto: LikeDto) {
     await this.reviewService.postLikeItem(likeDto);
@@ -117,5 +117,11 @@ export class ReviewController {
   @Patch('generable/img')
   async updateReviewImg(@Body() updateReviewImgListDto: UpdateReviewImgListDto) {
     await this.reviewService.updateReviewImg(updateReviewImgListDto);
+  }
+
+  @ApiOperation({ summary: '사용자가 좋아요를 누른 카테고리 목록 조회' })
+  @Get('like/list/:memberId')
+  async getLikedReviewList(@Param() memberIdDto: MemberIdDto) {
+    return await this.reviewService.getLikedReviewList(memberIdDto);
   }
 }

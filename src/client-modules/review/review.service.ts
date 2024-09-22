@@ -356,4 +356,14 @@ export class ReviewService {
       throw error;
     }
   }
+
+  async getLikedReviewList(memberIdDto: MemberIdDto) {
+    try {
+      const likedReviewList = await this.reviewRepository.findLikedReviewList(memberIdDto);
+      console.log('likedReviewList ::::::::::::::', likedReviewList);
+      return likedReviewList;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
