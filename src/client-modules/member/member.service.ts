@@ -4,6 +4,7 @@ import { MemberRepository } from './member.repository';
 import { Transactional } from 'typeorm-transactional';
 import { UserValidationDto } from './dto/login.dto';
 import { MemberIdDto } from './dto/member.id';
+import { MemberDeletionEnum } from './enum/member.deletion.enum';
 
 @Injectable()
 export class MemberService {
@@ -88,6 +89,18 @@ export class MemberService {
         isAgreeAD,
         isAgreeAlarm,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 신고 사유 조회
+   * @returns
+   */
+  async getReasonForLeaving() {
+    try {
+      return MemberDeletionEnum;
     } catch (error) {
       throw error;
     }

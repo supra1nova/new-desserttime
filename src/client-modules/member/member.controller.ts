@@ -33,4 +33,10 @@ export class MemberController {
   async getAlarmAndADStatue(@Param() memberIdDto: MemberIdDto) {
     return await this.memberService.getAlarmAndADStatue(memberIdDto);
   }
+
+  @ApiOperation({ summary: '탈퇴사유 항목 조회(라디오버튼)' })
+  @Get('my-page/deletion/reason')
+  async getReasonForLeaving() {
+    return await this.memberService.getReasonForLeaving();
+  }
 }
