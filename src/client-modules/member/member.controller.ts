@@ -27,4 +27,10 @@ export class MemberController {
   async myPageOverview(@Param() memberIdDto: MemberIdDto) {
     return await this.memberService.myPageOverview(memberIdDto);
   }
+
+  @ApiOperation({ summary: '마이페이지 - 설정 - 광고,알람 수신여부 조회' })
+  @Get('my-page/config/:memberId')
+  async getAlarmAndADStatue(@Param() memberIdDto: MemberIdDto) {
+    return await this.memberService.getAlarmAndADStatue(memberIdDto);
+  }
 }

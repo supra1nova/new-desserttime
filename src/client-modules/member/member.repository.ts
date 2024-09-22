@@ -106,4 +106,13 @@ export class MemberRepository {
   async findTotalPointOne(memberIdDto: MemberIdDto) {
     return await this.pointRepository.find({ select: { totalPoint: true }, where: { member: { memberId: memberIdDto.memberId } } });
   }
+
+  /**
+   * 알람 및 광고 수신여부 조회
+   * @param memberIdDto
+   * @returns
+   */
+  async findAlarmAndADStatue(memberIdDto: MemberIdDto) {
+    return await this.memberRepository.findOne({ select: { isAgreeAD: true, isAgreeAlarm: true }, where: { memberId: memberIdDto.memberId } });
+  }
 }

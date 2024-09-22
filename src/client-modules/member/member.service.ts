@@ -74,4 +74,22 @@ export class MemberService {
       throw error;
     }
   }
+
+  /**
+   * 광고, 알람 수신 여부 조회
+   * @param memberIdDto
+   * @returns
+   */
+  @Transactional()
+  async getAlarmAndADStatue(memberIdDto: MemberIdDto) {
+    try {
+      const { isAgreeAD, isAgreeAlarm } = await this.memberRepository.findAlarmAndADStatue(memberIdDto);
+      return {
+        isAgreeAD,
+        isAgreeAlarm,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

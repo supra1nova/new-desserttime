@@ -64,10 +64,10 @@ export class Member {
   @Column({ nullable: true })
   thirdCity: string;
 
-  @Column({ nullable: true })
+  @Column({ default: false })
   isAgreeAD: boolean;
 
-  @Column({ nullable: true, default: true })
+  @Column({ default: false })
   isAgreeAlarm: boolean;
 
   @OneToMany(() => UserInterestDessert, (udi) => udi.member)
