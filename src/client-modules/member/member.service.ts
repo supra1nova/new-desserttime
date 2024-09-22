@@ -3,6 +3,7 @@ import { SignInDto } from './dto/signin.dto';
 import { MemberRepository } from './member.repository';
 import { Transactional } from 'typeorm-transactional';
 import { UserValidationDto } from './dto/login.dto';
+import { MemberIdDto } from './dto/member.id';
 
 @Injectable()
 export class MemberService {
@@ -49,6 +50,27 @@ export class MemberService {
       return memberData;
     } catch (error) {
       console.log(error);
+      throw error;
+    }
+  }
+
+  /**
+   * 마이페이지 첫화면 (리뷰 수, 밀 수, 닉네임)
+   * @param memberIdDto
+   * @returns
+   */
+  @Transactional()
+  async myPageOverview(memberIdDto: MemberIdDto) {
+    try {
+      const nickName = await this.memberRepository.findUserNickNameOne(memberIdDto);
+      const usersReviewCount = await this.memberRepository.countReview(memberIdDto);
+      const usersTotalPoint = await this.memberRepository.findTotalPointOne(memberIdDto);
+      return {
+        nickName: nickName.nickName,
+        usersReviewCount,
+        usersTotalPoint: usersTotalPoint[0].totalPoint,
+      };
+    } catch (error) {
       throw error;
     }
   }
