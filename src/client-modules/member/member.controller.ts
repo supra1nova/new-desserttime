@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/signin.dto';
 import { MemberService } from './member.service';
 import { UserValidationDto } from './dto/login.dto';
 import { MemberIdDto } from './dto/member.id';
+import { MemberDeleteDto } from './dto/member.delete.dto';
 
 @ApiTags('Member')
 @Controller('member')
@@ -38,5 +39,11 @@ export class MemberController {
   @Get('my-page/deletion/reason')
   async getReasonForLeaving() {
     return await this.memberService.getReasonForLeaving();
+  }
+
+  @ApiOperation({ summary: '회원 탈퇴하기' })
+  @Delete('my-page/deletion')
+  async deleteMember(@Body() memberDeleteDto: MemberDeleteDto) {
+    return await this.memberService.deleteMember(memberDeleteDto);
   }
 }

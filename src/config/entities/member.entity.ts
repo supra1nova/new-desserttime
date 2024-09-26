@@ -7,6 +7,7 @@ import { ProfileImg } from './profile.img.entity';
 import { Accusation } from './accusation.entity';
 import { Point } from './point.entity';
 import { MemberTypeEnum } from '../../backoffice-modules/admin-member/model/member.enum';
+import { MemberDeleteion } from './member.deleteion.entity';
 
 @Entity()
 export class Member {
@@ -90,4 +91,7 @@ export class Member {
 
   @OneToOne(() => Point, (point) => point.member)
   point: Point;
+
+  @OneToOne(() => MemberDeleteion, (memberDeletion) => memberDeletion.member)
+  memberDeletion: MemberDeleteion;
 }

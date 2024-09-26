@@ -5,6 +5,7 @@ import { Transactional } from 'typeorm-transactional';
 import { UserValidationDto } from './dto/login.dto';
 import { MemberIdDto } from './dto/member.id';
 import { MemberDeletionEnum } from './enum/member.deletion.enum';
+import { MemberDeleteDto } from './dto/member.delete.dto';
 
 @Injectable()
 export class MemberService {
@@ -101,6 +102,18 @@ export class MemberService {
   async getReasonForLeaving() {
     try {
       return MemberDeletionEnum;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 사용자 탈퇴하기
+   * @param memberDeleteDto
+   */
+  async deleteMember(memberDeleteDto: MemberDeleteDto) {
+    try {
+      //탈퇴 사유 업ㄷㅔ이트, 닉네임 변경, 이름/이메일/snsId/snsdomain 데이터 변경, 탈퇴여부 변경
     } catch (error) {
       throw error;
     }
