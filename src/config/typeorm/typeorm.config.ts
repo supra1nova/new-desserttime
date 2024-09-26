@@ -16,6 +16,7 @@ import { PointHistory } from '../entities/point.history.entity';
 import { ReceiptImg } from '../entities/receipt.Img.entity';
 import { ReviewIngredient } from '../entities/review.ingredient.entity';
 import { Ingredient } from '../entities/ingredient.entity';
+import { MemberDeleteion } from '../entities/member.deleteion.entity';
 
 export const typeORMConfig = async (configService: ConfigService): Promise<TypeOrmModuleOptions> => {
   return {
@@ -25,7 +26,7 @@ export const typeORMConfig = async (configService: ConfigService): Promise<TypeO
     username: 'admin',
     password: 'DTelwjxmxkdla8*',
 
-    entities: [UserInterestDessert, Member, ProfileImg, Like, Review, ReviewImg, QnA, Notice, Accusation, DessertCategory, Point, PointHistory, ReceiptImg, Ingredient, ReviewIngredient],
+    entities: [MemberDeleteion, UserInterestDessert, Member, ProfileImg, Like, Review, ReviewImg, QnA, Notice, Accusation, DessertCategory, Point, PointHistory, ReceiptImg, Ingredient, ReviewIngredient],
 
     synchronize: false,
     logging: true,
