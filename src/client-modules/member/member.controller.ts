@@ -33,6 +33,12 @@ export class MemberController {
     return await this.memberService.myPageOverview(memberIdDto);
   }
 
+  @ApiOperation({ summary: '마이페이지 - 사용자 정보 조회' })
+  @Get('/my-page/member/:memberId')
+  async getMemberOne(@Query() memberIdDto: MemberIdDto) {
+    return await this.memberService.getMemberOne(memberIdDto);
+  }
+
   @ApiOperation({ summary: '마이페이지 - 설정 - 광고,알람 수신여부 조회' })
   @Get('/my-page/config/:memberId')
   async getAlarmAndADStatue(@Param() memberIdDto: MemberIdDto) {

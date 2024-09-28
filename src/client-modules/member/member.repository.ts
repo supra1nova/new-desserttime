@@ -13,6 +13,9 @@ import { PointHistory } from 'src/config/entities/point.history.entity';
 import { Notice } from 'src/config/entities/notice.entity';
 import { NoticeListDto } from './dto/notice.list.dto';
 import { NoticeDto } from './dto/notice.dto';
+import { ProfileImg } from 'src/config/entities/profile.img.entity';
+import { UserInterestDessert } from 'src/config/entities/user.interest.dessert.entity';
+import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 
 @Injectable()
 export class MemberRepository {
@@ -99,6 +102,43 @@ export class MemberRepository {
   async findUserNickNameOne(memberIdDto: MemberIdDto) {
     return await this.memberRepository.findOne({ select: { nickName: true }, where: { memberId: memberIdDto.memberId } });
   }
+
+  /**
+   * 사용자정보 조회
+   * @param memberIdDto
+   * @returns
+   */
+  async findMemberOne(memberIdDto: MemberIdDto) {
+    return await this.memberRepository
+      .createQueryBuilder('m')
+      .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = m.memberId') // 프로필 이미지와의 JOIN
+      .leftJoin(UserInterestDessert, 'uids', 'uids.memberMemberId = m.memberId') // user_interest_dessert와의 JOIN
+      .leftJoin(DessertCategory, 'dc', 'dc.dessertCategoryId = uids.dcDessertCategoryId') // dessert_category와의 JOIN
+      .select([
+        'm.memberId AS "memberId"',
+        'm.gender AS "gender"',
+        'm.nickName AS "nickName"',
+        'm.birthYear AS "birthYear"',
+        'm.firstCity AS "firstCity"',
+        'm.secondaryCity AS "secondaryCity"',
+        'm.thirdCity AS "thirdCity"',
+        'profileImg.middlePath AS "profileImgMiddlePath"',
+        'profileImg.profileImgId AS "profileImgId"',
+        'profileImg.path AS "profileImgPath"',
+        'profileImg.extension AS "profileImgExtension"',
+        'dc.dessertCategoryId AS "dessertCategoryId"',
+        'dc.dessertName AS "dessertName"',
+      ])
+      .where('m.memberId = :memberId', { memberId: memberIdDto.memberId }) // 특정 회원 ID 조건
+      .getRawMany();
+
+    // await this.memberRepository.find({
+    //   select: { nickName: true, birthYear: true, gender: true, firstCity: true, secondaryCity: true, thirdCity: true },
+    //   relations: ['profileImg', 'uids'],
+    //   where: { memberId: memberIdDto.memberId },
+    // });
+  }
+
   /**
    * 사용자가 작성한 리뷰 카운트
    * @param memberIdDto
