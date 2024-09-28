@@ -10,6 +10,7 @@ import { MemberAlarmDto } from './dto/member.alarm.dto';
 import { MemberAdDto } from './dto/member.add.dto';
 import { NoticeListDto } from './dto/notice.list.dto';
 import { NoticeDto } from './dto/notice.dto';
+import { NickNameDto } from './dto/nickname.dto';
 
 @Injectable()
 export class MemberService {
@@ -128,13 +129,29 @@ export class MemberService {
       };
 
       const groupedData = groupByMemberId(memberData);
-      console.log(groupedData);
-
       return groupedData;
     } catch (error) {
       throw error;
     }
   }
+
+  /**
+   * 닉네임 사용여부 확인
+   * @param nickNameDto
+   * @returns
+   */
+  @Transactional()
+  async isUsableNickName(nickNameDto: NickNameDto) {
+    try {
+      let result = { usable: true };
+      const isUsableNickName = await this.memberRepository.isUsableNickName(nickNameDto);
+      if (isUsableNickName.length > 0) result.usable = false;
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   /**
    * 광고, 알람 수신 여부 조회
    * @param memberIdDto

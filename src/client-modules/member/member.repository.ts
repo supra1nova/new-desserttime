@@ -16,6 +16,7 @@ import { NoticeDto } from './dto/notice.dto';
 import { ProfileImg } from 'src/config/entities/profile.img.entity';
 import { UserInterestDessert } from 'src/config/entities/user.interest.dessert.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
+import { NickNameDto } from './dto/nickname.dto';
 
 @Injectable()
 export class MemberRepository {
@@ -131,12 +132,14 @@ export class MemberRepository {
       ])
       .where('m.memberId = :memberId', { memberId: memberIdDto.memberId }) // 특정 회원 ID 조건
       .getRawMany();
+  }
 
-    // await this.memberRepository.find({
-    //   select: { nickName: true, birthYear: true, gender: true, firstCity: true, secondaryCity: true, thirdCity: true },
-    //   relations: ['profileImg', 'uids'],
-    //   where: { memberId: memberIdDto.memberId },
-    // });
+  /**
+   * 닉네임 존재여부 확인
+   * @param nickNameDto
+   */
+  async isUsableNickName(nickNameDto: NickNameDto) {
+    return await this.memberRepository.find({ select: { nickName: true }, where: { nickName: nickNameDto.nickName } });
   }
 
   /**
