@@ -6,6 +6,8 @@ import { UserValidationDto } from './dto/login.dto';
 import { MemberIdDto } from './dto/member.id';
 import { MemberDeletionEnum } from './enum/member.deletion.enum';
 import { MemberDeleteDto } from './dto/member.delete.dto';
+import { MemberAlarmDto } from './dto/member.alarm.dto';
+import { MemberAdDto } from './dto/member.add.dto';
 
 @Injectable()
 export class MemberService {
@@ -96,9 +98,36 @@ export class MemberService {
   }
 
   /**
+   * 알람 수신여부 업데이트
+   * @param memberAlarmDto
+   */
+  @Transactional()
+  async patchAlarmStatus(memberAlarmDto: MemberAlarmDto) {
+    try {
+      await this.memberRepository.updateAlarm(memberAlarmDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 광고 수신여부 업데이트
+   * @param memberAdDto
+   */
+  @Transactional()
+  async patchAdStatus(memberAdDto: MemberAdDto) {
+    try {
+      await this.memberRepository.updateAd(memberAdDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * 신고 사유 조회
    * @returns
    */
+  @Transactional()
   async getReasonForLeaving() {
     try {
       return MemberDeletionEnum;
@@ -111,9 +140,32 @@ export class MemberService {
    * 사용자 탈퇴하기
    * @param memberDeleteDto
    */
+  @Transactional()
   async deleteMember(memberDeleteDto: MemberDeleteDto) {
     try {
       //탈퇴 사유 업ㄷㅔ이트, 닉네임 변경, 이름/이메일/snsId/snsdomain 데이터 변경, 탈퇴여부 변경
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 이번달에 쌓은 포인트점수
+   * @param memberIdDto
+   * @returns
+   */
+  @Transactional()
+  async getPoint(memberIdDto: MemberIdDto) {
+    try {
+      const thisMonthPointData = await this.memberRepository.findThisMonthPoint(memberIdDto);
+      const totalPoint = await this.memberRepository.findTotalPointOne(memberIdDto);
+      const thisMonthPoint = !thisMonthPointData.totalPoint ? 0 : thisMonthPointData.totalPoint;
+
+      const result = {
+        thisMonthPoint,
+        totalPoint: totalPoint[0].totalPoint,
+      };
+      return result;
     } catch (error) {
       throw error;
     }
