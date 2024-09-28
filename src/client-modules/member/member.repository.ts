@@ -7,6 +7,9 @@ import { SignInDto } from './dto/signin.dto';
 import { Review } from 'src/config/entities/review.entity';
 import { MemberIdDto } from './dto/member.id';
 import { Point } from 'src/config/entities/point.entity';
+import { MemberAlarmDto } from './dto/member.alarm.dto';
+import { MemberAdDto } from './dto/member.add.dto';
+import { PointHistory } from 'src/config/entities/point.history.entity';
 
 @Injectable()
 export class MemberRepository {
@@ -17,6 +20,8 @@ export class MemberRepository {
     private reviewRepository: Repository<Review>,
     @InjectRepository(Point)
     private pointRepository: Repository<Point>,
+    @InjectRepository(PointHistory)
+    private pointHistory: Repository<PointHistory>,
   ) {}
 
   /**
@@ -114,5 +119,39 @@ export class MemberRepository {
    */
   async findAlarmAndADStatue(memberIdDto: MemberIdDto) {
     return await this.memberRepository.findOne({ select: { isAgreeAD: true, isAgreeAlarm: true }, where: { memberId: memberIdDto.memberId } });
+  }
+
+  /**
+   * 알람 수신여부 변경
+   * @param memberAlarmDto
+   */
+  async updateAlarm(memberAlarmDto: MemberAlarmDto) {
+    await this.memberRepository.update({ memberId: memberAlarmDto.memberId }, { isAgreeAlarm: memberAlarmDto.alarmStatus });
+  }
+
+  /**
+   * 광고 수신여부 변경
+   * @param memberAdDto
+   */
+  async updateAd(memberAdDto: MemberAdDto) {
+    await this.memberRepository.update({ memberId: memberAdDto.memberId }, { isAgreeAD: memberAdDto.adStatus });
+  }
+
+  /**
+   * 이번달 포인트 조회
+   * @param memberIdDto
+   * @returns
+   */
+  async findThisMonthPoint(memberIdDto: MemberIdDto) {
+    const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1); // 이번 달의 첫 날
+    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0); // 이번 달의 마지막 날
+
+    return await this.pointHistory
+      .createQueryBuilder('ph')
+      .select('SUM(ph.newPoint)', 'totalPoint')
+      .leftJoin(Member, 'm', 'ph.memberMemberId = m.memberId')
+      .where('m.memberId = :memberId', { memberId: memberIdDto.memberId })
+      .andWhere('ph.createdDate BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .getRawOne();
   }
 }

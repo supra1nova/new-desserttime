@@ -79,6 +79,7 @@ export class ReviewService {
    * @param reviewCategoryDto
    * @returns
    */
+  @Transactional()
   async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
     try {
       let result;
@@ -90,10 +91,12 @@ export class ReviewService {
       throw error;
     }
   }
+
   /**
    * 리뷰 좋아요/ 좋아요취소
    * @param likeDto
    */
+  @Transactional()
   async postLikeItem(likeDto: LikeDto) {
     try {
       const isMemberData = await this.reviewRepository.findMemberId(likeDto);
@@ -126,6 +129,7 @@ export class ReviewService {
    * @param memberIdDto
    * @returns
    */
+  @Transactional()
   async getGenerableReviewCount(memberIdDto: MemberIdDto) {
     try {
       const generableReviewCount = await this.reviewRepository.findGenerableReviewCount(memberIdDto);
@@ -140,6 +144,7 @@ export class ReviewService {
    * @param memberIdDto
    * @returns
    */
+  @Transactional()
   async getGenerableReviewDate() {
     try {
       const today = new Date();
@@ -158,7 +163,8 @@ export class ReviewService {
 
   /**
    * 후기작성 가능한 후기목록 조회
-   * @param memberIdDto
+   * @param memberIdDto  @Transactional()
+
    * @returns
    */
   async getGenerableReviewList(memberIdDto: MemberIdDto) {
@@ -173,6 +179,7 @@ export class ReviewService {
    * 후기 작성 목록 등록
    * @param reviewCreateDto
    */
+  @Transactional()
   async postGenerableReviewList(reviewCreateDto: ReviewCreateDto) {
     try {
       const insertData = reviewCreateDto.menuNames.map((menuName) => ({
@@ -191,6 +198,7 @@ export class ReviewService {
    * @param reviewIdDto
    * @returns
    */
+  @Transactional()
   async deleteGenerableReview(reviewIdDto: ReviewIdDto) {
     try {
       return await this.reviewRepository.deleteGenerableReview(reviewIdDto);
@@ -202,6 +210,7 @@ export class ReviewService {
   /**
    * 재료 하나 생성하기
    */
+  @Transactional()
   async postIngredientList(ingredientNameDto: IngredientNameDto) {
     try {
       await this.reviewRepository.insertIngredientList(ingredientNameDto);
@@ -214,6 +223,7 @@ export class ReviewService {
    * 재료 목록 조회
    * @returns
    */
+  @Transactional()
   async getIngredientList() {
     try {
       return await this.reviewRepository.findIngredientList();
@@ -226,6 +236,7 @@ export class ReviewService {
    * @param reviewIdDto
    * @returns
    */
+  @Transactional()
   async getGenerableReview(reviewIdDto: ReviewIdDto) {
     try {
       const reviewData = await this.reviewRepository.findGenerableReview(reviewIdDto);
@@ -357,6 +368,7 @@ export class ReviewService {
     }
   }
 
+  @Transactional()
   async getLikedReviewList(memberIdDto: MemberIdDto) {
     try {
       const likedReviewList = await this.reviewRepository.findLikedReviewList(memberIdDto);
