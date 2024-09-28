@@ -7,9 +7,10 @@ import { Member } from 'src/config/entities/member.entity';
 import { Review } from 'src/config/entities/review.entity';
 import { Point } from 'src/config/entities/point.entity';
 import { PointHistory } from 'src/config/entities/point.history.entity';
+import { Notice } from 'src/config/entities/notice.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member, Review, Point, PointHistory])],
+  imports: [TypeOrmModule.forFeature([Member, Review, Point, PointHistory, Notice])],
   exports: [],
   controllers: [MemberController],
   providers: [MemberService, MemberRepository],
