@@ -11,6 +11,8 @@ import { MemberAdDto } from './dto/member.add.dto';
 import { NoticeListDto } from './dto/notice.list.dto';
 import { NoticeDto } from './dto/notice.dto';
 import { NickNameDto } from './dto/nickname.dto';
+import { MemberUpdateDto } from './member.update.dto';
+import { Member } from 'src/config/entities/member.entity';
 
 @Injectable()
 export class MemberService {
@@ -147,6 +149,19 @@ export class MemberService {
       const isUsableNickName = await this.memberRepository.isUsableNickName(nickNameDto);
       if (isUsableNickName.length > 0) result.usable = false;
       return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 사용자 정보 변경
+   * @param memberUpdateDto
+   */
+  @Transactional()
+  async patchMember(memberUpdateDto: MemberUpdateDto) {
+    try {
+      await this.memberRepository.saveMember(memberUpdateDto);
     } catch (error) {
       throw error;
     }

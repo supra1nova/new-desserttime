@@ -10,6 +10,7 @@ import { MemberAlarmDto } from './dto/member.alarm.dto';
 import { NoticeListDto } from './dto/notice.list.dto';
 import { NoticeDto } from './dto/notice.dto';
 import { NickNameDto } from './dto/nickname.dto';
+import { MemberUpdateDto } from './member.update.dto';
 
 @ApiTags('Member')
 @Controller('member')
@@ -40,15 +41,18 @@ export class MemberController {
     return await this.memberService.getMemberOne(memberIdDto);
   }
 
-<<<<<<< HEAD
-=======
   @ApiOperation({ summary: '마이페이지 - 닉네임 중복체크 //false: 사용불가' })
   @Get('/my-page/nickname/:nickname')
   async isUsableNickName(@Query() nickNameDto: NickNameDto) {
     return await this.memberService.isUsableNickName(nickNameDto);
   }
 
->>>>>>> 6f6a065 (사용자 정보 조회 API, 닉네임 중복 확인 API 구현)
+  @ApiOperation({ summary: '마이페이지 - 사용자 정보 수정하기' })
+  @Patch('/my-page')
+  async patchMember(@Query() memberUpdateDto: MemberUpdateDto) {
+    return await this.memberService.patchMember(memberUpdateDto);
+  }
+
   @ApiOperation({ summary: '마이페이지 - 설정 - 광고,알람 수신여부 조회' })
   @Get('/my-page/config/:memberId')
   async getAlarmAndADStatue(@Param() memberIdDto: MemberIdDto) {

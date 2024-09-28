@@ -17,6 +17,7 @@ import { ProfileImg } from 'src/config/entities/profile.img.entity';
 import { UserInterestDessert } from 'src/config/entities/user.interest.dessert.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 import { NickNameDto } from './dto/nickname.dto';
+import { MemberUpdateDto } from './member.update.dto';
 
 @Injectable()
 export class MemberRepository {
@@ -237,5 +238,24 @@ export class MemberRepository {
    */
   async findNoticeOne(noticeDto: NoticeDto) {
     return await this.noticeRepository.findOne({ select: { content: true, title: true, createdDate: true }, where: { noticeId: noticeDto.noticeId, isNotice: noticeDto.isNotice } });
+  }
+
+  /**
+   * 사용자 정보 수정하기
+   * @param memberUpdateDto
+   * @returns
+   */
+  async saveMember(memberUpdateDto: MemberUpdateDto) {
+    return await this.memberRepository.update(
+      { memberId: memberUpdateDto.memberId },
+      {
+        birthYear: memberUpdateDto.birthYear,
+        gender: memberUpdateDto.gender,
+        firstCity: memberUpdateDto.firstCity,
+        secondaryCity: memberUpdateDto.secondaryCity,
+        thirdCity: memberUpdateDto.thirdCity,
+        nickName: memberUpdateDto.nickName,
+      },
+    );
   }
 }
