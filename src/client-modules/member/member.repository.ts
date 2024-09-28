@@ -10,6 +10,9 @@ import { Point } from 'src/config/entities/point.entity';
 import { MemberAlarmDto } from './dto/member.alarm.dto';
 import { MemberAdDto } from './dto/member.add.dto';
 import { PointHistory } from 'src/config/entities/point.history.entity';
+import { Notice } from 'src/config/entities/notice.entity';
+import { NoticeListDto } from './dto/notice.list.dto';
+import { NoticeDto } from './dto/notice.dto';
 
 @Injectable()
 export class MemberRepository {
@@ -22,6 +25,8 @@ export class MemberRepository {
     private pointRepository: Repository<Point>,
     @InjectRepository(PointHistory)
     private pointHistory: Repository<PointHistory>,
+    @InjectRepository(Notice)
+    private noticeRepository: Repository<Notice>,
   ) {}
 
   /**
@@ -153,5 +158,41 @@ export class MemberRepository {
       .where('m.memberId = :memberId', { memberId: memberIdDto.memberId })
       .andWhere('ph.createdDate BETWEEN :startDate AND :endDate', { startDate, endDate })
       .getRawOne();
+  }
+
+  /**
+   * 보유밀 상세내역
+   * @param memberIdDto
+   * @returns
+   */
+  async findPointHisoryList(memberIdDto: MemberIdDto) {
+    return await this.pointHistory.find({
+      select: { createdDate: true, newPoint: true },
+      relations: ['review'],
+      where: { member: { memberId: memberIdDto.memberId } },
+      order: { createdDate: 'DESC' },
+    });
+  }
+
+  /**
+   * 공지/이벤트 목록 조회
+   * @param noticeListDto
+   * @returns
+   */
+  async findNoticeList(noticeListDto: NoticeListDto) {
+    return await this.noticeRepository.find({
+      select: { title: true, createdDate: true, noticeId: true },
+      where: { isNotice: noticeListDto.isNotice },
+      order: { createdDate: 'DESC' },
+    });
+  }
+
+  /**
+   * 공지/이벤트 하나 조회
+   * @param noticeDto
+   * @returns
+   */
+  async findNoticeOne(noticeDto: NoticeDto) {
+    return await this.noticeRepository.findOne({ select: { content: true, title: true, createdDate: true }, where: { noticeId: noticeDto.noticeId, isNotice: noticeDto.isNotice } });
   }
 }

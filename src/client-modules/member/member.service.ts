@@ -8,6 +8,8 @@ import { MemberDeletionEnum } from './enum/member.deletion.enum';
 import { MemberDeleteDto } from './dto/member.delete.dto';
 import { MemberAlarmDto } from './dto/member.alarm.dto';
 import { MemberAdDto } from './dto/member.add.dto';
+import { NoticeListDto } from './dto/notice.list.dto';
+import { NoticeDto } from './dto/notice.dto';
 
 @Injectable()
 export class MemberService {
@@ -165,6 +167,55 @@ export class MemberService {
         thisMonthPoint,
         totalPoint: totalPoint[0].totalPoint,
       };
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 보유밀 상세내역
+   * @param memberIdDto
+   */
+  async getPointHisoryList(memberIdDto: MemberIdDto) {
+    try {
+      const pointHistoryList = await this.memberRepository.findPointHisoryList(memberIdDto);
+      const result = pointHistoryList.map((data) => {
+        const createdDate: string = data.createdDate.toISOString().substring(0, 10);
+        return {
+          menuName: data.review?.menuName,
+          point: data.newPoint,
+          createdDate,
+        };
+      });
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 공지/이벤트 목록조회
+   * @param noticeListDto
+   * @returns
+   */
+  async getNoticeList(noticeListDto: NoticeListDto) {
+    try {
+      const result = await this.memberRepository.findNoticeList(noticeListDto);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 공지/이벤트 하나 조회
+   * @param noticeDto
+   * @returns
+   */
+  async getNoticeOne(noticeDto: NoticeDto) {
+    try {
+      const result = await this.memberRepository.findNoticeOne(noticeDto);
       return result;
     } catch (error) {
       throw error;
