@@ -32,6 +32,8 @@ export class MemberRepository {
     private pointHistory: Repository<PointHistory>,
     @InjectRepository(Notice)
     private noticeRepository: Repository<Notice>,
+    @InjectRepository(UserInterestDessert)
+    private userInterestDessertRepository: Repository<UserInterestDessert>,
   ) {}
 
   /**
@@ -257,5 +259,27 @@ export class MemberRepository {
         nickName: memberUpdateDto.nickName,
       },
     );
+  }
+
+  /**
+   * 기존에 사용자가 선택한 디저트 카테고리 삭제
+   * @param memberUpdateDto
+   * @returns
+   */
+  async deletePickCategoryList(memberUpdateDto: MemberUpdateDto) {
+    return await this.userInterestDessertRepository
+      .createQueryBuilder()
+      .delete()
+      .where('memberMemberId = :memberId', { memberId: memberUpdateDto.memberId }) // status가 'inactive'인 모든 데이터를 삭제
+      .execute();
+  }
+
+  /**
+   * 사용자가 선택한 디저트카테고리 저장
+   * @param pickDessertList
+   * @returns
+   */
+  async insertPickCategoryList(pickDessertList: any) {
+    return await this.userInterestDessertRepository.save(pickDessertList);
   }
 }
