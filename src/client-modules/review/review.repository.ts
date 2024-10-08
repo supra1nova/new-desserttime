@@ -150,9 +150,9 @@ export class ReviewRepository {
         'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
         'member.nickName AS "memberNickName"',
         'member.isHavingImg AS "memberIsHavingImg"',
-        //'profileImg.middlepath AS memberImgMiddlepath',
-        //'profileImg.path AS memberImgPath',
-        //'profileImg.extention AS memberImgExtention',
+        'profileImg.middlePath AS profileImgMiddlePath',
+        'profileImg.path AS profileImgPath',
+        'profileImg.extension AS profileImgExtention',
         'reviewImg.isMain AS "reviewImgIsMain"',
         'reviewImg.num AS "reviewImgNum"',
         'reviewImg.middlepath AS "reviewImgMiddlepath"',
@@ -162,7 +162,7 @@ export class ReviewRepository {
       ])
       .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      //.leftJoin(ProfileImg, 'profileImg', 'profileImg.profileImgId = member.profileImgId')
+      .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
@@ -195,9 +195,9 @@ export class ReviewRepository {
         'dessertCategory.dessertCategoryId AS dessertCategoryId',
         'member.nickName AS memberNickName',
         'member.isHavingImg AS memberIsHavingImg',
-        'memberImg.middlepath AS memberImgMiddlepath',
-        'memberImg.path AS memberImgPath',
-        'memberImg.extention AS memberImgExtention',
+        'profileImg.middlePath AS profileImgMiddlePath',
+        'profileImg.path AS profileImgPath',
+        'profileImg.extension AS profileImgExtention',
         'reviewImg.isMain AS reviewImgIsMain',
         'reviewImg.num AS reviewImgNum',
         'reviewImg.middlepath AS reviewImgMiddlepath',
@@ -207,7 +207,7 @@ export class ReviewRepository {
       ])
       .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      .leftJoin(ProfileImg, 'memberImg', 'member.memberId = memberImg.memberImgId')
+      .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
