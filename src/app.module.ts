@@ -9,6 +9,7 @@ import { AdminUserInterestDessertModule } from './backoffice-modules/admin-user-
 import { AdminPointModule } from './backoffice-modules/admin-point/admin-point.module';
 import { AdminPointHistoryModule } from './backoffice-modules/admin-point-history/admin-point-history.module';
 import { AdminQnaModule } from './backoffice-modules/admin-qna/admin-qna.module';
+import { AdminDessertCategoryModule } from './backoffice-modules/admin-dessert-category/admin-dessert-category.module';
 import { NoticeModule } from './backoffice-modules/notice/notice.module';
 import { MemberModule } from './client-modules/member/member.module';
 import { DessertCategoryModule } from './client-modules/dessert-category/dessert-category.module';
@@ -23,7 +24,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
 import { ReviewModule } from './client-modules/review/review.module';
-import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
 import { AccusationModule } from './client-modules/accusation/accusation.module';
 import { FileTransModule } from './config/file/filetrans.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
@@ -37,6 +37,7 @@ import { DataSource } from 'typeorm';
     AdminPointModule,
     AdminPointHistoryModule,
     AdminQnaModule,
+    AdminDessertCategoryModule,
     NoticeModule,
     MemberModule,
     DessertCategoryModule,
