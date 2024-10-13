@@ -7,7 +7,7 @@ import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([DessertCategory])],
-  exports: [],
+  exports: [DessertCategoryService],
   controllers: [DessertCategoryController],
   providers: [DessertCategoryService, DessertCategoryRepository],
 })
