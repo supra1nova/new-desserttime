@@ -4,10 +4,10 @@ import { Review } from '../../config/entities/review.entity';
 import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
 import { Member } from '../../config/entities/member.entity';
 import { DessertCategory } from '../../config/entities/dessert.category.entity';
+import { ReviewIngredient } from '../../config/entities/review.ingredient.entity';
 
 export class AdminReviewRepository {
-  constructor(@InjectRepository(Review) private adminReviewRepository: Repository<Review>) {
-  }
+  constructor(@InjectRepository(Review) private adminReviewRepository: Repository<Review>) {}
 
   /**
    * 리뷰 수량 조회
@@ -26,53 +26,57 @@ export class AdminReviewRepository {
    * @param adminSearchReviewDto
    * @returns Promise<any>
    */
+  // TODO: 사진, 영수증 left join 할 것
   async findReviewList(adminSearchReviewDto: AdminSearchReviewDto) {
     const whereClause = this.setWhereClause(adminSearchReviewDto);
 
-    const dcSubQr = this.adminReviewRepository
-      .createQueryBuilder()
-      .subQuery()
-      .select([
-        'dc.dessertCategoryId   AS "dessertCategoryId"',
-        'dc.dessertName         AS "dessertName"',
-      ])
-      .from(DessertCategory, 'dc')
-      .getQuery();
-
-    const mbSubQr = this.adminReviewRepository
-      .createQueryBuilder()
-      .subQuery()
-      .select([
-        'mb.memberId      AS "memberId"',
-        'mb.memberEmail   AS "memberEmail"',
-        'mb.nickName      AS "nickName"',
-      ])
-      .from(Member, 'mb')
-      .getQuery();
-
-    // TODO: 재료, 사진, 처리내역, 영수증 left join 할 것
-    const mainQuery = await this.adminReviewRepository
+    const rawReviews = await this.adminReviewRepository
       .createQueryBuilder('rv')
-      .select([
-        'rv.status                                      AS "status"',
-        'rv.reviewId                                    AS "reviewId"',
-        '"mbSubQr"."memberId"                           AS "memberId"',
-        '"mbSubQr"."nickName"                           AS "nickName"',
-        '"mbSubQr"."memberEmail"                        AS "memberEmail"',
-        '"dcSubQr"."dessertCategoryId"                  AS "dessertCategoryId"',
-        '"dcSubQr"."dessertName"                        AS "dessertName"',
-        `('[' || rv.storeName || '] ' || rv.menuName)   AS "title"`,
-        'rv.content                                     AS "content"',
-        'rv.adminMemo                                   AS "adminMemo"',
-      ])
-      .leftJoin(dcSubQr, 'dcSubQr', 'rv.dessertCategoryDessertCategoryId = "dcSubQr"."dessertCategoryId"')
-      .leftJoin(mbSubQr, 'mbSubQr', 'rv.memberMemberId = "mbSubQr"."memberId"')
+      .leftJoin(DessertCategory, 'dc', 'rv.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
+      .leftJoin(Member, 'mb', 'rv.memberMemberId = mb.memberId')
+      .leftJoin(ReviewIngredient, 'rvIng', 'rv.reviewId = rvIng.reviewReviewId')
+      .leftJoin(ReviewIngredient, 'rvIng', 'rv.reviewId = rvIng.reviewReviewId')
+      .leftJoin('ingredient', 'ing', 'rvIng.ingredientIngredientId = ing.ingredientId')
+      .leftJoin('accusation', 'acc', 'rv.reviewId = acc.reviewReviewId')
       .where(whereClause)
-      /*.orderBy('rv.dessertCategoryId', 'ASC')*/
+      .andWhere('rv.isUsable = :isUsable', { isUsable: true })
+      .select('rv.status', 'rv_status')
+      .addSelect('rv.reviewId', 'rv_reviewId')
+      .addSelect('mb.memberId', 'mb_memberId')
+      .addSelect('mb.nickName', 'mb_nickName')
+      .addSelect('mb.memberEmail', 'mb_memberEmail')
+      .addSelect('dc.dessertCategoryId', 'dc_dessertCategoryId')
+      .addSelect('dc.dessertName', 'dc_dessertName')
+      .addSelect(`('[' || rv.storeName || '] ' || rv.menuName)`, 'title')
+      .addSelect('rv.content', 'rv_content')
+      .addSelect('rv.adminMemo', 'rv_adminMemo')
+      .addSelect(`LISTAGG(DISTINCT ing.ingredientId || ':' || ing.ingredientName, ', ') WITHIN GROUP (ORDER BY ing.ingredientName)`, 'ingredients')
+      .addSelect(`LISTAGG(DISTINCT acc.accusationId || ':' || acc.reason, ', ') WITHIN GROUP (ORDER BY acc.accusationId)`, 'accusations')
+      .groupBy('rv.reviewId, mb.memberId, mb.nickName, mb.memberEmail, dc.dessertCategoryId, dc.dessertName, rv.status, rv.content, rv.adminMemo, rv.storeName, rv.menuName')
+      .orderBy('rv.reviewId', 'ASC')
       .offset(adminSearchReviewDto.getSkip())
       .limit(adminSearchReviewDto.getTake())
       .getRawMany();
-    return mainQuery;
+
+    // 문자열을 배열로 파싱하며, 값이 없을 경우 빈 배열 처리
+    const parseList = (list) =>
+      list && !list.includes('null')
+        ? list
+            .split(', ')
+            .map((item) => {
+              const [id, value] = item.split(':');
+              // id가 null인 경우 빈 배열 처리
+              if (id === 'null' || id === '' || id === null || id === undefined) return null;
+              return { id: parseInt(id, 10), value };
+            })
+            .filter((item) => item !== null) // null인 항목은 필터링
+        : [];
+
+    return rawReviews.map((review) => ({
+      ...review,
+      ingredients: parseList(review.ingredients),
+      accusations: parseList(review.accusations),
+    }));
   }
 
   /**
@@ -82,9 +86,15 @@ export class AdminReviewRepository {
    */
   private setWhereClause(adminSearchReviewDto: AdminSearchReviewDto) {
     // TODO: search review where 절 세팅
-    /*const dessertName = adminSearchReviewDto.dessertName;*/
+    const reviewStatus = adminSearchReviewDto.searchReviewStatus;
 
     const whereClause = {};
+    if (reviewStatus !== undefined) {
+      whereClause['status'] = reviewStatus;
+    }
+
+    /*const dessertName = adminSearchReviewDto.dessertName;*/
+
     /*whereClause['isUsable'] = true;
 
     if (dessertName !== undefined) {
