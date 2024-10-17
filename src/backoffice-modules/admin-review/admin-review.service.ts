@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AdminReviewRepository } from './admin-review.repository';
 import { Transactional } from 'typeorm-transactional';
 import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
+import { Page } from '../common/dto/page.dto';
 
 @Injectable()
 export class AdminReviewService {
@@ -9,14 +10,16 @@ export class AdminReviewService {
 
   @Transactional()
   async findAll(adminSearchReviewDto: AdminSearchReviewDto) {
-    return this.adminReviewRepository.findReviewList(adminSearchReviewDto);
+    const total = await this.adminReviewRepository.count(adminSearchReviewDto);
+    const items = await this.adminReviewRepository.findReviewList(adminSearchReviewDto);
+
+    const pageNo = adminSearchReviewDto.pageNo;
+    const limitSize = adminSearchReviewDto.limitSize;
+
+    return new Page(pageNo, total, limitSize, items);
   }
 
   /*
-  create(createAdminReviewDto: CreateAdminReviewDto) {
-    return 'This action adds a new adminReview';
-  }
-
   findOne(id: number) {
     return `This action returns a #${id} adminReview`;
   }
