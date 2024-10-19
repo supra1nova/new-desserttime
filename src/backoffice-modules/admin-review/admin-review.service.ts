@@ -3,6 +3,7 @@ import { AdminReviewRepository } from './admin-review.repository';
 import { Transactional } from 'typeorm-transactional';
 import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
 import { Page } from '../common/dto/page.dto';
+import * as path from 'node:path';
 
 @Injectable()
 export class AdminReviewService {
@@ -84,11 +85,14 @@ export class AdminReviewService {
         if (value === undefined || value === null || value === '' || value.toLowerCase() === 'null') return;
 
         // id 또는 tgtImgName 이 없다면 result 추가 없이 return
-        const [id, tgtImgName] = idWithPath.split('_');
+        const [id, middlePath, tgtImgName] = idWithPath.split('_');
         if (id === undefined || id === null || id === '' || id.toLowerCase() === 'null') return;
+        if (middlePath === undefined || middlePath === null || middlePath === '' || middlePath.toLowerCase() === 'null') return;
         if (tgtImgName === undefined || tgtImgName === null || tgtImgName === '' || tgtImgName.toLowerCase() === 'null') return;
 
-        result.push({ id: parseInt(id, 10), tgtImgName: tgtImgName, orgImgName: value });
+        const tgtUrl = '/' + middlePath + '/' + tgtImgName;
+
+        result.push({ id: parseInt(id, 10), tgtImgName: tgtUrl, orgImgName: value });
       });
     }
 

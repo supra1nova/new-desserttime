@@ -106,9 +106,9 @@ export class AdminReviewRepository {
         WITHIN GROUP (ORDER BY ing.ingredientId) AS "ingredients"`,
       `LISTAGG(DISTINCT acc.accusationId || ':' || acc.reason, ', ') 
         WITHIN GROUP (ORDER BY acc.accusationId) AS "accusations"`,
-      `LISTAGG(DISTINCT rvImg.reviewImgId || '_' || rvImg.middlepath || rvImg.path || ':' || rvImg.imgName || rvImg.extention, ', ') 
+      `LISTAGG(DISTINCT rvImg.reviewImgId || '_' || rvImg.middlepath || '_' || rvImg.path || ':' || rvImg.imgName || rvImg.extention, ', ') 
         WITHIN GROUP (ORDER BY rvImg.reviewImgId) AS "reviewImgs"`,
-      `LISTAGG(DISTINCT rcptImg.receiptImgId || '_' || rcptImg.middlepath || rcptImg.path || ':' || rcptImg.imgName || rcptImg.extention, ', ') 
+      `LISTAGG(DISTINCT rcptImg.receiptImgId || '_' || rcptImg.middlepath || '_' || rcptImg.path || ':' || rcptImg.imgName || rcptImg.extention, ', ') 
         WITHIN GROUP (ORDER BY rcptImg.receiptImgId) AS "receiptImgs"`,
     ];
   }
