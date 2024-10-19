@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Like, Repository, SelectQueryBuilder } from 'typeorm';
+import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 import { Review } from '../../config/entities/review.entity';
 import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
 import { Member } from '../../config/entities/member.entity';
@@ -18,8 +18,11 @@ export class AdminReviewRepository {
    * @param adminSearchReviewDto
    */
   async count(adminSearchReviewDto: AdminSearchReviewDto) {
-    const queryBuilder = this._processSetListClause(adminSearchReviewDto);
-    return await queryBuilder.getCount();
+    const selectQueryBuilder = this._processSetListClause();
+    selectQueryBuilder.addSelect(`('[' || rv.storeName || '] ' || rv.menuName)`, 'title');
+
+    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto);
+    return await resultQueryBuilder.getCount();
   }
 
   /**
@@ -27,23 +30,40 @@ export class AdminReviewRepository {
    * @param adminSearchReviewDto
    */
   async findReviewList(adminSearchReviewDto: AdminSearchReviewDto) {
-    const queryBuilder = this._processSetListClause(adminSearchReviewDto);
-    queryBuilder
+    const selectQueryBuilder = this._processSetListClause();
+    selectQueryBuilder.addSelect(`('[' || rv.storeName || '] ' || rv.menuName)`, 'title');
+    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto);
+
+    resultQueryBuilder
       .addSelect(this._aggregateColumns())
       .orderBy('rv.reviewId', 'DESC');
 
-    this._setPagination(queryBuilder, adminSearchReviewDto);
-    return await queryBuilder.getRawMany();
+    this._setPagination(resultQueryBuilder, adminSearchReviewDto);
+    return await resultQueryBuilder.getRawMany();
+  }
+
+  /**
+   * 리뷰 단건 조회
+   * @param reviewId
+   */
+  async findOneById(reviewId: number) {
+    const selectQueryBuilder = this._processSetListClause();
+    const resultQueryBuilder = selectQueryBuilder.where('rv.reviewId = :reviewId', { reviewId: reviewId });
+
+    resultQueryBuilder
+      .addSelect(this._aggregateColumns())
+      .orderBy('rv.reviewId', 'DESC');
+
+    return await resultQueryBuilder.getRawOne();
   }
 
   /* private 메서드 */
 
   /**
    * [process] 공통 리스트 조회 쿼리 생성 프로세스
-   * @param adminSearchReviewDto
    */
-  private _processSetListClause(adminSearchReviewDto: AdminSearchReviewDto) {
-    const queryBuilder: SelectQueryBuilder<Review> = this.adminReviewRepository
+  private _processSetListClause() {
+    return this.adminReviewRepository
       .createQueryBuilder('rv')
       .leftJoin(DessertCategory, 'dc', 'rv.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
       .leftJoin(Member, 'mb', 'rv.memberMemberId = mb.memberId')
@@ -59,12 +79,11 @@ export class AdminReviewRepository {
       .addSelect('mb.memberEmail', 'memberEmail')
       .addSelect('dc.dessertCategoryId', 'dessertCategoryId')
       .addSelect('dc.dessertName', 'dessertName')
-      .addSelect(`('[' || rv.storeName || '] ' || rv.menuName)`, 'title')
+      .addSelect('rv.menuName', 'menuName')
+      .addSelect('rv.storeName', 'storeName')
       .addSelect('rv.content', 'content')
       .addSelect('rv.adminMemo', 'adminMemo')
-      .groupBy('rv.reviewId, mb.memberId, mb.nickName, mb.memberEmail, dc.dessertCategoryId, dc.dessertName, rv.status, rv.content, rv.adminMemo, rv.storeName, rv.menuName')
-
-    return this._setWhereClause(queryBuilder, adminSearchReviewDto);
+      .groupBy('rv.reviewId, mb.memberId, mb.nickName, mb.memberEmail, dc.dessertCategoryId, dc.dessertName, rv.status, rv.content, rv.adminMemo, rv.storeName, rv.menuName');
   }
 
   /**

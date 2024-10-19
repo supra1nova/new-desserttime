@@ -3,7 +3,6 @@ import { AdminReviewRepository } from './admin-review.repository';
 import { Transactional } from 'typeorm-transactional';
 import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
 import { Page } from '../common/dto/page.dto';
-import * as path from 'node:path';
 
 @Injectable()
 export class AdminReviewService {
@@ -29,11 +28,23 @@ export class AdminReviewService {
     return this.setPageInfo(total, items, adminSearchReviewDto);
   }
 
-  /*
-  findOne(id: number) {
-    return `This action returns a #${id} adminReview`;
+  /**
+   * 리뷰 단건 조회 메서드
+   * @param reviewId
+   */
+  async findOneById(reviewId: number) {
+    const rawItem = await this.adminReviewRepository.findOneById(reviewId);
+
+    if (rawItem === undefined) return null;
+
+    rawItem['ingredients'] = this.setStringToObjArr(rawItem['ingredients']);
+    rawItem['accusations'] = this.setStringToObjArr(rawItem['accusations']);
+    rawItem['reviewImgs'] = this.setImgStringToObjArr(rawItem['reviewImgs']);
+    rawItem['receiptImgs'] = this.setImgStringToObjArr(rawItem['receiptImgs']);
+    return rawItem;
   }
 
+  /*
   update(id: number, updateAdminReviewDto: UpdateAdminReviewDto) {
     return `This action updates a #${id} adminReview`;
   }

@@ -1,7 +1,7 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { AdminReviewService } from './admin-review.service';
 import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Admin review')
 @Controller('admin-review')
@@ -14,16 +14,23 @@ export class AdminReviewController {
     return this.adminReviewService.findAll(adminSearchReviewDto);
   }
 
+  @ApiOperation({ summary: '리뷰 단건 조회' })
+  @ApiParam({
+    name: 'reviewId',
+    type: Number,
+    description: 'review 아이디',
+  })
+  @Get(':reviewId')
+  async findOneById(@Param('reviewId') reviewId: string) {
+    return await this.adminReviewService.findOneById(+reviewId);
+  }
+
   /*
   @Post()
   create(@Body() createAdminReviewDto: CreateAdminReviewDto) {
     return this.adminReviewService.create(createAdminReviewDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminReviewService.findOne(+id);
-  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAdminReviewDto: UpdateAdminReviewDto) {

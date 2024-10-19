@@ -12,8 +12,8 @@ export class NoticeController {
 
   @ApiOperation({ summary: '전체 공지사항 목록 조회' })
   @Get()
-  findAll(@Query() searchNoticeDto: SearchNoticeDto) {
-    return this.noticeService.findAll(searchNoticeDto);
+  async findAll(@Query() searchNoticeDto: SearchNoticeDto) {
+    return await this.noticeService.findAll(searchNoticeDto);
   }
 
   @ApiOperation({ summary: '신규 공지사항 삽입' })
@@ -26,8 +26,8 @@ export class NoticeController {
     `,
   })
   @Post()
-  create(@Body() createNoticeDto: CreateNoticeDto) {
-    return this.noticeService.create(createNoticeDto);
+  async create(@Body() createNoticeDto: CreateNoticeDto) {
+    return await this.noticeService.create(createNoticeDto);
   }
 
   @ApiOperation({ summary: '공지사항 조회 by noticeId' })
@@ -37,8 +37,8 @@ export class NoticeController {
     description: 'notice 아이디',
   })
   @Get(':noticeId')
-  findOneById(@Param('noticeId') noticeId: number) {
-    return this.noticeService.findOneById(noticeId);
+  async findOneById(@Param('noticeId') noticeId: number) {
+    return await this.noticeService.findOneById(noticeId);
   }
 
   @ApiOperation({ summary: '공지사항 수정' })
@@ -56,8 +56,8 @@ export class NoticeController {
     `,
   })
   @Patch(':noticeId')
-  update(@Param('noticeId') noticeId: number, @Body() updateNoticeDto: UpdateNoticeDto) {
-    return this.noticeService.update(+noticeId, updateNoticeDto);
+  async update(@Param('noticeId') noticeId: number, @Body() updateNoticeDto: UpdateNoticeDto) {
+    return await this.noticeService.update(+noticeId, updateNoticeDto);
   }
 
   @ApiOperation({ summary: '공지사항 삭제' })
@@ -67,7 +67,7 @@ export class NoticeController {
     description: 'notice 아이디',
   })
   @Delete(':noticeId')
-  delete(@Param('noticeId') noticeId: number) {
-    return this.noticeService.delete(+noticeId);
+  async delete(@Param('noticeId') noticeId: number) {
+    return await this.noticeService.delete(+noticeId);
   }
 }
