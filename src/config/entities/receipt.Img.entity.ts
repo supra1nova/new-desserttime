@@ -1,20 +1,10 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  OneToOne,
-  OneToMany,
-} from 'typeorm';
-import { Member } from './member.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Review } from './review.entity';
 
 @Entity()
 export class ReceiptImg {
   @PrimaryGeneratedColumn()
-  rereceiptImgId: number;
+  receiptImgId: number;
 
   @Column()
   middlepath: string;
