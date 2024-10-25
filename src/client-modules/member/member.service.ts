@@ -13,6 +13,7 @@ import { NoticeDto } from './dto/notice.dto';
 import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
 import { Member } from 'src/config/entities/member.entity';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class MemberService {
@@ -258,6 +259,27 @@ export class MemberService {
   async deleteMember(memberDeleteDto: MemberDeleteDto) {
     try {
       //탈퇴 사유 업ㄷㅔ이트, 닉네임 변경, 이름/이메일/snsId/snsdomain 데이터 변경, 탈퇴여부 변경
+      /**
+       * 탈퇴시 아래와 같이 정보를 변경한다.
+snsid : 난수로 변경
+name : 기존이름1글자 + ** 혹은 '이름'
+email : {memberid}@desserttime.com
+
+
+name 예시 : 김** or 김이름 / 박** or 박이름 / 정** or 정이름
+email 예시 : 123456@desserttime.com
+
+닉네임은 [탈퇴번호+번째+탈퇴한+디타인]으로 변경한다.
+
+탈퇴번호 추가예정
+닉네임예시 : 123456번째탈퇴한디타인
+       */
+      // await this.memberRepository.findMemberOne();
+      const userData = {
+        snsId: uuid(),
+        memberId: memberDeleteDto.memberId,
+      };
+      await this.memberRepository.deleteMember(userData);
     } catch (error) {
       throw error;
     }

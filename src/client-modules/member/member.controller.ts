@@ -79,7 +79,7 @@ export class MemberController {
 
   @ApiOperation({ summary: '회원 탈퇴하기' })
   @Delete('my-page/deletion')
-  async deleteMember(@Body() memberDeleteDto: MemberDeleteDto) {
+  async deleteMember(@Query() memberDeleteDto: MemberDeleteDto) {
     return await this.memberService.deleteMember(memberDeleteDto);
   }
 
