@@ -57,4 +57,44 @@ export class MemberUpdateDto {
     required: false,
   })
   readonly nickName: string;
+
+  @IsOptional()
+  @ApiProperty({
+    example: 1,
+    description: '사용자가 선택한 디저트 카테고리 ID',
+    required: false,
+  })
+  readonly memberPickCategory1: number;
+
+  @IsOptional()
+  @ApiProperty({
+    example: 2,
+    description: '사용자가 선택한 디저트 카테고리 ID',
+    required: false,
+  })
+  readonly memberPickCategory2: number;
+
+  @IsOptional()
+  @ApiProperty({
+    example: 3,
+    description: '사용자가 선택한 디저트 카테고리 ID',
+    required: false,
+  })
+  readonly memberPickCategory3: number;
+
+  @IsOptional()
+  @ApiProperty({
+    example: 4,
+    description: '사용자가 선택한 디저트 카테고리 ID',
+    required: false,
+  })
+  readonly memberPickCategory4: number;
+
+  @IsOptional()
+  @ApiProperty({
+    example: 5,
+    description: '사용자가 선택한 디저트 카테고리 ID',
+    required: false,
+  })
+  readonly memberPickCategory5: number;
 }

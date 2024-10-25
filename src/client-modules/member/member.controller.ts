@@ -53,7 +53,7 @@ export class MemberController {
     return await this.memberService.patchMember(memberUpdateDto);
   }
 
-  @ApiOperation({ summary: '마이페이지 - 설정 - 광고,알람 수신여부 조회' })
+  @ApiOperation({ summary: '마이페이지 - 설정 - 광 고,알람 수신여부 조회' })
   @Get('/my-page/config/:memberId')
   async getAlarmAndADStatue(@Param() memberIdDto: MemberIdDto) {
     return await this.memberService.getAlarmAndADStatue(memberIdDto);
@@ -105,5 +105,11 @@ export class MemberController {
   @Get('my-page/notice/:isNotice/:noticeId')
   async getNoticeOne(@Query() noticeDto: NoticeDto) {
     return await this.memberService.getNoticeOne(noticeDto);
+  }
+
+  @ApiOperation({ summary: '사용자가 등록한 리뷰목록 조회하기' })
+  @Get('my-page/review/list')
+  async getMyReviewList(@Query() memberIdDto: MemberIdDto) {
+    return await this.memberService.getMyReviewList(memberIdDto);
   }
 }

@@ -29,7 +29,18 @@ export class MemberService {
       const isSnsId = await this.memberRepository.findSnsIdOne(signInDto.snsId);
 
       if (!isEmail && !isSnsId) {
-        await this.memberRepository.insertMember(signInDto);
+        const newMember = await this.memberRepository.insertMember(signInDto);
+        const pickDessertList = [];
+        const categories = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5];
+        categories.forEach((category) => {
+          if (category) {
+            pickDessertList.push({
+              member: { memberId: newMember.identifiers[0].memberId },
+              dc: { dessertCategoryId: category },
+            });
+          }
+        });
+        await this.memberRepository.insertPickCategoryList(pickDessertList);
       } else {
         throw new BadRequestException('중복정보', {
           cause: new Error(),
@@ -162,6 +173,21 @@ export class MemberService {
   async patchMember(memberUpdateDto: MemberUpdateDto) {
     try {
       await this.memberRepository.saveMember(memberUpdateDto);
+
+      const pickDessertList = [];
+      const categories = [memberUpdateDto.memberPickCategory1, memberUpdateDto.memberPickCategory2, memberUpdateDto.memberPickCategory3, memberUpdateDto.memberPickCategory4, memberUpdateDto.memberPickCategory5];
+
+      categories.forEach((category) => {
+        if (category) {
+          pickDessertList.push({
+            member: { memberId: memberUpdateDto.memberId },
+            dc: { dessertCategoryId: category },
+          });
+        }
+      });
+
+      await this.memberRepository.deletePickCategoryList(memberUpdateDto);
+      await this.memberRepository.insertPickCategoryList(pickDessertList);
     } catch (error) {
       throw error;
     }
@@ -306,6 +332,21 @@ export class MemberService {
     try {
       const result = await this.memberRepository.findNoticeOne(noticeDto);
       return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 사용자가 등록한 리뷰목록 조회하기
+   * @param memberIdDto
+   */
+  @Transactional()
+  async getMyReviewList(memberIdDto: MemberIdDto) {
+    try {
+      const reviewList = await this.memberRepository.findMyReviewList(memberIdDto);
+      console.log('reviewList :::::;', reviewList);
+      return reviewList;
     } catch (error) {
       throw error;
     }
