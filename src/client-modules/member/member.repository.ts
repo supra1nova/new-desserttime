@@ -282,4 +282,17 @@ export class MemberRepository {
   async insertPickCategoryList(pickDessertList: any) {
     return await this.userInterestDessertRepository.save(pickDessertList);
   }
+
+  /**
+   *
+   * @param memberIdDto
+   * @returns
+   */
+  async findMyReviewList(memberIdDto: MemberIdDto) {
+    return await this.reviewRepository.find({
+      where: { member: { memberId: memberIdDto.memberId }, reviewImg: { isMain: true } }, //isUsable: true, isInitalized: true }, //, isUpdated: true,
+      relations: ['reviewImg'],
+      order: { createdDate: 'DESC' },
+    });
+  }
 }

@@ -106,4 +106,10 @@ export class MemberController {
   async getNoticeOne(@Query() noticeDto: NoticeDto) {
     return await this.memberService.getNoticeOne(noticeDto);
   }
+
+  @ApiOperation({ summary: '사용자가 등록한 리뷰목록 조회하기' })
+  @Get('my-page/review/list')
+  async getMyReviewList(@Query() memberIdDto: MemberIdDto) {
+    return await this.memberService.getMyReviewList(memberIdDto);
+  }
 }

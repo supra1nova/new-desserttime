@@ -336,4 +336,19 @@ export class MemberService {
       throw error;
     }
   }
+
+  /**
+   * 사용자가 등록한 리뷰목록 조회하기
+   * @param memberIdDto
+   */
+  @Transactional()
+  async getMyReviewList(memberIdDto: MemberIdDto) {
+    try {
+      const reviewList = await this.memberRepository.findMyReviewList(memberIdDto);
+      console.log('reviewList :::::;', reviewList);
+      return reviewList;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
