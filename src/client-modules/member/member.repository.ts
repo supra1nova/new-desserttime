@@ -19,6 +19,7 @@ import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
 import { MemberDeleteDto } from './dto/member.delete.dto';
+import { MemberDeletion } from 'src/config/entities/member.deleteion.entity';
 
 @Injectable()
 export class MemberRepository {
@@ -35,6 +36,8 @@ export class MemberRepository {
     private noticeRepository: Repository<Notice>,
     @InjectRepository(UserInterestDessert)
     private userInterestDessertRepository: Repository<UserInterestDessert>,
+    @InjectRepository(MemberDeletion)
+    private memberDeletionRepository: Repository<MemberDeletion>,
   ) {}
 
   /**
@@ -109,7 +112,7 @@ export class MemberRepository {
   }
 
   /**
-   * 사용자정보 조회
+   * 사용자정보 조회 - 이미지, 취향 join
    * @param memberIdDto
    * @returns
    */
@@ -138,6 +141,14 @@ export class MemberRepository {
       .getRawMany();
   }
 
+  /**
+   * 사용자 정보조회 - member entity 정보만 조회
+   */
+  async findMemberEntityOne(memberDeleteDto: MemberDeleteDto) {
+    return await this.memberRepository.findOne({
+      where: { memberId: memberDeleteDto.memberId },
+    });
+  }
   /**
    * 닉네임 존재여부 확인
    * @param nickNameDto
@@ -190,27 +201,19 @@ export class MemberRepository {
   }
 
   /**
+   * 탈퇴회원 데이터 저장
+   * @param memberDeleteDto
+   */
+  async insertDeletionMember(memberDeleteDto: MemberDeleteDto) {
+    return await this.memberDeletionRepository.insert({ reason: memberDeleteDto.reasonForLeaving, content: memberDeleteDto.context, memberId: memberDeleteDto.memberId });
+  }
+
+  /**
    * 사용자 탈퇴
    * @param memberDeleteDto
    */
   async deleteMember(userData) {
-    //탈퇴 사유 업ㄷㅔ이트, 닉네임 변경, 이름/이메일/snsId/snsdomain 데이터 변경, 탈퇴여부 변경
-    /**
-     * 탈퇴시 아래와 같이 정보를 변경한다.
-snsid : 난수로 변경
-name : 기존이름1글자 + ** 혹은 '이름'
-email : {memberid}@desserttime.com
-
-
-name 예시 : 김** or 김이름 / 박** or 박이름 / 정** or 정이름
-email 예시 : 123456@desserttime.com
-
-닉네임은 [탈퇴번호+번째+탈퇴한+디타인]으로 변경한다.
-
-탈퇴번호 추가예정
-닉네임예시 : 123456번째탈퇴한디타인
-     */
-    await this.memberRepository.update({ memberId: userData.memberId }, { isUsable: false, snsId: userData.snsId });
+    await this.memberRepository.update({ memberId: userData.memberId }, { isUsable: false, snsId: userData.snsId, nickName: userData.nickName, memberEmail: userData.memberEmail, memberName: userData.memberName });
   }
 
   /**

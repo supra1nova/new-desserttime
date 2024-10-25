@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { Member } from './member.entity';
 
 @Entity()
-export class MemberDeleteion {
+export class MemberDeletion {
   @PrimaryGeneratedColumn()
   memberDeletionId: number;
 
@@ -17,6 +17,9 @@ export class MemberDeleteion {
 
   @UpdateDateColumn()
   updateDate: Date;
+
+  @Column()
+  memberId: number;
 
   @OneToOne(() => Member, (member) => member.memberDeletion)
   member: Member;
