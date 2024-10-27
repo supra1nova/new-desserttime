@@ -1,7 +1,7 @@
 import { PageRequest } from '../../common/dto/page.request';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { MemberSearchEnum } from './member.enum';
+import { MemberSearchType } from '../../common/enum/member.enum';
 import { Transform } from 'class-transformer';
 
 export class SearchAdminMemberDto extends PageRequest {
@@ -17,14 +17,14 @@ export class SearchAdminMemberDto extends PageRequest {
   readonly isUsable?: string;
 
   @ApiProperty({
-    enum: MemberSearchEnum,
+    enum: MemberSearchType,
     isArray: false,
     description: '검색어 종류: memberEmail / nickName',
     required: false,
   })
-  @IsEnum(MemberSearchEnum)
+  @IsEnum(MemberSearchType)
   @IsOptional()
-  readonly searchType?: MemberSearchEnum;
+  readonly searchType?: MemberSearchType;
 
   @ApiProperty({
     type: String,

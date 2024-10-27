@@ -7,7 +7,7 @@ import { DessertCategory } from './dessert.category.entity';
 import { PointHistory } from './point.history.entity';
 import { ReceiptImg } from './receipt.Img.entity';
 import { ReviewIngredient } from './review.ingredient.entity';
-import { SearchReviewStatusEnum } from '../../backoffice-modules/admin-review/dto/review.enum';
+import { ReviewStatus } from '../../backoffice-modules/common/enum/review.enum';
 
 @Entity()
 export class Review {
@@ -47,8 +47,8 @@ export class Review {
   @Column({ nullable: true })
   adminMemo: string;
 
-  @Column({ default: SearchReviewStatusEnum.WAIT })
-  status: SearchReviewStatusEnum;
+  @Column({ default: ReviewStatus.WAIT })
+  status: ReviewStatus;
 
   @CreateDateColumn()
   createdDate: Date;

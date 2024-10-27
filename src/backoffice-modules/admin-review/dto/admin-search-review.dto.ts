@@ -1,18 +1,18 @@
 import { PageRequest } from '../../common/dto/page.request';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { SearchReviewStatusEnum } from './review.enum';
+import { ReviewStatus } from '../../common/enum/review.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AdminSearchReviewDto extends PageRequest {
   @ApiProperty({
-    enum: SearchReviewStatusEnum,
+    enum: ReviewStatus,
     isArray: false,
     description: '검색 대상 리뷰 상태 : 대기 / 등록 / 신고 / 삭제',
     required: false,
   })
-  @IsEnum(SearchReviewStatusEnum)
+  @IsEnum(ReviewStatus)
   @IsOptional()
-  readonly searchReviewStatus?: SearchReviewStatusEnum;
+  readonly searchReviewStatus?: ReviewStatus;
 
   @ApiProperty({
     type: String,
