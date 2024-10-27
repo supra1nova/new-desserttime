@@ -6,7 +6,7 @@ import { Like } from './like.entity';
 import { ProfileImg } from './profile.img.entity';
 import { Accusation } from './accusation.entity';
 import { Point } from './point.entity';
-import { MemberTypeEnum } from '../../backoffice-modules/admin-member/model/member.enum';
+import { MemberType } from '../../backoffice-modules/common/enum/member.enum';
 import { MemberDeletion } from './member.deleteion.entity';
 
 @Entity()
@@ -53,7 +53,7 @@ export class Member {
   @Column({ nullable: true })
   memo: string;
 
-  @Column({ nullable: true, default: MemberTypeEnum.NORMAL_USER })
+  @Column({ nullable: true, default: MemberType.NORMAL_USER })
   type: string;
 
   @Column({ nullable: true })

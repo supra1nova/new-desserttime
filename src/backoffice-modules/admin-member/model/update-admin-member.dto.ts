@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { MemberGenderEnum, MemberTypeEnum } from './member.enum';
+import { MemberGender, MemberType } from '../../common/enum/member.enum';
 
 export class UpdateAdminMemberDto {
   @ApiProperty({
@@ -29,9 +29,9 @@ export class UpdateAdminMemberDto {
     example: 'M',
     required: false,
   })
-  @IsEnum(MemberGenderEnum)
+  @IsEnum(MemberGender)
   @IsNotEmpty()
-  readonly gender: MemberGenderEnum;
+  readonly gender: MemberGender;
 
   @ApiProperty({
     type: String,
@@ -64,14 +64,14 @@ export class UpdateAdminMemberDto {
   readonly thirdCity: string;
 
   @ApiProperty({
-    enum: MemberTypeEnum,
+    enum: MemberType,
     description: '회원 유형( N: 일반회원 normal user, P: 프로회원 pro user, A: 관리자 admin)',
     example: 'N',
     required: true,
   })
-  @IsEnum(MemberTypeEnum)
+  @IsEnum(MemberType)
   @IsNotEmpty()
-  readonly type: MemberTypeEnum;
+  readonly type: MemberType;
 
   @ApiProperty({
     type: () => Boolean,
