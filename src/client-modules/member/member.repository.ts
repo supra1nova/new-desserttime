@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/config/entities/member.entity';
-import { In, Repository } from 'typeorm';
+import { In, LessThan, Repository } from 'typeorm';
 import { UserValidationDto } from './dto/login.dto';
 import { SignInDto } from './dto/signin.dto';
 import { Review } from 'src/config/entities/review.entity';
@@ -20,6 +20,8 @@ import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
 import { MemberDeleteDto } from './dto/member.delete.dto';
 import { MemberDeletion } from 'src/config/entities/member.deleteion.entity';
+import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
+import { MemberPointListDto } from './dto/member.pointlist.dto';
 
 @Injectable()
 export class MemberRepository {
@@ -239,13 +241,17 @@ export class MemberRepository {
    * @param memberIdDto
    * @returns
    */
-  async findPointHisoryList(memberIdDto: MemberIdDto) {
-    return await this.pointHistory.find({
-      select: { createdDate: true, newPoint: true },
+  async findPointHisoryList(memberPointListDto: MemberPointListDto) {
+    const { cursor, limit } = memberPointListDto;
+
+    const items = await this.pointHistory.find({
+      select: { pointHistoryId: true, createdDate: true, newPoint: true },
       relations: ['review'],
-      where: { member: { memberId: memberIdDto.memberId } },
+      where: { member: { memberId: memberPointListDto.memberId, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) } },
       order: { createdDate: 'DESC' },
+      take: limit + 1,
     });
+    return new ResponseCursorPagination(items, memberPointListDto.limit, 'pointHistoryId');
   }
 
   /**
@@ -254,11 +260,16 @@ export class MemberRepository {
    * @returns
    */
   async findNoticeList(noticeListDto: NoticeListDto) {
-    return await this.noticeRepository.find({
+    const { cursor, limit } = noticeListDto;
+
+    const items = await this.noticeRepository.find({
       select: { title: true, createdDate: true, noticeId: true },
-      where: { noticeType: noticeListDto.noticeType },
+      where: { noticeType: noticeListDto.noticeType, ...(cursor ? { noticeId: LessThan(Number(cursor)) } : {}) },
       order: { createdDate: 'DESC' },
+      take: limit + 1, // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
     });
+
+    return new ResponseCursorPagination(items, noticeListDto.limit, 'noticeId');
   }
 
   /**

@@ -15,7 +15,7 @@ export class Notice {
   @Column({ default: true })
   isNotice: boolean;
 
-  @Column()
+  @Column({ default: NoticeType.NOTICE })
   noticeType: string;
 
   @Column({ default: false })

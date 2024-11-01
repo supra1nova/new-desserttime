@@ -4,7 +4,7 @@ import { MemberRepository } from './member.repository';
 import { Transactional } from 'typeorm-transactional';
 import { UserValidationDto } from './dto/login.dto';
 import { MemberIdDto } from './dto/member.id';
-import { MemberDeletionEnum } from './enum/member.deletion.enum';
+import { MemberDeletionEnum } from '../../common/enum/member.deletion.enum';
 import { MemberDeleteDto } from './dto/member.delete.dto';
 import { MemberAlarmDto } from './dto/member.alarm.dto';
 import { MemberAdDto } from './dto/member.add.dto';
@@ -14,6 +14,8 @@ import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
 import { Member } from 'src/config/entities/member.entity';
 import { v4 as uuid } from 'uuid';
+import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
+import { MemberPointListDto } from './dto/member.pointlist.dto';
 
 @Injectable()
 export class MemberService {
@@ -300,18 +302,21 @@ export class MemberService {
    * @param memberIdDto
    */
   @Transactional()
-  async getPointHisoryList(memberIdDto: MemberIdDto) {
+  async getPointHisoryList(memberPointListDto: MemberPointListDto) {
     try {
-      const pointHistoryList = await this.memberRepository.findPointHisoryList(memberIdDto);
-      const result = pointHistoryList.map((data) => {
+      const pointHistoryList = await this.memberRepository.findPointHisoryList(memberPointListDto);
+
+      const result = pointHistoryList.items.map((data) => {
         const createdDate: string = data.createdDate.toISOString().substring(0, 10);
         return {
+          pointHistoryId: data.pointHistoryId,
           menuName: data.review?.menuName,
           point: data.newPoint,
           createdDate,
         };
       });
-      return result;
+
+      return { items: result, hasNextPage: pointHistoryList.hasNextPage, nextCursor: pointHistoryList.nextCursor };
     } catch (error) {
       throw error;
     }
