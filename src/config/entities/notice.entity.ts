@@ -1,4 +1,4 @@
-import { NoticeType } from 'src/common/enum/noticetype.enum';
+import { NoticeType } from 'src/backoffice-modules/common/enum/noticetype.enum';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
