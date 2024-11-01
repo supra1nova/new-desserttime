@@ -17,7 +17,7 @@ import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { Ingredient } from 'src/config/entities/ingredient.entity';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
-import { SearchReviewStatusEnum } from 'src/backoffice-modules/admin-review/dto/review.enum';
+import { ReviewStatus } from 'src/backoffice-modules/common/enum/review.enum';
 
 @Injectable()
 export class ReviewRepository {
@@ -56,7 +56,7 @@ export class ReviewRepository {
     return await this.review
       .createQueryBuilder('review')
       .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
-      .andWhere({ status: SearchReviewStatusEnum.SAVED })
+      .andWhere({ status: ReviewStatus.SAVED })
       .andWhere({ isUsable: true })
       .andWhere('dc.dessertCategoryId IN (:...dessertCategoryId)', { dessertCategoryId })
       .groupBy('dc.dessertCategoryId, dc.dessertName')
@@ -99,7 +99,7 @@ export class ReviewRepository {
     return await this.review
       .createQueryBuilder('review')
       .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
-      .where({ status: SearchReviewStatusEnum.SAVED })
+      .andWhere({ status: ReviewStatus.SAVED })
       .andWhere({ isUsable: true })
       .andWhere('dc.sessionNum = :sessionNum', { sessionNum: 2 })
       .groupBy('dc.dessertCategoryId, dc.dessertName')
@@ -167,7 +167,7 @@ export class ReviewRepository {
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
-      .andWhere('review.status = :status', { status: SearchReviewStatusEnum.SAVED })
+      .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
       .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
         dessertCategoryId: reviewCategoryDto.dessertCategoryId,
       })
@@ -211,7 +211,7 @@ export class ReviewRepository {
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
-      .andWhere('review.status = :status', { status: SearchReviewStatusEnum.SAVED })
+      .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
       .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
         dessertCategoryId: reviewCategoryDto.dessertCategoryId,
       })
@@ -300,7 +300,7 @@ export class ReviewRepository {
    */
   async findGenerableReviewCount(memberIdDto: MemberIdDto) {
     return await this.review.count({
-      where: { isUsable: true, status: In([SearchReviewStatusEnum.WAIT, SearchReviewStatusEnum.INIT]), member: { memberId: memberIdDto.memberId } },
+      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdDto.memberId } },
     });
   }
 
@@ -312,7 +312,7 @@ export class ReviewRepository {
   async findGenerableReviewList(memberIdDto: MemberIdDto) {
     return await this.review.find({
       select: { reviewId: true, menuName: true, storeName: true, status: true },
-      where: { isUsable: true, status: In([SearchReviewStatusEnum.WAIT, SearchReviewStatusEnum.INIT]), member: { memberId: memberIdDto.memberId } },
+      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdDto.memberId } },
       order: { createdDate: 'ASC', menuName: 'ASC' },
     });
   }
@@ -363,7 +363,7 @@ export class ReviewRepository {
       .leftJoinAndSelect('review.reviewIngredients', 'reviewIngredient')
       .leftJoinAndSelect('reviewIngredient.ingredient', 'ingredient')
       .where('review.reviewId = :reviewId', { reviewId: reviewIdDto.reviewId })
-      .andWhere('review.status = :status', { status: In([SearchReviewStatusEnum.WAIT, SearchReviewStatusEnum.INIT]) })
+      .andWhere('review.status = :status', { status: In([ReviewStatus.WAIT, ReviewStatus.INIT]) })
       .andWhere('review.isUsable = :isUsable', { isUsable: true })
       .getOne();
   }
@@ -400,7 +400,7 @@ export class ReviewRepository {
   async updateGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
     const saveReview = new Review();
     saveReview.content = reviewUpdateDto.content;
-    saveReview.status = reviewUpdateDto.status == 'WAIT' ? SearchReviewStatusEnum.WAIT : SearchReviewStatusEnum.INIT;
+    saveReview.status = reviewUpdateDto.status == 'WAIT' ? ReviewStatus.WAIT : ReviewStatus.INIT;
     saveReview.menuName = reviewUpdateDto.menuName;
     saveReview.score = reviewUpdateDto.score;
     saveReview.storeName = reviewUpdateDto.storeName;
@@ -489,7 +489,7 @@ export class ReviewRepository {
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
-      .andWhere('review.status = :status', { status: In([SearchReviewStatusEnum.WAIT, SearchReviewStatusEnum.INIT]) })
+      .andWhere('review.status = :status', { status: In([ReviewStatus.WAIT, ReviewStatus.INIT]) })
       .andWhere('like.memberMemberId = :memberId', {
         memberId: memberIdDto.memberId,
       })
