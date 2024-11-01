@@ -11,6 +11,7 @@ import { NoticeListDto } from './dto/notice.list.dto';
 import { NoticeDto } from './dto/notice.dto';
 import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
+import { MemberPointListDto } from './dto/member.pointlist.dto';
 
 @ApiTags('Member')
 @Controller('member')
@@ -91,8 +92,8 @@ export class MemberController {
 
   @ApiOperation({ summary: '보유밀 상세내역' })
   @Get('my-page/point/list/:memberId')
-  async getPointHisoryList(@Query() memberIdDto: MemberIdDto) {
-    return await this.memberService.getPointHisoryList(memberIdDto);
+  async getPointHisoryList(@Query() memberPointListDto: MemberPointListDto) {
+    return await this.memberService.getPointHisoryList(memberPointListDto);
   }
 
   @ApiOperation({ summary: '공지/이벤트 목록 조회' })
