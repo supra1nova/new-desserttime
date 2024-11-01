@@ -256,7 +256,7 @@ export class MemberRepository {
   async findNoticeList(noticeListDto: NoticeListDto) {
     return await this.noticeRepository.find({
       select: { title: true, createdDate: true, noticeId: true },
-      where: { isNotice: noticeListDto.isNotice },
+      where: { noticeType: noticeListDto.noticeType },
       order: { createdDate: 'DESC' },
     });
   }
@@ -267,7 +267,7 @@ export class MemberRepository {
    * @returns
    */
   async findNoticeOne(noticeDto: NoticeDto) {
-    return await this.noticeRepository.findOne({ select: { content: true, title: true, createdDate: true }, where: { noticeId: noticeDto.noticeId, isNotice: noticeDto.isNotice } });
+    return await this.noticeRepository.findOne({ select: { content: true, title: true, createdDate: true }, where: { noticeId: noticeDto.noticeId, noticeType: noticeDto.noticeType } });
   }
 
   /**
