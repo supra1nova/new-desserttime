@@ -312,13 +312,13 @@ export class MemberRepository {
   }
 
   /**
-   *
+   * 내 리뷰 리스트 조회
    * @param memberIdDto
    * @returns
    */
   async findMyReviewList(memberIdDto: MemberIdDto) {
     return await this.reviewRepository.find({
-      where: { member: { memberId: memberIdDto.memberId } }, //isUsable: true, isInitalized: true }, //, isUpdated: true,
+      where: { member: { memberId: memberIdDto.memberId } },
       relations: ['reviewImg'],
       order: { createdDate: 'DESC' },
     });
