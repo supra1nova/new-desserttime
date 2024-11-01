@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PostAccusationDto } from './dto/post.accusation.dto';
 import { AccusationRecordDto } from './dto/accusation.record.dto';
 import { AccusationRepository } from './accusation.repository';
-import { AccusationEnum } from './enum/accusation.enum';
+import { AccusationEnum } from '../../common/enum/accusation.enum';
 import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
