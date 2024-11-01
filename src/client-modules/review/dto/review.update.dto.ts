@@ -67,9 +67,9 @@ export class ReviewUpdateDto {
 
   @ApiProperty({
     example: 'true',
-    description: '작성완료(true), 뒤로가기(false) 여부',
+    description: '작성완료 : WAIT , 뒤로가기 : INIT ',
     required: true,
   })
   @IsNotEmpty()
-  readonly isSaved: boolean;
+  readonly status: string;
 }
