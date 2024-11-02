@@ -1,12 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AdminReviewRepository } from './admin-review.repository';
 import { Transactional } from 'typeorm-transactional';
-import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
 import { Page } from '../common/dto/page.dto';
+import { AdminSearchReviewDto } from './model/admin-search-review.dto';
+import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
+import { RuntimeException } from '@nestjs/core/errors/exceptions';
+/*import { AdminReviewIngredientService } from '../admin-review-ingredient/admin-review-ingredient.service';*/
 
 @Injectable()
 export class AdminReviewService {
-  constructor(private adminReviewRepository: AdminReviewRepository) {}
+  constructor(
+    private adminReviewRepository: AdminReviewRepository,
+    /*private adminReviewIngredientService: AdminReviewIngredientService,*/
+  ) {}
 
   /**
    * 리뷰 목록 조회 메서드
@@ -35,7 +41,7 @@ export class AdminReviewService {
   async findOneById(reviewId: number) {
     const rawItem = await this.adminReviewRepository.findOneById(reviewId);
 
-    if (rawItem === undefined) return null;
+    if (rawItem === undefined) throw new NotFoundException();
 
     rawItem['ingredients'] = this.setStringToObjArr(rawItem['ingredients']);
     rawItem['accusations'] = this.setStringToObjArr(rawItem['accusations']);
@@ -44,15 +50,48 @@ export class AdminReviewService {
     return rawItem;
   }
 
-  /*
-  update(id: number, updateAdminReviewDto: UpdateAdminReviewDto) {
-    return `This action updates a #${id} adminReview`;
+  /**
+   * 리뷰 수정 메서드
+   * @param reviewId
+   * @param updateAdminReviewDto
+   */
+  async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+    const { reviewIngredientIdArr, reviewImgs, ...otherFileds } = updateAdminReviewDto;
+    // TODO: review update (categoryId, storeName, menuId)
+    const updateResult = await this.adminReviewRepository.update(reviewId, otherFileds);
+
+    if (updateResult) {
+      // Review의 ReviewIngredients 관계 업데이트
+      if (reviewIngredientIdArr) {
+        // 기존 ReviewIngredient 삭제
+        /*await this.adminReviewIngredientService.delete(reviewId);*/
+        // 신규 ReviewIngredient 삽입
+        // await this.adminReviewIngredientService.processCreate(reviewId, reviewIngredientIdArr);
+      }
+
+      // TODO: review 에 소속된 review img 업데이트
+      /*if (reviewImgs) {
+        for (const imgData of reviewImgs) {
+          await this.reviewImgRepository.update(
+            { reviewImgId: imgData.reviewImgId }, // 업데이트할 ReviewImg의 ID
+            {
+              num: imgData.num,
+              isMain: imgData.isMain,
+              isUsable: imgData.isUsable,
+            }
+          );
+        }
+      }*/
+    }
+
+    throw new RuntimeException('testing');
+    // return result;
   }
 
+  /*
   remove(id: number) {
     return `This action removes a #${id} adminReview`;
   }*/
-
 
   /* private 메서드 */
 

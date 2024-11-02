@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 import { Review } from '../../config/entities/review.entity';
-import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
+import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { Member } from '../../config/entities/member.entity';
 import { DessertCategory } from '../../config/entities/dessert.category.entity';
 import { ReviewIngredient } from '../../config/entities/review.ingredient.entity';
@@ -9,6 +9,7 @@ import { Ingredient } from '../../config/entities/ingredient.entity';
 import { Accusation } from '../../config/entities/accusation.entity';
 import { ReviewImg } from '../../config/entities/review.img.entity';
 import { ReceiptImg } from '../../config/entities/receipt.Img.entity';
+import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
 
 export class AdminReviewRepository {
   constructor(@InjectRepository(Review) private adminReviewRepository: Repository<Review>) {}
@@ -55,6 +56,15 @@ export class AdminReviewRepository {
       .orderBy('rv.reviewId', 'DESC');
 
     return await resultQueryBuilder.getRawOne();
+  }
+
+  async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+    const updateResult = await this.adminReviewRepository
+      .update(reviewId, {
+        ...updateAdminReviewDto,
+        dessertCategory: { dessertCategoryId: updateAdminReviewDto.dessertCategoryId }
+      });
+    return !!updateResult.affected;
   }
 
   /* private 메서드 */
