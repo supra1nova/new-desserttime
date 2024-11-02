@@ -1,7 +1,8 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
 import { AdminReviewService } from './admin-review.service';
-import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { AdminSearchReviewDto } from './model/admin-search-review.dto';
+import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
 
 @ApiTags('Admin review')
 @Controller('admin-review')
@@ -14,32 +15,90 @@ export class AdminReviewController {
     return this.adminReviewService.findAll(adminSearchReviewDto);
   }
 
-  @ApiOperation({ summary: '리뷰 단건 조회' })
+  @ApiOperation({ summary: '리뷰 조회' })
   @ApiParam({
     name: 'reviewId',
     type: Number,
     description: 'review 아이디',
+    example: 4,
   })
   @Get(':reviewId')
   async findOneById(@Param('reviewId') reviewId: string) {
     return await this.adminReviewService.findOneById(+reviewId);
   }
 
-  /*
-  @Post()
-  create(@Body() createAdminReviewDto: CreateAdminReviewDto) {
-    return this.adminReviewService.create(createAdminReviewDto);
+  @ApiOperation({ summary: '리뷰 수정' })
+  @ApiParam({
+    name: 'reviewId',
+    type: Number,
+    description: '리뷰 아이디',
+    example: 4,
+  })
+  @ApiBody({
+    type: UpdateAdminReviewDto,
+    description: `
+      dessertCategoryId: 2차 카테고리 id
+      storeName: 가게명
+      menuId: 메뉴 id
+      menuName: 메뉴명
+      content: 리뷰 내용
+      memo: 관리자 메모
+      reviewIngredientIdArr: 재료 id 배열
+      reviewImgs: 리뷰 이미지 객체 배열
+  `,
+    examples: {
+      example1: {
+        summary: '리뷰 수정 예시1',
+        value: {
+          reviewId: 4,
+          dessertCategoryId: 22,
+          storeName: 'ㅇㅇ디저트',
+          menuName: '초콜릿 케이크',
+          content: '초콜릿 맛이 엄청나요!!',
+          adminMemo: '오버하는 리뷰를 자주씀',
+          reviewIngredientIdArr: [1, 2, 3],
+          reviewImgs: [
+            { reviewImgId: 1, num: 1, isMain: true, isUsable: true },
+            { reviewImgId: 2, num: 2, isMain: false, isUsable: true },
+          ],
+        },
+      },
+      example2: {
+        summary: '리뷰 수정 예시2',
+        value: {
+          reviewId: 4,
+          dessertCategoryId: 30,
+          storeName: 'ㅁㅁ베이커리',
+          menuName: '치즈 케이크',
+          content: '깊은 치즈의 맛 최고의 케이크',
+          adminMemo: '리뷰를 영화 시사평처럼 작성',
+          reviewIngredientIdArr: [1, 2, 3],
+          reviewImgs: [
+            { reviewImgId: 13, num: 4, isMain: false, isUsable: true },
+            { reviewImgId: 14, num: 1, isMain: false, isUsable: true },
+            { reviewImgId: 15, num: 3, isMain: true, isUsable: true },
+            { reviewImgId: 16, num: 0, isMain: false, isUsable: false },
+            { reviewImgId: 17, num: 2, isMain: false, isUsable: true },
+            { reviewImgId: 18, num: 5, isMain: false, isUsable: true },
+          ],
+        },
+      },
+    },
+  })
+  @Patch(':reviewId')
+  async update(@Param('reviewId') reviewId: string, @Body() updateAdminReviewDto: UpdateAdminReviewDto) {
+    return this.adminReviewService.processUpdate(+reviewId, updateAdminReviewDto);
   }
 
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdminReviewDto: UpdateAdminReviewDto) {
-    return this.adminReviewService.update(+id, updateAdminReviewDto);
+  @ApiOperation({ summary: '리뷰 삭제' })
+  @ApiParam({
+    name: 'reviewId',
+    type: Number,
+    description: '리뷰 아이디',
+    example: 4,
+  })
+  @Delete(':reviewId')
+  remove(@Param('reviewId') reviewId: string) {
+    return this.adminReviewService.delete(+reviewId);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adminReviewService.remove(+id);
-  }
-  */
 }

@@ -21,6 +21,9 @@ export class ReviewImg {
   @Column({ default: false })
   isMain: boolean;
 
+  @Column({ default: true })
+  isUsable: boolean;
+
   @Column()
   num: number;
 

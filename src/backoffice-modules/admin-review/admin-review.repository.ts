@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 import { Review } from '../../config/entities/review.entity';
-import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
+import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { Member } from '../../config/entities/member.entity';
 import { DessertCategory } from '../../config/entities/dessert.category.entity';
 import { ReviewIngredient } from '../../config/entities/review.ingredient.entity';
@@ -9,6 +9,8 @@ import { Ingredient } from '../../config/entities/ingredient.entity';
 import { Accusation } from '../../config/entities/accusation.entity';
 import { ReviewImg } from '../../config/entities/review.img.entity';
 import { ReceiptImg } from '../../config/entities/receipt.Img.entity';
+import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
+import { ReviewStatus } from '../common/enum/review.enum';
 
 export class AdminReviewRepository {
   constructor(@InjectRepository(Review) private adminReviewRepository: Repository<Review>) {}
@@ -55,6 +57,43 @@ export class AdminReviewRepository {
       .orderBy('rv.reviewId', 'DESC');
 
     return await resultQueryBuilder.getRawOne();
+  }
+
+  /**
+   * 리뷰 수정
+   * @param reviewId
+   * @param updateAdminReviewDto
+   */
+  async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+    const { dessertCategoryId, ...otherFields } = updateAdminReviewDto;
+
+    const updateResult = await this.adminReviewRepository
+      .createQueryBuilder()
+      .update(Review)
+      .set({
+        ...otherFields,
+        dessertCategory: { dessertCategoryId },  // 특정 관계 필드를 ID로만 업데이트
+      })
+      .where("reviewId = :reviewId", { reviewId })
+      .execute();
+    return !!updateResult.affected;
+  }
+
+  /**
+   * 리뷰 삭제
+   * @param reviewId
+   */
+  async delete(reviewId: number) {
+    const deleteResult = await this.adminReviewRepository
+      .createQueryBuilder()
+      .update(Review)
+      .set({
+        isUsable: false,  // 특정 관계 필드를 ID로만 업데이트
+        status: ReviewStatus.DELETED,  // 특정 관계 필드를 ID로만 업데이트
+      })
+      .where("reviewId = :reviewId", { reviewId })
+      .execute();
+    return !!deleteResult.affected;
   }
 
   /* private 메서드 */

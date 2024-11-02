@@ -11,6 +11,8 @@ import { AdminPointHistoryModule } from './backoffice-modules/admin-point-histor
 import { AdminQnaModule } from './backoffice-modules/admin-qna/admin-qna.module';
 import { AdminDessertCategoryModule } from './backoffice-modules/admin-dessert-category/admin-dessert-category.module';
 import { AdminReviewModule } from './backoffice-modules/admin-review/admin-review.module';
+import { AdminReviewIngredientModule } from './backoffice-modules/admin-review-ingredient/admin-review-ingredient.module';
+import { AdminReviewImgModule } from './backoffice-modules/admin-review-img/admin-review-img.module';
 import { NoticeModule } from './backoffice-modules/notice/notice.module';
 import { MemberModule } from './client-modules/member/member.module';
 import { DessertCategoryModule } from './client-modules/dessert-category/dessert-category.module';
@@ -40,6 +42,8 @@ import { DataSource } from 'typeorm';
     AdminQnaModule,
     AdminDessertCategoryModule,
     AdminReviewModule,
+    AdminReviewIngredientModule,
+    AdminReviewImgModule,
     NoticeModule,
     MemberModule,
     DessertCategoryModule,

@@ -51,8 +51,6 @@ export class AdminMemberService {
    */
   @Transactional()
   async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
-    await this.findOneById(memberId);
-
     const memberData: Partial<Member> = {
       nickName: updateAdminMemberDto.nickName,
       memo: updateAdminMemberDto.memo,
