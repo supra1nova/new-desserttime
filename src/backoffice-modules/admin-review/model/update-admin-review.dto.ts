@@ -6,16 +6,6 @@ import { UpdateReviewImgDto } from '../../../client-modules/review/dto/reviewimg
 export class UpdateAdminReviewDto {
   @ApiProperty({
     type: () => Number,
-    description: 'review id',
-    required: true,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  @Type(() => Number)
-  reviewId: number;
-
-  @ApiProperty({
-    type: () => Number,
     description: '2차 카테고리 id',
     required: true,
   })

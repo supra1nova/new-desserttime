@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
 import { AdminReviewService } from './admin-review.service';
 import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -37,7 +37,7 @@ export class AdminReviewController {
   @ApiBody({
     type: UpdateAdminReviewDto,
     description: `
-      categoryId: 2차 카테고리 id
+      dessertCategoryId: 2차 카테고리 id
       storeName: 가게명
       menuId: 메뉴 id
       menuName: 메뉴명
@@ -51,7 +51,7 @@ export class AdminReviewController {
         summary: '리뷰 수정 예시1',
         value: {
           reviewId: 4,
-          categoryId: 22,
+          dessertCategoryId: 22,
           storeName: 'ㅇㅇ디저트',
           menuName: '초콜릿 케이크',
           content: '초콜릿 맛이 엄청나요!!',
@@ -67,7 +67,7 @@ export class AdminReviewController {
         summary: '리뷰 수정 예시2',
         value: {
           reviewId: 4,
-          categoryId: 30,
+          dessertCategoryId: 30,
           storeName: 'ㅁㅁ베이커리',
           menuName: '치즈 케이크',
           content: '깊은 치즈의 맛 최고의 케이크',
@@ -86,14 +86,19 @@ export class AdminReviewController {
     },
   })
   @Patch(':reviewId')
-  update(@Param('reviewId') id: string, @Body() updateAdminReviewDto: UpdateAdminReviewDto) {
-    return this.adminReviewService.update(+id, updateAdminReviewDto);
+  async update(@Param('reviewId') reviewId: string, @Body() updateAdminReviewDto: UpdateAdminReviewDto) {
+    return this.adminReviewService.processUpdate(+reviewId, updateAdminReviewDto);
   }
 
-  /*
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adminReviewService.remove(+id);
+  @ApiOperation({ summary: '리뷰 삭제' })
+  @ApiParam({
+    name: 'reviewId',
+    type: Number,
+    description: '리뷰 아이디',
+    example: 4,
+  })
+  @Delete(':reviewId')
+  remove(@Param('reviewId') reviewId: string) {
+    return this.adminReviewService.delete(+reviewId);
   }
-  */
 }
