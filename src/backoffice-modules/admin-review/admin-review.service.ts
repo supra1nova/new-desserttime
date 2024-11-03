@@ -6,7 +6,7 @@ import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
 import { AdminReviewIngredientService } from '../admin-review-ingredient/admin-review-ingredient.service';
 import { AdminReviewImgService } from '../admin-review-img/admin-review-img.service';
-import { UpdateAdminReviewImgDto } from '../admin-review-img/model/update-admin-review-img.dto';
+import { RuntimeException } from '@nestjs/core/errors/exceptions';
 
 @Injectable()
 export class AdminReviewService {
@@ -60,34 +60,23 @@ export class AdminReviewService {
   async processUpdate(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
     const { reviewIngredientIdArr, reviewImgs, ...otherFields } = updateAdminReviewDto;
 
-    // dessertCategoryId를 dessertCategory로 매핑
     const updateData = {
       ...otherFields,
-      dessertCategory: { dessertCategoryId: updateAdminReviewDto.dessertCategoryId } // 관계를 통해 ID를 설정
+      dessertCategory: { dessertCategoryId: updateAdminReviewDto.dessertCategoryId },
     };
 
-    // Review 업데이트
-    const updateResult = await this.adminReviewRepository.update(reviewId, updateData);
-
-    if (updateResult) {
-      // Review의 ReviewIngredients 관계 업데이트
-      if (reviewIngredientIdArr) {
-        // 기존 ReviewIngredient 삭제
-        await this.adminReviewIngredientService.delete(reviewId);
-        // 신규 ReviewIngredient 삽입
-        await this.adminReviewIngredientService.processInsert(reviewId, reviewIngredientIdArr);
-      }
-
-      if (reviewImgs) {
-        for (const imgData of reviewImgs) {
-          // ReviewImg 업데이트
-          const {reviewImgId, num, isMain, isUsable} = imgData
-          const updateReviewImgDto = new UpdateAdminReviewImgDto(num, isMain, isUsable);
-          await this.adminReviewImgService.update(reviewImgId, updateReviewImgDto);
-        }
-      }
-    }
+    await this.update(reviewId, updateData);
+    if (reviewIngredientIdArr) await this.adminReviewIngredientService.processDeleteInsert(reviewId, reviewIngredientIdArr);
+    if (reviewImgs) await this.adminReviewImgService.update(reviewId, reviewImgs);
     return true;
+  }
+
+  /**
+   * 리뷰 수정 메서드
+   */
+  async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+    const result = await this.adminReviewRepository.update(reviewId, updateAdminReviewDto);
+    if (!result) throw new RuntimeException('testing');
   }
 
   /**
@@ -151,7 +140,6 @@ export class AdminReviewService {
         result.push({ id: parseInt(id, 10), tgtImgName: tgtUrl, orgImgName: value });
       });
     }
-
     return result;
   }
 

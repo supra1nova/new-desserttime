@@ -8,13 +8,12 @@ export class AdminReviewIngredientRepository {
   constructor(@InjectRepository(ReviewIngredient) private adminReviewRepository: Repository<ReviewIngredient>) {}
 
   /**
-   * 신규 재료 삽입
-   * @param createAdminReviewIngredientDto
-   * @return Promise<insertResult>
+   * 리뷰 재료 배열 삽입
+   * @param createAdminReviewIngredientDtoArr
    */
-  async insert(createAdminReviewIngredientDto: CreateAdminReviewIngredientDto) {
-    const insertResult = await this.adminReviewRepository.insert(createAdminReviewIngredientDto);
-    return insertResult !== null && insertResult !== undefined && insertResult.identifiers.length > 0;
+  async insert(createAdminReviewIngredientDtoArr: CreateAdminReviewIngredientDto[]) {
+    const reviewIngredients = await this.adminReviewRepository.save(createAdminReviewIngredientDtoArr);
+    return reviewIngredients.length > 0;
   }
 
   /**
