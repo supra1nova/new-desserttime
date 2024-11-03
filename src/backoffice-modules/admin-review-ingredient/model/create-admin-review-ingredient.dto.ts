@@ -1,7 +1,7 @@
-export class CreateAdminReviewIngredientDto  {
-  constructor(ingredientId: number, reviewId: number) {
-    this.ingredient = { ingredientId: ingredientId };
+export class CreateAdminReviewIngredientDto {
+  constructor(reviewId: number, ingredientId: number) {
     this.review = { reviewId: reviewId };
+    this.ingredient = { ingredientId: ingredientId };
   }
 
   readonly review: { reviewId: number };

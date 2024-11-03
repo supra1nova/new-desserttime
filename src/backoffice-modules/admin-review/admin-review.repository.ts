@@ -72,9 +72,9 @@ export class AdminReviewRepository {
       .update(Review)
       .set({
         ...otherFields,
-        dessertCategory: { dessertCategoryId },  // 특정 관계 필드를 ID로만 업데이트
+        dessertCategory: { dessertCategoryId }, // 특정 관계 필드를 ID로만 업데이트
       })
-      .where("reviewId = :reviewId", { reviewId })
+      .where('reviewId = :reviewId', { reviewId })
       .execute();
     return !!updateResult.affected;
   }
@@ -88,10 +88,10 @@ export class AdminReviewRepository {
       .createQueryBuilder()
       .update(Review)
       .set({
-        isUsable: false,  // 특정 관계 필드를 ID로만 업데이트
-        status: ReviewStatus.DELETED,  // 특정 관계 필드를 ID로만 업데이트
+        isUsable: false,
+        status: ReviewStatus.DELETED,
       })
-      .where("reviewId = :reviewId", { reviewId })
+      .where('reviewId = :reviewId', { reviewId })
       .execute();
     return !!deleteResult.affected;
   }
@@ -177,8 +177,6 @@ export class AdminReviewRepository {
    * @param adminSearchReviewDto
    */
   private _setPagination(queryBuilder: SelectQueryBuilder<Review>, adminSearchReviewDto: AdminSearchReviewDto) {
-    queryBuilder
-      .offset(adminSearchReviewDto.getSkip())
-      .limit(adminSearchReviewDto.getTake());
+    queryBuilder.offset(adminSearchReviewDto.getSkip()).limit(adminSearchReviewDto.getTake());
   }
 }
