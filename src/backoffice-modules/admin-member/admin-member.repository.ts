@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { Member } from '../../config/entities/member.entity';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
-import { MemberSearchType } from '../common/enum/member.enum';
+import { MemberSearchType } from '../../common/enum/member.enum';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 
 export class AdminMemberRepository {

@@ -6,7 +6,7 @@ import { CursorPaginationDto } from 'src/common/pagination/dto/cursor.pagination
 
 export class NoticeListDto extends CursorPaginationDto {
   @Transform((value) => {
-    return value.value == 'NOTICE' ? NoticeType.NOTICE : value.value == 'EVENT' ? NoticeType.EVENT : NoticeType.FNQ;
+    return value.value == 'NOTICE' ? NoticeType.NOTICE : value.value == 'EVENT' ? NoticeType.EVENT : NoticeType.FAQ;
   })
   @ApiProperty({
     example: '공지조회 :NOTICE / 이벤트조회:EVENT / 자주묻는 질문:FNQ',

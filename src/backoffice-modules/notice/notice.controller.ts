@@ -5,7 +5,7 @@ import { SearchNoticeDto } from './model/search-notice.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UpdateNoticeDto } from './model/update-notice.dto';
 
-@ApiTags('Admin notice')
+@ApiTags('Admin Notice')
 @Controller('admin/notice')
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}

@@ -4,7 +4,7 @@ import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
 
-@ApiTags('Admin review')
+@ApiTags('Admin Review')
 @Controller('admin-review')
 export class AdminReviewController {
   constructor(private readonly adminReviewService: AdminReviewService) {}

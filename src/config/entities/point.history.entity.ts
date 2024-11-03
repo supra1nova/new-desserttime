@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
-import { PointType } from '../../backoffice-modules/common/enum/point.enum';
+import { PointType } from '../../common/enum/point.enum';
 
 @Entity()
 export class PointHistory {

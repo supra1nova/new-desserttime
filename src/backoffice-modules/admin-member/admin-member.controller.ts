@@ -4,7 +4,7 @@ import { SearchAdminMemberDto } from './model/search-admin-member.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
 
-@ApiTags('Admin member')
+@ApiTags('Admin Member')
 @Controller('admin/member')
 export class AdminMemberController {
   constructor(private readonly adminMemberService: AdminMemberService) {}
