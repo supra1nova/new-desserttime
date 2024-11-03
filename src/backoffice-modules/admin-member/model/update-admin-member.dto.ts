@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { MemberGender, MemberType } from '../../common/enum/member.enum';
+import { MemberGender, MemberType } from '../../../common/enum/member.enum';
 
 export class UpdateAdminMemberDto {
   @ApiProperty({

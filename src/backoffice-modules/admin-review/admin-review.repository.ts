@@ -10,7 +10,7 @@ import { Accusation } from '../../config/entities/accusation.entity';
 import { ReviewImg } from '../../config/entities/review.img.entity';
 import { ReceiptImg } from '../../config/entities/receipt.Img.entity';
 import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
-import { ReviewStatus } from '../common/enum/review.enum';
+import { ReviewStatus } from '../../common/enum/review.enum';
 
 export class AdminReviewRepository {
   constructor(@InjectRepository(Review) private adminReviewRepository: Repository<Review>) {}

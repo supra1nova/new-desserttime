@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PointType } from '../../common/enum/point.enum';
+import { PointType } from '../../../common/enum/point.enum';
 
 export class UpdateAdminPointDto {
   @ApiProperty({

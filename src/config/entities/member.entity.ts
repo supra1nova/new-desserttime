@@ -6,7 +6,7 @@ import { Like } from './like.entity';
 import { ProfileImg } from './profile.img.entity';
 import { Accusation } from './accusation.entity';
 import { Point } from './point.entity';
-import { MemberType } from '../../backoffice-modules/common/enum/member.enum';
+import { MemberType } from '../../common/enum/member.enum';
 import { MemberDeletion } from './member.deleteion.entity';
 
 @Entity()

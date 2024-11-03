@@ -1,6 +1,6 @@
 import { PageRequest } from '../../common/dto/page.request';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { ReviewStatus } from '../../common/enum/review.enum';
+import { ReviewStatus } from '../../../common/enum/review.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AdminSearchReviewDto extends PageRequest {

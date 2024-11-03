@@ -1,7 +1,7 @@
 import { PageRequest } from '../../common/dto/page.request';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { MemberSearchType } from '../../common/enum/member.enum';
+import { MemberSearchType } from '../../../common/enum/member.enum';
 import { Transform } from 'class-transformer';
 
 export class SearchAdminMemberDto extends PageRequest {
