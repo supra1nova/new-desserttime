@@ -251,7 +251,7 @@ export class MemberRepository {
       order: { createdDate: 'DESC' },
       take: limit + 1,
     });
-    return new ResponseCursorPagination(items, memberPointListDto.limit, 'pointHistoryId');
+    return new ResponseCursorPagination(items, limit, 'pointHistoryId');
   }
 
   /**
@@ -269,7 +269,7 @@ export class MemberRepository {
       take: limit + 1, // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
     });
 
-    return new ResponseCursorPagination(items, noticeListDto.limit, 'noticeId');
+    return new ResponseCursorPagination(items, limit, 'noticeId');
   }
 
   /**
