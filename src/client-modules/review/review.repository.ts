@@ -18,6 +18,7 @@ import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { Ingredient } from 'src/config/entities/ingredient.entity';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { ReviewStatus } from 'src/common/enum/review.enum';
+import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
 
 @Injectable()
 export class ReviewRepository {
@@ -137,8 +138,13 @@ export class ReviewRepository {
    * @param reviewCategoryDto
    * @returns
    */
-  async findReviewCategoryDateList(reviewCategoryDto: ReviewCategoryDto) {
-    return await this.review
+  async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
+    const { cursor, limit } = reviewCategoryDto;
+
+    let orderField;
+    reviewCategoryDto.selectedOrder === 'D' ? (orderField = 'createdDate') : (orderField = 'totalLikedNum');
+
+    const queryBuilder = await this.review
       .createQueryBuilder('review')
       .select([
         'review.reviewId AS "reviewId"',
@@ -172,52 +178,14 @@ export class ReviewRepository {
         dessertCategoryId: reviewCategoryDto.dessertCategoryId,
       })
       .setParameter('memberId', reviewCategoryDto.memberId)
-      .orderBy('review.createdDate', 'DESC')
-      .getRawMany();
-  }
+      .orderBy(`review.${orderField}`, 'DESC')
+      .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
 
-  /**
-   * 리뷰 카테고리 좋아요 많은 순 목록 조회
-   * @param reviewCategoryDto
-   * @returns
-   */
-  async findReviewCategoryLikeList(reviewCategoryDto: ReviewCategoryDto) {
-    return await this.review
-      .createQueryBuilder('review')
-      .select([
-        'review.reviewId AS reviewId',
-        'review.totalLikedNum AS totalLikedNum',
-        'review.menuName AS menuName',
-        'review.content AS content',
-        'review.storeName AS storeName',
-        'review.score AS score',
-        'review.createdDate AS createdDate',
-        'dessertCategory.dessertCategoryId AS dessertCategoryId',
-        'member.nickName AS memberNickName',
-        'member.isHavingImg AS memberIsHavingImg',
-        'profileImg.middlePath AS profileImgMiddlePath',
-        'profileImg.path AS profileImgPath',
-        'profileImg.extension AS profileImgExtention',
-        'reviewImg.isMain AS reviewImgIsMain',
-        'reviewImg.num AS reviewImgNum',
-        'reviewImg.middlepath AS reviewImgMiddlepath',
-        'reviewImg.path AS reviewImgPath',
-        'reviewImg.extention AS reviewImgExtention',
-        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS isLiked',
-      ])
-      .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
-      .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
-      .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
-      .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
-      .where('review.isUsable = :isUsable', { isUsable: true })
-      .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
-      .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
-        dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-      })
-      .setParameter('memberId', reviewCategoryDto.memberId)
-      .orderBy('review.totalLikedNum', 'DESC')
-      .getRawMany();
+    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: Number(cursor) });
+
+    const items = await queryBuilder.getRawMany();
+
+    return new ResponseCursorPagination(items, limit, 'reviewId');
   }
 
   /**
