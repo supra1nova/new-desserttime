@@ -18,6 +18,7 @@ import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { Ingredient } from 'src/config/entities/ingredient.entity';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { ReviewStatus } from 'src/common/enum/review.enum';
+import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
 
 @Injectable()
 export class ReviewRepository {
@@ -138,9 +139,12 @@ export class ReviewRepository {
    * @returns
    */
   async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
+    const { cursor, limit } = reviewCategoryDto;
+
     let orderField;
     reviewCategoryDto.selectedOrder === 'D' ? (orderField = 'createdDate') : (orderField = 'totalLikedNum');
-    return await this.review
+
+    const queryBuilder = await this.review
       .createQueryBuilder('review')
       .select([
         'review.reviewId AS "reviewId"',
@@ -175,7 +179,13 @@ export class ReviewRepository {
       })
       .setParameter('memberId', reviewCategoryDto.memberId)
       .orderBy(`review.${orderField}`, 'DESC')
-      .getRawMany();
+      .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
+
+    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: Number(cursor) });
+
+    const items = await queryBuilder.getRawMany();
+
+    return new ResponseCursorPagination(items, limit, 'reviewId');
   }
 
   /**

@@ -82,10 +82,9 @@ export class ReviewService {
   @Transactional()
   async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
     try {
-      let result = await this.reviewRepository.findReviewCategoryList(reviewCategoryDto);
-
+      let reviewCategoryList = await this.reviewRepository.findReviewCategoryList(reviewCategoryDto);
       const grouped = new Map();
-      result.forEach((review) => {
+      reviewCategoryList.items.forEach((review) => {
         if (!grouped.has(review.reviewId)) {
           // 처음 본 reviewId이면 새로운 그룹 생성
           grouped.set(review.reviewId, {
@@ -128,7 +127,7 @@ export class ReviewService {
       });
 
       // Map을 배열로 변환하여 반환
-      return Array.from(grouped.values());
+      return { items: Array.from(grouped.values()), hasNextPage: reviewCategoryList.hasNextPage, nextCursor: reviewCategoryList.nextCursor };
 
       // return result;
     } catch (error) {
