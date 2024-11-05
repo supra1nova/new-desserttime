@@ -7,7 +7,7 @@ import { DessertCategory } from './dessert.category.entity';
 import { PointHistory } from './point.history.entity';
 import { ReceiptImg } from './receipt.Img.entity';
 import { ReviewIngredient } from './review.ingredient.entity';
-import { ReviewStatus } from '../../backoffice-modules/common/enum/review.enum';
+import { ReviewStatus } from '../../common/enum/review.enum';
 
 @Entity()
 export class Review {

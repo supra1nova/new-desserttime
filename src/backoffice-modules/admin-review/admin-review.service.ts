@@ -1,18 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AdminReviewRepository } from './admin-review.repository';
 import { Transactional } from 'typeorm-transactional';
-import { AdminSearchReviewDto } from './dto/admin-search-review.dto';
 import { Page } from '../common/dto/page.dto';
+import { AdminSearchReviewDto } from './model/admin-search-review.dto';
+import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
+import { AdminReviewIngredientService } from '../admin-review-ingredient/admin-review-ingredient.service';
+import { AdminReviewImgService } from '../admin-review-img/admin-review-img.service';
+import { RuntimeException } from '@nestjs/core/errors/exceptions';
 
 @Injectable()
 export class AdminReviewService {
-  constructor(private adminReviewRepository: AdminReviewRepository) {}
+  constructor(
+    private adminReviewIngredientService: AdminReviewIngredientService,
+    private adminReviewRepository: AdminReviewRepository,
+    private adminReviewImgService: AdminReviewImgService,
+  ) {}
 
   /**
    * 리뷰 목록 조회 메서드
    * @param adminSearchReviewDto
    */
-  @Transactional()
   async findAll(adminSearchReviewDto: AdminSearchReviewDto) {
     const total = await this.adminReviewRepository.count(adminSearchReviewDto);
     const rawItems = await this.adminReviewRepository.findReviewList(adminSearchReviewDto);
@@ -35,7 +42,7 @@ export class AdminReviewService {
   async findOneById(reviewId: number) {
     const rawItem = await this.adminReviewRepository.findOneById(reviewId);
 
-    if (rawItem === undefined) return null;
+    if (rawItem === undefined) throw new NotFoundException();
 
     rawItem['ingredients'] = this.setStringToObjArr(rawItem['ingredients']);
     rawItem['accusations'] = this.setStringToObjArr(rawItem['accusations']);
@@ -44,15 +51,42 @@ export class AdminReviewService {
     return rawItem;
   }
 
-  /*
-  update(id: number, updateAdminReviewDto: UpdateAdminReviewDto) {
-    return `This action updates a #${id} adminReview`;
+  /**
+   * 리뷰 수정 메서드
+   * @param reviewId
+   * @param updateAdminReviewDto
+   */
+  @Transactional()
+  async processUpdate(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+    const { reviewIngredientIdArr, reviewImgs, ...otherFields } = updateAdminReviewDto;
+
+    const updateData = {
+      ...otherFields,
+      dessertCategory: { dessertCategoryId: updateAdminReviewDto.dessertCategoryId },
+    };
+
+    await this.update(reviewId, updateData);
+    if (reviewIngredientIdArr) await this.adminReviewIngredientService.processDeleteInsert(reviewId, reviewIngredientIdArr);
+    if (reviewImgs) await this.adminReviewImgService.update(reviewId, reviewImgs);
+    return true;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} adminReview`;
-  }*/
+  /**
+   * 리뷰 수정 메서드
+   */
+  async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+    const result = await this.adminReviewRepository.update(reviewId, updateAdminReviewDto);
+    if (!result) throw new RuntimeException('testing');
+  }
 
+  /**
+   * 리뷰 삭제 메서드
+   * @param reviewId
+   */
+  @Transactional()
+  async delete(reviewId: number) {
+    return await this.adminReviewRepository.delete(reviewId);
+  }
 
   /* private 메서드 */
 
@@ -106,7 +140,6 @@ export class AdminReviewService {
         result.push({ id: parseInt(id, 10), tgtImgName: tgtUrl, orgImgName: value });
       });
     }
-
     return result;
   }
 

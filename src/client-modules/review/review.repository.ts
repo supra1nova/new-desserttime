@@ -17,7 +17,7 @@ import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { Ingredient } from 'src/config/entities/ingredient.entity';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
-import { ReviewStatus } from 'src/backoffice-modules/common/enum/review.enum';
+import { ReviewStatus } from 'src/common/enum/review.enum';
 
 @Injectable()
 export class ReviewRepository {

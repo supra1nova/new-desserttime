@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QnA } from '../../config/entities/qna.entity';
 import { Like, Repository } from 'typeorm';
 import { SearchAdminQnaDto } from './model/search-admin-qna.dto';
-import { SearchQnaEnum } from '../common/enum/qna.enum';
+import { SearchQnaEnum } from '../../common/enum/qna.enum';
 
 export class AdminQnaRepository {
   constructor(@InjectRepository(QnA) private readonly adminQnaRepository: Repository<QnA>) {}

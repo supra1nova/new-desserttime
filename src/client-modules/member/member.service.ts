@@ -4,7 +4,6 @@ import { MemberRepository } from './member.repository';
 import { Transactional } from 'typeorm-transactional';
 import { UserValidationDto } from './dto/login.dto';
 import { MemberIdDto } from './dto/member.id';
-import { MemberDeletionEnum } from '../../common/enum/member.deletion.enum';
 import { MemberDeleteDto } from './dto/member.delete.dto';
 import { MemberAlarmDto } from './dto/member.alarm.dto';
 import { MemberAdDto } from './dto/member.add.dto';
@@ -12,10 +11,9 @@ import { NoticeListDto } from './dto/notice.list.dto';
 import { NoticeDto } from './dto/notice.dto';
 import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
-import { Member } from 'src/config/entities/member.entity';
 import { v4 as uuid } from 'uuid';
-import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
 import { MemberPointListDto } from './dto/member.pointlist.dto';
+import { MemberDeletion } from '../../common/enum/member.enum';
 
 @Injectable()
 export class MemberService {
@@ -159,7 +157,7 @@ export class MemberService {
   @Transactional()
   async isUsableNickName(nickNameDto: NickNameDto) {
     try {
-      let result = { usable: true };
+      const result = { usable: true };
       const isUsableNickName = await this.memberRepository.isUsableNickName(nickNameDto);
       if (isUsableNickName.length > 0) result.usable = false;
       return result;
@@ -247,7 +245,7 @@ export class MemberService {
   @Transactional()
   async getReasonForLeaving() {
     try {
-      return MemberDeletionEnum;
+      return MemberDeletion;
     } catch (error) {
       throw error;
     }

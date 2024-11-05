@@ -4,7 +4,7 @@ import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { SearchAdminQnaDto } from './model/search-admin-qna.dto';
 import { ReplyAdminQnaDto } from './model/reply-admin-qna.dto';
 
-@ApiTags('Admin qna')
+@ApiTags('Admin Qna')
 @Controller('admin/qna')
 export class AdminQnaController {
   constructor(private readonly adminQnaService: AdminQnaService) {}
