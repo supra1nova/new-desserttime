@@ -137,7 +137,9 @@ export class ReviewRepository {
    * @param reviewCategoryDto
    * @returns
    */
-  async findReviewCategoryDateList(reviewCategoryDto: ReviewCategoryDto) {
+  async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
+    let orderField;
+    reviewCategoryDto.selectedOrder === 'D' ? (orderField = 'createdDate') : (orderField = 'totalLikedNum');
     return await this.review
       .createQueryBuilder('review')
       .select([
@@ -172,51 +174,7 @@ export class ReviewRepository {
         dessertCategoryId: reviewCategoryDto.dessertCategoryId,
       })
       .setParameter('memberId', reviewCategoryDto.memberId)
-      .orderBy('review.createdDate', 'DESC')
-      .getRawMany();
-  }
-
-  /**
-   * 리뷰 카테고리 좋아요 많은 순 목록 조회
-   * @param reviewCategoryDto
-   * @returns
-   */
-  async findReviewCategoryLikeList(reviewCategoryDto: ReviewCategoryDto) {
-    return await this.review
-      .createQueryBuilder('review')
-      .select([
-        'review.reviewId AS reviewId',
-        'review.totalLikedNum AS totalLikedNum',
-        'review.menuName AS menuName',
-        'review.content AS content',
-        'review.storeName AS storeName',
-        'review.score AS score',
-        'review.createdDate AS createdDate',
-        'dessertCategory.dessertCategoryId AS dessertCategoryId',
-        'member.nickName AS memberNickName',
-        'member.isHavingImg AS memberIsHavingImg',
-        'profileImg.middlePath AS profileImgMiddlePath',
-        'profileImg.path AS profileImgPath',
-        'profileImg.extension AS profileImgExtention',
-        'reviewImg.isMain AS reviewImgIsMain',
-        'reviewImg.num AS reviewImgNum',
-        'reviewImg.middlepath AS reviewImgMiddlepath',
-        'reviewImg.path AS reviewImgPath',
-        'reviewImg.extention AS reviewImgExtention',
-        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS isLiked',
-      ])
-      .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
-      .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
-      .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
-      .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
-      .where('review.isUsable = :isUsable', { isUsable: true })
-      .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
-      .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
-        dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-      })
-      .setParameter('memberId', reviewCategoryDto.memberId)
-      .orderBy('review.totalLikedNum', 'DESC')
+      .orderBy(`review.${orderField}`, 'DESC')
       .getRawMany();
   }
 

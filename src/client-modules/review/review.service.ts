@@ -82,13 +82,9 @@ export class ReviewService {
   @Transactional()
   async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
     try {
-      let result;
-      if (reviewCategoryDto.selectedOrder === 'D') result = await this.reviewRepository.findReviewCategoryDateList(reviewCategoryDto);
-      else if (reviewCategoryDto.selectedOrder === 'L') result = await this.reviewRepository.findReviewCategoryLikeList(reviewCategoryDto);
-      console.log('result ::::::::::::', result);
+      let result = await this.reviewRepository.findReviewCategoryList(reviewCategoryDto);
 
       const grouped = new Map();
-
       result.forEach((review) => {
         if (!grouped.has(review.reviewId)) {
           // 처음 본 reviewId이면 새로운 그룹 생성
