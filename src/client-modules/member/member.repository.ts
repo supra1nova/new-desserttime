@@ -22,6 +22,7 @@ import { MemberDeleteDto } from './dto/member.delete.dto';
 import { MemberDeletion } from 'src/config/entities/member.deleteion.entity';
 import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
 import { MemberPointListDto } from './dto/member.pointlist.dto';
+import { MemberIdPagingDto } from './dto/member.id.paging.dto';
 
 @Injectable()
 export class MemberRepository {
@@ -327,11 +328,15 @@ export class MemberRepository {
    * @param memberIdDto
    * @returns
    */
-  async findMyReviewList(memberIdDto: MemberIdDto) {
-    return await this.reviewRepository.find({
-      where: { member: { memberId: memberIdDto.memberId } },
+  async findMyReviewList(memberIdPagingDto: MemberIdPagingDto) {
+    const { limit, cursor } = memberIdPagingDto;
+    const items = await this.reviewRepository.find({
+      where: { member: { memberId: memberIdPagingDto.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
       relations: ['reviewImg'],
       order: { createdDate: 'DESC' },
+      take: limit + 1,
     });
+
+    return new ResponseCursorPagination(items, limit, 'pointHistoryId');
   }
 }

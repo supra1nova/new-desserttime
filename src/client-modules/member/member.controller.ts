@@ -12,6 +12,7 @@ import { NoticeDto } from './dto/notice.dto';
 import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
 import { MemberPointListDto } from './dto/member.pointlist.dto';
+import { MemberIdPagingDto } from './dto/member.id.paging.dto';
 
 @ApiTags('Member')
 @Controller('member')
@@ -110,7 +111,7 @@ export class MemberController {
 
   @ApiOperation({ summary: '사용자가 등록한 리뷰목록 조회하기' })
   @Get('my-page/review/list')
-  async getMyReviewList(@Query() memberIdDto: MemberIdDto) {
-    return await this.memberService.getMyReviewList(memberIdDto);
+  async getMyReviewList(@Query() memberIdPagingDto: MemberIdPagingDto) {
+    return await this.memberService.getMyReviewList(memberIdPagingDto);
   }
 }

@@ -14,6 +14,7 @@ import { MemberUpdateDto } from './member.update.dto';
 import { v4 as uuid } from 'uuid';
 import { MemberPointListDto } from './dto/member.pointlist.dto';
 import { MemberDeletion } from '../../common/enum/member.enum';
+import { MemberIdPagingDto } from './dto/member.id.paging.dto';
 
 @Injectable()
 export class MemberService {
@@ -355,10 +356,9 @@ export class MemberService {
    * @param memberIdDto
    */
   @Transactional()
-  async getMyReviewList(memberIdDto: MemberIdDto) {
+  async getMyReviewList(memberIdPagingDto: MemberIdPagingDto) {
     try {
-      const reviewList = await this.memberRepository.findMyReviewList(memberIdDto);
-      console.log('reviewList :::::;', reviewList);
+      const reviewList = await this.memberRepository.findMyReviewList(memberIdPagingDto);
       return reviewList;
     } catch (error) {
       throw error;
