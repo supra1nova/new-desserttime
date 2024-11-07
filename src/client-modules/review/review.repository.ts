@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/config/entities/review.entity';
-import { In, Repository } from 'typeorm';
+import { In, LessThan, Repository } from 'typeorm';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { Like } from 'src/config/entities/like.entity';
@@ -19,6 +19,7 @@ import { Ingredient } from 'src/config/entities/ingredient.entity';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { ReviewStatus } from 'src/common/enum/review.enum';
 import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
+import { MemberIdPagingDto } from './dto/review.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -277,12 +278,15 @@ export class ReviewRepository {
    * @param memberIdDto
    * @returns
    */
-  async findGenerableReviewList(memberIdDto: MemberIdDto) {
-    return await this.review.find({
+  async findGenerableReviewList(memberIdPagingDto: MemberIdPagingDto) {
+    const { limit, cursor } = memberIdPagingDto;
+    const items = await this.review.find({
       select: { reviewId: true, menuName: true, storeName: true, status: true },
-      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdDto.memberId } },
+      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdPagingDto.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
       order: { createdDate: 'ASC', menuName: 'ASC' },
     });
+
+    return new ResponseCursorPagination(items, limit, 'reviewId');
   }
 
   /**
@@ -427,8 +431,9 @@ export class ReviewRepository {
   /**
    * 내가 좋아요를 누른 리뷰 목록조회하기
    */
-  async findLikedReviewList(memberIdDto: MemberIdDto) {
-    return await this.review
+  async findLikedReviewList(memberIdPagingDto: MemberIdPagingDto) {
+    const { cursor, limit } = memberIdPagingDto;
+    const queryBuilder = await this.review
       .createQueryBuilder('review')
       .select([
         'review.reviewId AS "reviewId"',
@@ -441,27 +446,31 @@ export class ReviewRepository {
         'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
         'member.nickName AS "memberNickName"',
         'member.isHavingImg AS "memberIsHavingImg"',
-        //'profileImg.middlepath AS memberImgMiddlepath',
-        //'profileImg.path AS memberImgPath',
-        //'profileImg.extention AS memberImgExtention',
+        'profileImg.middlePath AS profileImgMiddlePath',
+        'profileImg.path AS profileImgPath',
+        'profileImg.extension AS profileImgExtention',
         'reviewImg.isMain AS "reviewImgIsMain"',
         'reviewImg.num AS "reviewImgNum"',
         'reviewImg.middlepath AS "reviewImgMiddlepath"',
         'reviewImg.path AS "reviewImgPath"',
         'reviewImg.extention AS "reviewImgExtention"',
-        'CASE WHEN like.memberMemberId = 1 THEN 1 ELSE 0 END AS "isLiked"',
+        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
       ])
       .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      //.leftJoin(ProfileImg, 'profileImg', 'profileImg.profileImgId = member.profileImgId')
+      .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
-      .andWhere('review.status = :status', { status: In([ReviewStatus.WAIT, ReviewStatus.INIT]) })
-      .andWhere('like.memberMemberId = :memberId', {
-        memberId: memberIdDto.memberId,
-      })
+      .andWhere('review.status = :status', { status: ReviewStatus.SAVED }) // status: In([ReviewStatus.WAIT, ReviewStatus.INIT])
+      .andWhere('like.memberMemberId = :likeMemberId', { likeMemberId: memberIdPagingDto.memberId })
       .orderBy('review.createdDate', 'DESC')
-      .getRawMany();
+      .setParameter('memberId', memberIdPagingDto.memberId)
+      .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
+
+    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: Number(cursor) });
+    const items = await queryBuilder.getRawMany();
+
+    return new ResponseCursorPagination(items, limit, 'reviewId');
   }
 }

@@ -13,6 +13,7 @@ import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { Transactional } from 'typeorm-transactional';
+import { MemberIdPagingDto } from './dto/review.dto';
 
 @Injectable()
 export class ReviewService {
@@ -128,8 +129,6 @@ export class ReviewService {
 
       // Map을 배열로 변환하여 반환
       return { items: Array.from(grouped.values()), hasNextPage: reviewCategoryList.hasNextPage, nextCursor: reviewCategoryList.nextCursor };
-
-      // return result;
     } catch (error) {
       throw error;
     }
@@ -206,13 +205,14 @@ export class ReviewService {
 
   /**
    * 후기작성 가능한 후기목록 조회
-   * @param memberIdDto  @Transactional()
+   * @param memberIdDto 
 
    * @returns
    */
-  async getGenerableReviewList(memberIdDto: MemberIdDto) {
+  @Transactional()
+  async getGenerableReviewList(memberIdPagingDto: MemberIdPagingDto) {
     try {
-      return await this.reviewRepository.findGenerableReviewList(memberIdDto);
+      return await this.reviewRepository.findGenerableReviewList(memberIdPagingDto);
     } catch (error) {
       throw error;
     }
@@ -412,11 +412,55 @@ export class ReviewService {
   }
 
   @Transactional()
-  async getLikedReviewList(memberIdDto: MemberIdDto) {
+  async getLikedReviewList(memberIdPagingDto: MemberIdPagingDto) {
     try {
-      const likedReviewList = await this.reviewRepository.findLikedReviewList(memberIdDto);
-      console.log('likedReviewList ::::::::::::::', likedReviewList);
-      return likedReviewList;
+      const likedReviewList = await this.reviewRepository.findLikedReviewList(memberIdPagingDto);
+      //return likedReviewList;
+      const grouped = new Map();
+      likedReviewList.items.forEach((review) => {
+        if (!grouped.has(review.reviewId)) {
+          // 처음 본 reviewId이면 새로운 그룹 생성
+          grouped.set(review.reviewId, {
+            reviewId: review.reviewId,
+            totalLikedNum: review.totalLikedNum,
+            menuName: review.menuName,
+            content: review.content,
+            storeName: review.storeName,
+            score: review.score,
+            createdDate: review.createdDate,
+            dessertCategoryId: review.dessertCategoryId,
+            memberNickName: review.memberNickName,
+            memberIsHavingImg: review.memberIsHavingImg,
+            isLiked: review.isLiked,
+            reviewImg: [],
+            profileImg: [],
+          });
+        }
+        const currentReview = grouped.get(review.reviewId);
+
+        // reviewImg 관련 데이터가 있을 때만 추가
+        if (review.reviewImgPath) {
+          currentReview.reviewImg.push({
+            reviewImgIsMain: review.reviewImgIsMain,
+            reviewImgNum: review.reviewImgNum,
+            reviewImgMiddlepath: review.reviewImgMiddlepath,
+            reviewImgPath: review.reviewImgPath,
+            reviewImgExtention: review.reviewImgExtention,
+          });
+        }
+
+        // profileImg 관련 데이터가 있을 때만 추가
+        if (review.profileImgPath) {
+          currentReview.profileImg.push({
+            profileImgMiddlePath: review.profileImgMiddlePath,
+            profileImgPath: review.profileImgPath,
+            profileImgExtention: review.profileImgExtention,
+          });
+        }
+      });
+
+      // Map을 배열로 변환하여 반환
+      return { items: Array.from(grouped.values()), hasNextPage: likedReviewList.hasNextPage, nextCursor: likedReviewList.nextCursor };
     } catch (error) {
       throw error;
     }
