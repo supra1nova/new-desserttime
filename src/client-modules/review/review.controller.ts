@@ -13,6 +13,7 @@ import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
+import { MemberIdPagingDto } from './dto/review.dto';
 
 @Controller('review')
 @ApiTags('Review')
@@ -48,8 +49,8 @@ export class ReviewController {
 
   @ApiOperation({ summary: '후기 작성가능한 후기 목록' })
   @Get('generable/list/:memberId')
-  async getGenerableReviewList(@Param() memberIdDto: MemberIdDto) {
-    return await this.reviewService.getGenerableReviewList(memberIdDto);
+  async getGenerableReviewList(@Param() memberIdPagingDto: MemberIdPagingDto) {
+    return await this.reviewService.getGenerableReviewList(memberIdPagingDto);
   }
 
   @ApiOperation({ summary: '후기 작성목록 등록' })

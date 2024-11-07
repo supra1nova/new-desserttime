@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/config/entities/review.entity';
-import { In, Repository } from 'typeorm';
+import { In, LessThan, Repository } from 'typeorm';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { Like } from 'src/config/entities/like.entity';
@@ -19,6 +19,7 @@ import { Ingredient } from 'src/config/entities/ingredient.entity';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { ReviewStatus } from 'src/common/enum/review.enum';
 import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
+import { MemberIdPagingDto } from './dto/review.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -277,12 +278,15 @@ export class ReviewRepository {
    * @param memberIdDto
    * @returns
    */
-  async findGenerableReviewList(memberIdDto: MemberIdDto) {
-    return await this.review.find({
+  async findGenerableReviewList(memberIdPagingDto: MemberIdPagingDto) {
+    const { limit, cursor } = memberIdPagingDto;
+    const items = await this.review.find({
       select: { reviewId: true, menuName: true, storeName: true, status: true },
-      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdDto.memberId } },
+      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdPagingDto.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
       order: { createdDate: 'ASC', menuName: 'ASC' },
     });
+
+    return new ResponseCursorPagination(items, limit, 'reviewId');
   }
 
   /**
