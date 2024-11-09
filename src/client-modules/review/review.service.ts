@@ -237,7 +237,7 @@ export class ReviewService {
   }
 
   /**
-   * 작성가능한 리뷰 하나 삭제
+   * 리뷰 하나 삭제
    * @param reviewIdDto
    * @returns
    */

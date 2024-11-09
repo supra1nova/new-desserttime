@@ -59,7 +59,7 @@ export class ReviewController {
     return await this.reviewService.postGenerableReviewList(reviewCreateDto);
   }
 
-  @ApiOperation({ summary: '작성가능한 후기 삭제' })
+  @ApiOperation({ summary: '후기 삭제' })
   @Delete('generable')
   async deleteGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
     return await this.reviewService.deleteGenerableReview(reviewIdDto);
