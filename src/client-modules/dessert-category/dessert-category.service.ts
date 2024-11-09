@@ -26,18 +26,18 @@ export class DessertCategoryService {
       firstCategoryList.forEach((oneCategory) => {
         itemMap.set(oneCategory.dessertCategoryId, {
           ...oneCategory,
-          secondCategory: [],
+          nextCategory: [],
         });
       });
 
       firstCategoryList.forEach((oneCategory) => {
-        const currentItme = itemMap.get(oneCategory.dessertCategoryId);
+        const currentItem = itemMap.get(oneCategory.dessertCategoryId);
         if (oneCategory.parentDCId === 0) {
-          rootItems.push(currentItme);
+          rootItems.push(currentItem);
         } else {
           const parentItem = itemMap.get(oneCategory.parentDCId);
           if (parentItem) {
-            parentItem.secondCategory.push(currentItme);
+            parentItem.nextCategory.push(currentItem);
           }
         }
       });
