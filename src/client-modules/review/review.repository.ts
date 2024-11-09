@@ -299,7 +299,7 @@ export class ReviewRepository {
   }
 
   /**
-   * 작성가능한 후기 하나 삭제
+   * 후기 하나 삭제
    * @returns
    */
   async deleteGenerableReview(reviewIdDto: ReviewIdDto) {
