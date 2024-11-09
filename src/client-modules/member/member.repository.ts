@@ -314,11 +314,7 @@ export class MemberRepository {
    * @returns
    */
   async deletePickCategoryList(memberUpdateDto: MemberUpdateDto) {
-    return await this.userInterestDessertRepository
-      .createQueryBuilder()
-      .delete()
-      .where('memberMemberId = :memberId', { memberId: memberUpdateDto.memberId }) // status가 'inactive'인 모든 데이터를 삭제
-      .execute();
+    return await this.userInterestDessertRepository.createQueryBuilder().delete().where('memberMemberId = :memberId', { memberId: memberUpdateDto.memberId }).execute();
   }
 
   /**

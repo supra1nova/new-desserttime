@@ -238,7 +238,7 @@ export class MemberService {
   }
 
   /**
-   * 신고 사유 조회
+   * 탈퇴 사유 조회
    * @returns
    */
   @Transactional()
@@ -258,6 +258,12 @@ export class MemberService {
   async deleteMember(memberDeleteDto: MemberDeleteDto) {
     try {
       const member = await this.memberRepository.findMemberEntityOne(memberDeleteDto);
+      if (!member.isUsable) {
+        throw new BadRequestException('이미 삭제됨', {
+          cause: new Error(),
+          description: '이미 삭제된 사용자입니다.',
+        });
+      }
       const deletionMember = await this.memberRepository.insertDeletionMember(memberDeleteDto);
       const userData = {
         snsId: uuid(),
