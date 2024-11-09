@@ -77,7 +77,6 @@ export class MemberService {
       }
       return memberData;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -112,45 +111,38 @@ export class MemberService {
   async getMemberOne(memberIdDto: MemberIdDto) {
     try {
       const memberData = await this.memberRepository.findMemberOne(memberIdDto);
-      const groupByMemberId = (memberData) => {
-        return memberData.reduce((acc, current) => {
-          // 이미 존재하는 memberId인지 확인
-          const existingMember = acc.find((item) => item.memberId === current.memberId);
 
-          if (existingMember) {
-            // 같은 memberId가 있을 경우 dessertCategory와 dessertName을 추가
-            existingMember.desserts.push({
-              dessertCategoryId: current.dessertCategoryId,
-              dessertName: current.dessertName,
-            });
-          } else {
-            // 새로운 memberId일 경우 새로운 객체를 추가
-            acc.push({
-              memberId: current.memberId,
-              gender: current.gender,
-              nickName: current.nickName,
-              birthYear: current.birthYear,
-              firstCity: current.firstCity,
-              secondaryCity: current.secondaryCity,
-              thirdCity: current.thirdCity,
-              profileImgMiddlePath: current.profileImgMiddlePath,
-              profileImgId: current.profileImgId,
-              profileImgPath: current.profileImgPath,
-              profileImgExtension: current.profileImgExtension,
-              desserts: [
-                {
-                  dessertCategoryId: current.dessertCategoryId,
-                  dessertName: current.dessertName,
-                },
-              ],
-            });
-          }
-          return acc;
-        }, []);
-      };
+      const result = memberData.reduce((acc, current) => {
+        if (acc['memberId'] == current.memberId) {
+          acc.desserts.push({
+            dessertCategoryId: current.dessertCategoryId,
+            dessertName: current.dessertName,
+          });
+        } else {
+          acc = {
+            memberId: current.memberId,
+            gender: current.gender,
+            nickName: current.nickName,
+            birthYear: current.birthYear,
+            firstCity: current.firstCity,
+            secondaryCity: current.secondaryCity,
+            thirdCity: current.thirdCity,
+            profileImgMiddlePath: current.profileImgMiddlePath,
+            profileImgId: current.profileImgId,
+            profileImgPath: current.profileImgPath,
+            profileImgExtension: current.profileImgExtension,
+            desserts: [
+              {
+                dessertCategoryId: current.dessertCategoryId,
+                dessertName: current.dessertName,
+              },
+            ],
+          };
+        }
+        return acc;
+      }, {});
 
-      const groupedData = groupByMemberId(memberData);
-      return groupedData;
+      return result;
     } catch (error) {
       throw error;
     }
