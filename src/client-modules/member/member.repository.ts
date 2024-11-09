@@ -101,10 +101,17 @@ export class MemberRepository {
       secondaryCity: signInDto.secondaryCity,
       thirdCity: signInDto.thirdCity,
       isAgreeAD: signInDto.isAgreeAD,
-      nickName: Math.ceil(Math.random() * 1000) + ' 번째 테스트 닉네임 어흥',
     });
   }
 
+  /**
+   * 닉네임 등록
+   * @param newMemberId
+   * @param nickName
+   */
+  async updateMemberNickname(newMemberId: number, nickName: string) {
+    await this.memberRepository.update({ memberId: newMemberId }, { nickName });
+  }
   /**
    * 사용자 닉네임 조회
    * @param memberIdDto
@@ -245,13 +252,23 @@ export class MemberRepository {
   async findPointHisoryList(memberPointListDto: MemberPointListDto) {
     const { cursor, limit } = memberPointListDto;
 
-    const items = await this.pointHistory.find({
-      select: { pointHistoryId: true, createdDate: true, newPoint: true },
-      relations: ['review'],
-      where: { member: { memberId: memberPointListDto.memberId, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) } },
-      order: { createdDate: 'DESC' },
-      take: limit + 1,
-    });
+    const items = await this.pointHistory
+      .createQueryBuilder('pointHistory')
+      .leftJoinAndSelect('pointHistory.review', 'review')
+      .select(['pointHistory.pointHistoryId', 'pointHistory.createdDate', 'pointHistory.newPoint', 'review.menuName'])
+      .where('pointHistory.memberMemberId = :memberId', { memberId: memberPointListDto.memberId })
+      .andWhere(cursor ? 'pointHistory.pointHistoryId < :cursor' : '1=1', { cursor: Number(cursor) })
+      .orderBy('pointHistory.createdDate', 'DESC')
+      .take(limit + 1)
+      .getMany();
+
+    // .find({
+    //   select: { pointHistoryId: true, createdDate: true, newPoint: true, review: { menuName: true } },
+    //   relations: ['review'],
+    //   where: { member: { memberId: memberPointListDto.memberId, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) } },
+    //   order: { createdDate: 'DESC' },
+    //   take: limit + 1,
+    // });
     return new ResponseCursorPagination(items, limit, 'pointHistoryId');
   }
 
@@ -307,11 +324,7 @@ export class MemberRepository {
    * @returns
    */
   async deletePickCategoryList(memberUpdateDto: MemberUpdateDto) {
-    return await this.userInterestDessertRepository
-      .createQueryBuilder()
-      .delete()
-      .where('memberMemberId = :memberId', { memberId: memberUpdateDto.memberId }) // status가 'inactive'인 모든 데이터를 삭제
-      .execute();
+    return await this.userInterestDessertRepository.createQueryBuilder().delete().where('memberMemberId = :memberId', { memberId: memberUpdateDto.memberId }).execute();
   }
 
   /**

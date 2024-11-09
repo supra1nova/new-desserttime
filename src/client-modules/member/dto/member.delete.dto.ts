@@ -23,6 +23,5 @@ export class MemberDeleteDto {
     description: '탈퇴사유-기타 내용',
     required: false,
   })
-  @IsNotEmpty()
   readonly context: string;
 }

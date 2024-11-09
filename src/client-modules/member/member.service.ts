@@ -31,18 +31,24 @@ export class MemberService {
       const isSnsId = await this.memberRepository.findSnsIdOne(signInDto.snsId);
 
       if (!isEmail && !isSnsId) {
+        const pickedDCList = [];
+
         const newMember = await this.memberRepository.insertMember(signInDto);
-        const pickDessertList = [];
+        const newMemberId = newMember.identifiers[0].memberId;
+        const nickName = `${newMemberId}번째 달콤한 디저트`;
+
+        await this.memberRepository.updateMemberNickname(newMemberId, nickName);
+
         const categories = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5];
         categories.forEach((category) => {
           if (category) {
-            pickDessertList.push({
-              member: { memberId: newMember.identifiers[0].memberId },
+            pickedDCList.push({
+              member: { memberId: newMemberId },
               dc: { dessertCategoryId: category },
             });
           }
         });
-        await this.memberRepository.insertPickCategoryList(pickDessertList);
+        await this.memberRepository.insertPickCategoryList(pickedDCList);
       } else {
         throw new BadRequestException('중복정보', {
           cause: new Error(),
@@ -71,7 +77,6 @@ export class MemberService {
       }
       return memberData;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -106,45 +111,38 @@ export class MemberService {
   async getMemberOne(memberIdDto: MemberIdDto) {
     try {
       const memberData = await this.memberRepository.findMemberOne(memberIdDto);
-      const groupByMemberId = (memberData) => {
-        return memberData.reduce((acc, current) => {
-          // 이미 존재하는 memberId인지 확인
-          const existingMember = acc.find((item) => item.memberId === current.memberId);
 
-          if (existingMember) {
-            // 같은 memberId가 있을 경우 dessertCategory와 dessertName을 추가
-            existingMember.desserts.push({
-              dessertCategoryId: current.dessertCategoryId,
-              dessertName: current.dessertName,
-            });
-          } else {
-            // 새로운 memberId일 경우 새로운 객체를 추가
-            acc.push({
-              memberId: current.memberId,
-              gender: current.gender,
-              nickName: current.nickName,
-              birthYear: current.birthYear,
-              firstCity: current.firstCity,
-              secondaryCity: current.secondaryCity,
-              thirdCity: current.thirdCity,
-              profileImgMiddlePath: current.profileImgMiddlePath,
-              profileImgId: current.profileImgId,
-              profileImgPath: current.profileImgPath,
-              profileImgExtension: current.profileImgExtension,
-              desserts: [
-                {
-                  dessertCategoryId: current.dessertCategoryId,
-                  dessertName: current.dessertName,
-                },
-              ],
-            });
-          }
-          return acc;
-        }, []);
-      };
+      const result = memberData.reduce((acc, current) => {
+        if (acc['memberId'] == current.memberId) {
+          acc.desserts.push({
+            dessertCategoryId: current.dessertCategoryId,
+            dessertName: current.dessertName,
+          });
+        } else {
+          acc = {
+            memberId: current.memberId,
+            gender: current.gender,
+            nickName: current.nickName,
+            birthYear: current.birthYear,
+            firstCity: current.firstCity,
+            secondaryCity: current.secondaryCity,
+            thirdCity: current.thirdCity,
+            profileImgMiddlePath: current.profileImgMiddlePath,
+            profileImgId: current.profileImgId,
+            profileImgPath: current.profileImgPath,
+            profileImgExtension: current.profileImgExtension,
+            desserts: [
+              {
+                dessertCategoryId: current.dessertCategoryId,
+                dessertName: current.dessertName,
+              },
+            ],
+          };
+        }
+        return acc;
+      }, {});
 
-      const groupedData = groupByMemberId(memberData);
-      return groupedData;
+      return result;
     } catch (error) {
       throw error;
     }
@@ -240,7 +238,7 @@ export class MemberService {
   }
 
   /**
-   * 신고 사유 조회
+   * 탈퇴 사유 조회
    * @returns
    */
   @Transactional()
@@ -260,6 +258,12 @@ export class MemberService {
   async deleteMember(memberDeleteDto: MemberDeleteDto) {
     try {
       const member = await this.memberRepository.findMemberEntityOne(memberDeleteDto);
+      if (!member.isUsable) {
+        throw new BadRequestException('이미 삭제됨', {
+          cause: new Error(),
+          description: '이미 삭제된 사용자입니다.',
+        });
+      }
       const deletionMember = await this.memberRepository.insertDeletionMember(memberDeleteDto);
       const userData = {
         snsId: uuid(),
@@ -283,12 +287,12 @@ export class MemberService {
   async getPoint(memberIdDto: MemberIdDto) {
     try {
       const thisMonthPointData = await this.memberRepository.findThisMonthPoint(memberIdDto);
-      const totalPoint = await this.memberRepository.findTotalPointOne(memberIdDto);
+      const totalPointData = await this.memberRepository.findTotalPointOne(memberIdDto);
       const thisMonthPoint = !thisMonthPointData.totalPoint ? 0 : thisMonthPointData.totalPoint;
-
+      const totalPoint = !totalPointData[0] ? 0 : !totalPointData[0].totalPoint ? 0 : totalPointData[0].totalPoint;
       const result = {
         thisMonthPoint,
-        totalPoint: totalPoint[0].totalPoint,
+        totalPoint,
       };
       return result;
     } catch (error) {
@@ -304,7 +308,7 @@ export class MemberService {
   async getPointHisoryList(memberPointListDto: MemberPointListDto) {
     try {
       const pointHistoryList = await this.memberRepository.findPointHisoryList(memberPointListDto);
-
+      console.log('pointHistoryList', pointHistoryList);
       const result = pointHistoryList.items.map((data) => {
         const createdDate: string = data.createdDate.toISOString().substring(0, 10);
         return {
