@@ -252,13 +252,23 @@ export class MemberRepository {
   async findPointHisoryList(memberPointListDto: MemberPointListDto) {
     const { cursor, limit } = memberPointListDto;
 
-    const items = await this.pointHistory.find({
-      select: { pointHistoryId: true, createdDate: true, newPoint: true },
-      relations: ['review'],
-      where: { member: { memberId: memberPointListDto.memberId, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) } },
-      order: { createdDate: 'DESC' },
-      take: limit + 1,
-    });
+    const items = await this.pointHistory
+      .createQueryBuilder('pointHistory')
+      .leftJoinAndSelect('pointHistory.review', 'review')
+      .select(['pointHistory.pointHistoryId', 'pointHistory.createdDate', 'pointHistory.newPoint', 'review.menuName'])
+      .where('pointHistory.memberMemberId = :memberId', { memberId: memberPointListDto.memberId })
+      .andWhere(cursor ? 'pointHistory.pointHistoryId < :cursor' : '1=1', { cursor: Number(cursor) })
+      .orderBy('pointHistory.createdDate', 'DESC')
+      .take(limit + 1)
+      .getMany();
+
+    // .find({
+    //   select: { pointHistoryId: true, createdDate: true, newPoint: true, review: { menuName: true } },
+    //   relations: ['review'],
+    //   where: { member: { memberId: memberPointListDto.memberId, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) } },
+    //   order: { createdDate: 'DESC' },
+    //   take: limit + 1,
+    // });
     return new ResponseCursorPagination(items, limit, 'pointHistoryId');
   }
 

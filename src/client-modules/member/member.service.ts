@@ -308,7 +308,7 @@ export class MemberService {
   async getPointHisoryList(memberPointListDto: MemberPointListDto) {
     try {
       const pointHistoryList = await this.memberRepository.findPointHisoryList(memberPointListDto);
-
+      console.log('pointHistoryList', pointHistoryList);
       const result = pointHistoryList.items.map((data) => {
         const createdDate: string = data.createdDate.toISOString().substring(0, 10);
         return {
