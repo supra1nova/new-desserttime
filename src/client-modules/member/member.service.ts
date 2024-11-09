@@ -287,12 +287,12 @@ export class MemberService {
   async getPoint(memberIdDto: MemberIdDto) {
     try {
       const thisMonthPointData = await this.memberRepository.findThisMonthPoint(memberIdDto);
-      const totalPoint = await this.memberRepository.findTotalPointOne(memberIdDto);
+      const totalPointData = await this.memberRepository.findTotalPointOne(memberIdDto);
       const thisMonthPoint = !thisMonthPointData.totalPoint ? 0 : thisMonthPointData.totalPoint;
-
+      const totalPoint = !totalPointData[0] ? 0 : !totalPointData[0].totalPoint ? 0 : totalPointData[0].totalPoint;
       const result = {
         thisMonthPoint,
-        totalPoint: totalPoint[0].totalPoint,
+        totalPoint,
       };
       return result;
     } catch (error) {
