@@ -29,7 +29,7 @@ export class SignInDto {
   @ApiProperty({
     example: 'naver/google/kakao/apple',
     description: '등록한 sns 도메인',
-    required: true,
+    required: false,
   })
   @IsNotEmpty()
   readonly signInSns: string;
@@ -37,35 +37,35 @@ export class SignInDto {
   @ApiProperty({
     example: '1997',
     description: '출생년도',
-    required: true,
+    required: false,
   })
   readonly birthYear: number;
 
   @ApiProperty({
     example: 'F:여/ M:남',
     description: '성별',
-    required: true,
+    required: false,
   })
   readonly memberGender: string;
 
   @ApiProperty({
     example: '서울광역시',
     description: '첫 주소',
-    required: true,
+    required: false,
   })
   readonly firstCity: string;
 
   @ApiProperty({
     example: '관악구',
     description: '두번째 주소',
-    required: true,
+    required: false,
   })
   readonly secondaryCity: string;
 
   @ApiProperty({
     example: '신림동',
     description: '세번째 주소',
-    required: true,
+    required: false,
   })
   readonly thirdCity: string;
 
@@ -80,35 +80,35 @@ export class SignInDto {
   @ApiProperty({
     example: 1,
     description: '사용자가 선택한 디저트카테고리',
-    required: true,
+    required: false,
   })
   readonly memberPickCategory1: number;
 
   @ApiProperty({
     example: 2,
     description: '사용자가 선택한 디저트카테고리',
-    required: true,
+    required: false,
   })
   readonly memberPickCategory2: number;
 
   @ApiProperty({
     example: 3,
     description: '사용자가 선택한 디저트카테고리',
-    required: true,
+    required: false,
   })
   readonly memberPickCategory3: number;
 
   @ApiProperty({
     example: 4,
     description: '사용자가 선택한 디저트카테고리',
-    required: true,
+    required: false,
   })
   readonly memberPickCategory4: number;
 
   @ApiProperty({
     example: 5,
     description: '사용자가 선택한 디저트카테고리',
-    required: true,
+    required: false,
   })
   readonly memberPickCategory5: number;
 }

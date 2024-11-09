@@ -101,10 +101,17 @@ export class MemberRepository {
       secondaryCity: signInDto.secondaryCity,
       thirdCity: signInDto.thirdCity,
       isAgreeAD: signInDto.isAgreeAD,
-      nickName: Math.ceil(Math.random() * 1000) + ' 번째 테스트 닉네임 어흥',
     });
   }
 
+  /**
+   * 닉네임 등록
+   * @param newMemberId
+   * @param nickName
+   */
+  async updateMemberNickname(newMemberId: number, nickName: string) {
+    await this.memberRepository.update({ memberId: newMemberId }, { nickName });
+  }
   /**
    * 사용자 닉네임 조회
    * @param memberIdDto
