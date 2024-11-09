@@ -31,11 +31,14 @@ export class MemberService {
       const isSnsId = await this.memberRepository.findSnsIdOne(signInDto.snsId);
 
       if (!isEmail && !isSnsId) {
+        const pickedDCList = [];
+
         const newMember = await this.memberRepository.insertMember(signInDto);
         const newMemberId = newMember.identifiers[0].memberId;
         const nickName = `${newMemberId}번째 달콤한 디저트`;
+
         await this.memberRepository.updateMemberNickname(newMemberId, nickName);
-        const pickedDCList = [];
+
         const categories = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5];
         categories.forEach((category) => {
           if (category) {
