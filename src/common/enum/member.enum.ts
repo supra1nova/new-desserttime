@@ -21,3 +21,9 @@ export enum MemberDeletion {
   DIFFICULTY = '서비스 사용이 어려워서',
   ETC = '기타(직접입력)',
 }
+
+/** 검색 정렬 enum */
+export enum SearchOrder {
+  DESC = 'DESC',
+  ASC = 'ASC',
+}

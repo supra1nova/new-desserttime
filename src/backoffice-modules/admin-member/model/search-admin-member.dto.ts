@@ -1,7 +1,7 @@
 import { PageRequest } from '../../common/dto/page.request';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { MemberSearchType } from '../../../common/enum/member.enum';
+import { SearchOrder, MemberSearchType } from '../../../common/enum/member.enum';
 import { Transform } from 'class-transformer';
 
 export class SearchAdminMemberDto extends PageRequest {
@@ -34,4 +34,14 @@ export class SearchAdminMemberDto extends PageRequest {
   @IsString()
   @IsOptional()
   readonly searchValue?: string;
+
+  @ApiProperty({
+    enum: SearchOrder,
+    isArray: false,
+    description: '회원정렬순서: DESC / ASC',
+    required: false,
+  })
+  @IsEnum(SearchOrder)
+  @IsOptional()
+  readonly orderValue?: SearchOrder = SearchOrder.DESC;
 }
