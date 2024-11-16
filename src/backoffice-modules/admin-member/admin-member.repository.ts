@@ -45,7 +45,7 @@ export class AdminMemberRepository {
       skip: searchAdminMemberDto.getSkip(),
       take: searchAdminMemberDto.getTake(),
       order: {
-        createdDate: 'DESC',
+        createdDate: searchAdminMemberDto.orderValue,
       },
     });
   }

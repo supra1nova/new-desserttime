@@ -6,6 +6,16 @@ export class AdminPointRepository {
   constructor(@InjectRepository(Point) private adminPointRepository: Repository<Point>) {}
 
   /**
+   * 포인트 등록
+   * @param memberId
+   * @param totalPoint
+   * */
+  async insert(memberId: number, totalPoint: number) {
+    const insertResult = await this.adminPointRepository.insert({ member: { memberId: memberId }, totalPoint: totalPoint });
+    return insertResult.identifiers.length > 0;
+  }
+
+  /**
    * 회원 번호를 이용한 포인트 검색
    * @param memberId
    * */
@@ -19,6 +29,7 @@ export class AdminPointRepository {
    * @param totalPoint
    * */
   async update(memberId: number, totalPoint: number) {
-    await this.adminPointRepository.update({ member: { memberId: memberId } }, { totalPoint: totalPoint });
+    const updateResult = await this.adminPointRepository.update({ member: { memberId: memberId } }, { totalPoint: totalPoint });
+    return !!updateResult.affected;
   }
 }
