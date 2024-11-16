@@ -12,7 +12,8 @@ export class AdminPointHistoryRepository {
    * @return Promise<insertResult>
    * */
   async insert(pointHistory: Partial<PointHistory>) {
-    return this.adminPointHistoryRepository.insert(pointHistory);
+    const insertResult = await this.adminPointHistoryRepository.insert(pointHistory);
+    return insertResult.identifiers.length > 0;
   }
 
   /**
