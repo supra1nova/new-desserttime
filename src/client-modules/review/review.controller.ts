@@ -19,11 +19,13 @@ import { MemberIdPagingDto } from './dto/review.dto';
 @ApiTags('Review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
+
   @ApiOperation({ summary: '홈화면 - 카테고리별 리뷰 이미지 목록 조회' })
   @Get('home/list/:memberId')
   async getHomeReviewImgList(@Param() memberIdDto: MemberIdDto) {
     return await this.reviewService.getHomeReviewImgList(memberIdDto);
   }
+
   @ApiOperation({ summary: '선택한 카테고리의 리뷰 목록 조회' })
   @Get('category/list/:dessertCategoryId/:selectedOrder/:memberId')
   async getReviewCategoryList(@Param() reviewCategoryDto: ReviewCategoryDto) {
@@ -35,6 +37,7 @@ export class ReviewController {
   async postLikeItem(@Param() likeDto: LikeDto) {
     await this.reviewService.postLikeItem(likeDto);
   }
+
   @ApiOperation({ summary: '후기작성가능한 후기 갯수' })
   @Get('generable/count/:memberId')
   async getGenerableReviewCount(@Param() memberIdDto: MemberIdDto) {

@@ -29,16 +29,19 @@ export class ReviewService {
     try {
       // 사용자가 선호하는 카테고리의 2차 카테고리ID 목록 조회
       const memberInterestList = await this.reviewRepository.findMemberInterestList(memberIdDto);
+      if (!memberInterestList || memberInterestList.length === 0) {
+        return [];
+      }
       const dessertCategoryList = memberInterestList.map((category) => category.dc_dessertCategoryId);
-
-      let randomReviewCount: number = 25;
+      let randomReviewCount = 25;
       let reviewImgList = [];
 
       if (dessertCategoryList.length > 0) {
         const usableCategoryList = await this.reviewRepository.findUsablecategoryList(dessertCategoryList);
-        randomReviewCount -= usableCategoryList.length;
 
-        if (usableCategoryList.length > 0) {
+        if (usableCategoryList && usableCategoryList.length > 0) {
+          randomReviewCount -= usableCategoryList.length;
+
           // 사용 가능한 카테고리가 있을 경우
           const mainCategoryList = await Promise.all(
             usableCategoryList.map(async (category) => {
@@ -69,6 +72,7 @@ export class ReviewService {
         );
         reviewImgList = reviewImgList.concat(mainRandomCategoryList);
       }
+
       return reviewImgList;
     } catch (error) {
       throw error;
@@ -212,6 +216,7 @@ export class ReviewService {
   @Transactional()
   async getGenerableReviewList(memberIdPagingDto: MemberIdPagingDto) {
     try {
+      //한달 넘은 후기는 삭제?
       return await this.reviewRepository.findGenerableReviewList(memberIdPagingDto);
     } catch (error) {
       throw error;
@@ -237,7 +242,7 @@ export class ReviewService {
   }
 
   /**
-   * 리뷰 하나 삭제
+   * 리뷰 하나 완전 삭제
    * @param reviewIdDto
    * @returns
    */
@@ -341,7 +346,7 @@ export class ReviewService {
         await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
       }
       //마지막. 리뷰 저장
-      const updatedReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
+      await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
       return;
     } catch (error) {
       throw error;
@@ -357,6 +362,13 @@ export class ReviewService {
   @Transactional()
   async postReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
     try {
+      const reviewImgCount = await this.reviewRepository.counteReviewImg(reviewImgSaveDto);
+      if (reviewImgCount >= 4) {
+        throw new BadRequestException('이미지갯수 초과', {
+          cause: new Error(),
+          description: '등록가능한 최대 이미지는 4개입니다.',
+        });
+      }
       const extention = path.extname(file.originalname); // 파일 확장자 추출
       const imgName = path.basename(file.originalname, extention); // 파일 이름
       const lastpath = file.originalname;
@@ -411,6 +423,11 @@ export class ReviewService {
     }
   }
 
+  /**
+   * 사용자가 좋아요한 리뷰목록 조회
+   * @param memberIdPagingDto
+   * @returns
+   */
   @Transactional()
   async getLikedReviewList(memberIdPagingDto: MemberIdPagingDto) {
     try {
