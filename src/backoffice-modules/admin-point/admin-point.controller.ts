@@ -27,26 +27,4 @@ export class AdminPointController {
     if (pointFlag !== 'save' && pointFlag !== 'recall') throw new RuntimeException('잘못된 접근 경로 입니다.');
     return await this.adminPointService.saveRecallPoint(pointFlag, memberId, createAdminPointDto);
   }
-
-  /*@ApiOperation({ summary: '포인트 적립' })
-  @ApiParam({
-    name: 'memberId',
-    type: Number,
-    description: '회원 아이디',
-  })
-  @Post('save/:memberId')
-  async save(@Param('memberId') memberId: number, @Body() createAdminPointDto: UpdateAdminPointDto) {
-    return await this.adminPointService.savePoint(memberId, createAdminPointDto);
-  }
-
-  @ApiOperation({ summary: '포인트 회수' })
-  @ApiParam({
-    name: 'memberId',
-    type: Number,
-    description: '회원 아이디',
-  })
-  @Post('recall/:memberId')
-  async recall(@Param('memberId') memberId: number, @Body() createAdminPointDto: UpdateAdminPointDto) {
-    return await this.adminPointService.recallPoint(memberId, createAdminPointDto);
-  }*/
 }

@@ -13,7 +13,7 @@ export class AdminPointService {
   ) {}
 
   /**
-   * 포인트 적립/회수
+   * 포인트 적립/회수 메서드
    * @param pointFlag
    * @param memberId
    * @param updateAdminPointDto
@@ -31,36 +31,12 @@ export class AdminPointService {
     return await this.processInsertUpdatePoint(pointFlag, memberId, recallPointDto);
   }
 
-  /*
-  /!**
-   * 포인트 적립 프로세스
-   * @param memberId
-   * @param updateAdminPointDto
-   * *!/
-  @Transactional()
-  async savePoint(memberId: number, updateAdminPointDto: UpdateAdminPointDto) {
-    const savePointDto = updateAdminPointDto.toSavePointDto();
-    if (savePointDto.newPoint < 1) throw new RuntimeException('적립 포인트는 0보다 더 큰 수만 가능합니다.');
 
-    return await this.processInsertUpdatePoint(memberId, savePointDto, 'save');
-  }
+  // private 메서드
 
-  /!**
-   * 포인트 회수 프로세스
-   * @param memberId
-   * @param updateAdminPointDto
-   * *!/
-  @Transactional()
-  async recallPoint(memberId: number, updateAdminPointDto: UpdateAdminPointDto) {
-    const recallPointDto = updateAdminPointDto.toRecallPointDto();
-    if (recallPointDto.newPoint > -1) throw new RuntimeException('적립 포인트는 0보다 더 작은 수만 가능합니다.');
-
-    return await this.processInsertUpdatePoint(memberId, recallPointDto, 'recall');
-  }
-*/
 
   /**
-   * [process] 포인트 적립/회수 메서드
+   * 포인트 적립/회수 프로세스
    * @param pointFlag
    * @param memberId
    * @param updateAdminPointDto
