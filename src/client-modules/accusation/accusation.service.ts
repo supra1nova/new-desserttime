@@ -14,7 +14,11 @@ export class AccusationService {
    */
   @Transactional()
   async getAccuList() {
-    return AccusationEnum;
+    const result = Object.entries(AccusationEnum).map(([key, value]) => ({
+      code: key,
+      text: value,
+    }));
+    return result;
   }
 
   /**
