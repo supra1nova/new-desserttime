@@ -97,13 +97,13 @@ export class MemberController {
     return await this.memberService.getPointHisoryList(memberPointListDto);
   }
 
-  @ApiOperation({ summary: '공지/이벤트 목록 조회' })
+  @ApiOperation({ summary: '공지/이벤트/자주묻는질문 목록 조회' })
   @Get('my-page/notice/list/:noticeType')
   async getNoticeList(@Query() noticeListDto: NoticeListDto) {
     return await this.memberService.getNoticeList(noticeListDto);
   }
 
-  @ApiOperation({ summary: '공지/이벤트 하나 조회' })
+  @ApiOperation({ summary: '공지/이벤트/자주묻는질문 하나 조회' })
   @Get('my-page/notice/:noticeType/:noticeId')
   async getNoticeOne(@Query() noticeDto: NoticeDto) {
     return await this.memberService.getNoticeOne(noticeDto);
