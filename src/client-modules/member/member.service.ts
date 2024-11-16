@@ -244,7 +244,11 @@ export class MemberService {
   @Transactional()
   async getReasonForLeaving() {
     try {
-      return MemberDeletion;
+      const result = Object.entries(MemberDeletion).map(([key, value]) => ({
+        code: key,
+        text: value,
+      }));
+      return result;
     } catch (error) {
       throw error;
     }
