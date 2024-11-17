@@ -390,6 +390,16 @@ export class ReviewRepository {
   }
 
   /**
+   * 리뷰 이미지 카운트
+   * @param reviewImgSaveDto
+   * @returns
+   */
+  async counteReviewImg(reviewImgSaveDto: ReviewImgSaveDto) {
+    return await this.reviewImg.count({
+      where: { reviewImg: { reviewId: reviewImgSaveDto.reviewId } },
+    });
+  }
+  /**
    * 리뷰 이미지 파일 하나 저장
    * @param reviewImgSaveDto
    * @param file
