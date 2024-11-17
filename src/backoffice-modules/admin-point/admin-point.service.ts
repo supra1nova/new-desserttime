@@ -31,18 +31,15 @@ export class AdminPointService {
     return await this.processInsertUpdatePoint(pointFlag, memberId, recallPointDto);
   }
 
-
-  // private 메서드
-
-
   /**
    * 포인트 적립/회수 프로세스
    * @param pointFlag
    * @param memberId
    * @param updateAdminPointDto
+   * @param reviewId
    * */
   @Transactional()
-  private async processInsertUpdatePoint(pointFlag: string, memberId: number, updateAdminPointDto: UpdateAdminPointDto) {
+  public async processInsertUpdatePoint(pointFlag: string, memberId: number, updateAdminPointDto: UpdateAdminPointDto, reviewId: number = null) {
     // 멤버로 생성된 포인트 정보가 있는지 확인
     const point = await this.adminPointRepository.findOneByMemberId(memberId);
     let pointResult: boolean = false;
@@ -60,7 +57,7 @@ export class AdminPointService {
       pointResult = await this.adminPointRepository.update(memberId, totalPoint);
     }
 
-    const pointHistoryResult = await this.adminPointHistoryService.insert(memberId, updateAdminPointDto);
+    const pointHistoryResult = await this.adminPointHistoryService.insert(memberId, updateAdminPointDto, reviewId);
     // PointHistory 에 신규 포인트 내역 적재
     return pointResult && pointHistoryResult;
   }
