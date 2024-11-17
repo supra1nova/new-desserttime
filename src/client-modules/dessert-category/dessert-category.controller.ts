@@ -3,7 +3,6 @@ import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DessertCategoryService } from './dessert-category.service';
 import { DessertSessionDto } from './dto/dessertsession.dto';
 import { FirstCategoryAppendDto } from './dto/firstcategory.append.dto';
-import { TransactionInterceptor } from 'src/config/interceptor/transaction.interceptor';
 import { ParentIdDto } from './dto/parent.id.dto';
 import { DessertCategoryIdDto } from './dto/dessert.category.dto';
 import { DessertCategoryNameDto } from './dto/dessert.category.name.dto';
@@ -31,7 +30,6 @@ export class DessertCategoryController {
     return await this.dessertCategoryService.getSessionSubDessertCategory(parentIdDto);
   }
 
-  @UseInterceptors(TransactionInterceptor)
   @ApiBody({
     description: `
     sessionNum: 카테고리 차수 1차:1 or 2차:2,\n
@@ -45,14 +43,12 @@ export class DessertCategoryController {
     return await this.dessertCategoryService.postDessertCategory(firstCategoryAppendDto);
   }
 
-  @UseInterceptors(TransactionInterceptor)
   @ApiOperation({ summary: '카테고리 하나 삭제' })
   @Delete('delete/:dessertCategoryId')
   async deleteDessertCategory(@Param() dessertCategoryIdDto: DessertCategoryIdDto) {
     return await this.dessertCategoryService.deleteDessertCategory(dessertCategoryIdDto);
   }
 
-  @UseInterceptors(TransactionInterceptor)
   @ApiOperation({ summary: '후기작성- 카테고리 목록 검색' })
   @Get('search/:dessertName')
   async getSearchCategoryList(@Param() dessertCategoryNameDto: DessertCategoryNameDto) {

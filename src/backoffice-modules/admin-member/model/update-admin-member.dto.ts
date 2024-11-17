@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { MemberGenderEnum, MemberTypeEnum } from './member.enum';
+import { MemberGender, MemberType } from '../../../common/enum/member.enum';
 
 export class UpdateAdminMemberDto {
   @ApiProperty({
-    example: '홍길동',
+    type: String,
     description: '회원 이름',
+    example: '홍길동',
     required: true,
   })
   @IsString()
@@ -13,8 +14,9 @@ export class UpdateAdminMemberDto {
   readonly nickName: string;
 
   @ApiProperty({
-    example: '자주 부정적인 후기를 등록하는 회원임',
+    type: String,
     description: '관리자 메모',
+    example: '자주 부정적인 후기를 등록하는 회원임',
     required: false,
   })
   @IsString()
@@ -22,74 +24,82 @@ export class UpdateAdminMemberDto {
   readonly memo: string;
 
   @ApiProperty({
+    type: String,
+    description: '회원 성별: M-남성 / F-여성 / N-선택안함 )',
     example: 'M',
-    description: '회원 성별( M:남성 / F:여성 / N:선택안함 )',
     required: false,
   })
-  @IsEnum(MemberGenderEnum)
+  @IsEnum(MemberGender)
   @IsNotEmpty()
-  readonly gender: MemberGenderEnum;
+  readonly gender: MemberGender;
 
   @ApiProperty({
-    example: '서울시',
+    type: String,
     description: '1차 지역',
+    example: '서울시',
     required: true,
   })
   @IsString()
   @IsOptional()
-  firstCity: string;
+  readonly firstCity: string;
 
   @ApiProperty({
-    example: 'OO구',
+    type: String,
     description: '2차 지역',
+    example: 'OO구',
     required: true,
   })
   @IsString()
   @IsOptional()
-  secondaryCity: string;
+  readonly secondaryCity: string;
 
   @ApiProperty({
-    example: 'OO동',
+    type: String,
     description: '3차 지역',
+    example: 'OO동',
     required: true,
   })
   @IsString()
   @IsOptional()
-  thirdCity: string;
+  readonly thirdCity: string;
 
   @ApiProperty({
+    enum: MemberType,
+    description: '회원 유형( N: 일반회원 normal user, P: 프로회원 pro user, A: 관리자 admin)',
     example: 'N',
-    description: '회원 유형( N: 일반회원 normal, P: 프로회원 pro )',
     required: true,
   })
-  @IsEnum(MemberTypeEnum)
+  @IsEnum(MemberType)
   @IsNotEmpty()
-  type: MemberTypeEnum;
+  readonly type: MemberType;
 
   @ApiProperty({
-    example: 'true',
+    type: () => Boolean,
     description: '광고 수신 동의 여부( true: 동의, false: 비동의 )',
-    required: true,
-  })
-  @IsBoolean()
-  @IsNotEmpty()
-  isAgreeAD: boolean;
-
-  @ApiProperty({
     example: 'true',
-    description: '알림 수신 동의 여부( true: 동의, false: 비동의 )',
     required: true,
   })
   @IsBoolean()
   @IsNotEmpty()
-  isAgreeAlarm: boolean;
+  readonly isAgreeAD: boolean;
 
   @ApiProperty({
-    example: '[1, 2, 3, 4]',
+    type: () => Boolean,
+    description: '알림 수신 동의 여부( true: 동의, false: 비동의 )',
+    example: 'true',
+    required: true,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  readonly isAgreeAlarm: boolean;
+
+  @ApiProperty({
+    type: Array,
     description: '1차 디저트 카테고리 id 배열',
+    example: '[1, 2, 3, 4]',
     required: true,
   })
   @IsArray()
   @IsOptional()
-  uidIdArr: number[];
+  readonly uidIdArr: number[];
 }

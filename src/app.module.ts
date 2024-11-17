@@ -8,6 +8,11 @@ import { AdminMemberModule } from './backoffice-modules/admin-member/admin-membe
 import { AdminUserInterestDessertModule } from './backoffice-modules/admin-user-interest-dessert/admin-user-interest-dessert.module';
 import { AdminPointModule } from './backoffice-modules/admin-point/admin-point.module';
 import { AdminPointHistoryModule } from './backoffice-modules/admin-point-history/admin-point-history.module';
+import { AdminQnaModule } from './backoffice-modules/admin-qna/admin-qna.module';
+import { AdminDessertCategoryModule } from './backoffice-modules/admin-dessert-category/admin-dessert-category.module';
+import { AdminReviewModule } from './backoffice-modules/admin-review/admin-review.module';
+import { AdminReviewIngredientModule } from './backoffice-modules/admin-review-ingredient/admin-review-ingredient.module';
+import { AdminReviewImgModule } from './backoffice-modules/admin-review-img/admin-review-img.module';
 import { NoticeModule } from './backoffice-modules/notice/notice.module';
 import { MemberModule } from './client-modules/member/member.module';
 import { DessertCategoryModule } from './client-modules/dessert-category/dessert-category.module';
@@ -20,12 +25,12 @@ import { LoggerMiddleware } from './config/middleware/logger.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TransactionInterceptor } from './config/interceptor/transaction.interceptor';
 import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
 import { ReviewModule } from './client-modules/review/review.module';
-import { LoggerInterceptor } from './config/interceptor/logger.interceptor';
 import { AccusationModule } from './client-modules/accusation/accusation.module';
 import { FileTransModule } from './config/file/filetrans.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -34,6 +39,11 @@ import { FileTransModule } from './config/file/filetrans.module';
     AdminUserInterestDessertModule,
     AdminPointModule,
     AdminPointHistoryModule,
+    AdminQnaModule,
+    AdminDessertCategoryModule,
+    AdminReviewModule,
+    AdminReviewIngredientModule,
+    AdminReviewImgModule,
     NoticeModule,
     MemberModule,
     DessertCategoryModule,
@@ -49,31 +59,31 @@ import { FileTransModule } from './config/file/filetrans.module';
     }),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
-      rootPath: path.join(String(process.env.fileroot)),
+      rootPath: path.join(process.cwd(), 'uploads'), // 'uploads' 디렉토리를 제공
+      //rootPath: path.join(String(process.env.fileroot)),
+
       serveStaticOptions: {
         //index: false, // 디렉토리 색인 페이지 표시 비활성화
-        setHeaders: (res) => {
-          res.setHeader(
-            'Content-Security-Policy',
-            'upgrade-insecure-requests',
-            //  `attachment; filename=${encodeURIComponent(path)}`,
-          );
-          //res.setHeader('Content-Type', 'application/octet-stream'); // MIME 유형 설정
+        setHeaders: (res, filePath) => {
+          const filename = filePath.split('/').pop(); // 파일 경로에서 파일명 추출
+          res.setHeader('Content-Security-Policy', 'upgrade-insecure-requests', `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`);
         },
       },
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => await typeORMConfig(configService),
+      dataSourceFactory: async (options) => {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggerInterceptor,
-    },
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,

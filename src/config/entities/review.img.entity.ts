@@ -1,5 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm';
-import { Member } from './member.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Review } from './review.entity';
 
 @Entity()
@@ -21,6 +20,9 @@ export class ReviewImg {
 
   @Column({ default: false })
   isMain: boolean;
+
+  @Column({ default: true })
+  isUsable: boolean;
 
   @Column()
   num: number;

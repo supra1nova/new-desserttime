@@ -6,8 +6,11 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { winstonLogger } from './config/logger/winston.util';
 import { HttpExceptionFilter } from './config/filters/http.exception.filter';
 import { ValidationPipe } from '@nestjs/common';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
+  initializeTransactionalContext();
+
   // app.use(
   //   ['/docs', '/docs-json'],
   //   expressBasicAuth({

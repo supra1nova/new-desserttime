@@ -7,6 +7,7 @@ import { DessertCategory } from './dessert.category.entity';
 import { PointHistory } from './point.history.entity';
 import { ReceiptImg } from './receipt.Img.entity';
 import { ReviewIngredient } from './review.ingredient.entity';
+import { ReviewStatus } from '../../common/enum/review.enum';
 
 @Entity()
 export class Review {
@@ -45,6 +46,9 @@ export class Review {
 
   @Column({ nullable: true })
   adminMemo: string;
+
+  @Column({ default: ReviewStatus.WAIT })
+  status: ReviewStatus;
 
   @CreateDateColumn()
   createdDate: Date;

@@ -3,8 +3,8 @@ import { IsBoolean, IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validat
 
 export class NoticeDto {
   @ApiProperty({
-    example: '1',
     description: '공지사항 일련번호',
+    example: '1',
     required: true,
   })
   @IsNumber()
@@ -12,8 +12,8 @@ export class NoticeDto {
   readonly noticeId: number;
 
   @ApiProperty({
-    example: '공지사항 제목입니다.',
     description: '공지사항 제목',
+    example: '공지사항 제목입니다.',
     required: true,
   })
   @IsString()
@@ -21,8 +21,8 @@ export class NoticeDto {
   readonly title: string;
 
   @ApiProperty({
-    example: '공지사항 본문입니다.',
     description: '공지사항 본문',
+    example: '공지사항 본문입니다.',
     required: true,
   })
   @IsString()
@@ -30,16 +30,16 @@ export class NoticeDto {
   readonly content: string;
 
   @ApiProperty({
-    example: 'true',
     description: 'isNotice',
+    example: 'true',
     required: true,
   })
   @IsBoolean()
   readonly isNotice: boolean;
 
   @ApiProperty({
-    example: 'true',
     description: '게시글 상단고정 여부',
+    example: 'true',
     required: true,
   })
   @IsBoolean()
@@ -47,8 +47,8 @@ export class NoticeDto {
   readonly isTopFixed: boolean;
 
   @ApiProperty({
-    example: 'true',
     description: '게시글 삭제여부',
+    example: 'true',
     required: false,
   })
   @IsBoolean()
@@ -56,8 +56,8 @@ export class NoticeDto {
   readonly isDeleted: boolean;
 
   @ApiProperty({
-    example: '2024-01-01',
     description: '게시글 작성일',
+    example: '2024-01-01',
     required: true,
   })
   @IsDate()
@@ -65,8 +65,8 @@ export class NoticeDto {
   readonly createdDate: Date;
 
   @ApiProperty({
-    example: '2024-01-01',
     description: '게시글 수정일',
+    example: '2024-01-01',
     required: false,
   })
   @IsDate()

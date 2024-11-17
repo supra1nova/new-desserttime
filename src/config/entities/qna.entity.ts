@@ -6,24 +6,42 @@ export class QnA {
   @PrimaryGeneratedColumn()
   qnaId: number;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   email: string;
 
   @Column()
   content: string;
 
-  @Column({default:false})
-  isAnswered:boolean;
+  @Column({ nullable: true })
+  replyContent: string;
 
-  @Column({default:true})
-  isUsable:boolean;
-  
+  @Column({ default: false })
+  isAnswered: boolean;
+
+  @Column({ default: true })
+  isUsable: boolean;
+
   @CreateDateColumn()
   createdDate: Date;
-  
+
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(()=>Member, member => member.qnas)
-  member:Member
+  @Column({ nullable: true })
+  replyAdminId: number;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  replyCreatedDate: Date;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  replyUpdateDate: Date;
+
+  @ManyToOne(() => Member, (member) => member.qnas)
+  member: Member;
 }

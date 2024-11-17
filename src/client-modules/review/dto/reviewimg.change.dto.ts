@@ -2,18 +2,39 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class UpdateReviewImgDto {
-  @ApiProperty({ example: 99, description: '리뷰이미지 ID' })
-  @IsNotEmpty()
+  @ApiProperty({
+    type: Number,
+    description: '리뷰 이미지 id',
+    required: true,
+  })
   @IsNumber()
+  @IsNotEmpty()
   reviewImgId: number;
 
-  @ApiProperty({ example: 1, description: '이미지 order number' })
-  @IsNotEmpty()
+  @ApiProperty({
+    type: Number,
+    description: '이미지 순서',
+    required: true,
+  })
   @IsNumber()
+  @IsNotEmpty()
   num: number;
 
-  @ApiProperty({ example: true, description: '대표이미지 여부 ' })
-  @IsNotEmpty()
+  @ApiProperty({
+    type: () => Boolean,
+    description: '대표 이미지 여부 ',
+    required: true,
+  })
   @IsBoolean()
+  @IsNotEmpty()
   isMain: boolean;
+
+  @ApiProperty({
+    type: () => Boolean,
+    description: '이미지 사용 여부 ',
+    required: true,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  isUsable: boolean;
 }

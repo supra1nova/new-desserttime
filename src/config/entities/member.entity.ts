@@ -1,12 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { UserInterestDessert } from './user.interest.dessert.entity';
 import { QnA } from './qna.entity';
 import { Review } from './review.entity';
@@ -14,6 +6,8 @@ import { Like } from './like.entity';
 import { ProfileImg } from './profile.img.entity';
 import { Accusation } from './accusation.entity';
 import { Point } from './point.entity';
+import { MemberType } from '../../common/enum/member.enum';
+import { MemberDeletion } from './member.deleteion.entity';
 
 @Entity()
 export class Member {
@@ -32,13 +26,13 @@ export class Member {
   @Column()
   memberName: string;
 
-  @Column()
+  @Column({ nullable: true })
   nickName: string;
 
-  @Column()
+  @Column({ nullable: true })
   birthYear: number;
 
-  @Column()
+  @Column({ nullable: true })
   gender: string;
 
   @Column({ nullable: true, default: false })
@@ -59,22 +53,22 @@ export class Member {
   @Column({ nullable: true })
   memo: string;
 
-  @Column({ nullable: true, default: 'user' })
+  @Column({ nullable: true, default: MemberType.NORMAL_USER })
   type: string;
 
-  @Column()
+  @Column({ nullable: true })
   firstCity: string;
 
-  @Column()
+  @Column({ nullable: true })
   secondaryCity: string;
 
-  @Column()
+  @Column({ nullable: true })
   thirdCity: string;
 
-  @Column()
+  @Column({ default: false })
   isAgreeAD: boolean;
 
-  @Column({ nullable: true, default: true })
+  @Column({ default: false })
   isAgreeAlarm: boolean;
 
   @OneToMany(() => UserInterestDessert, (udi) => udi.member)
@@ -97,4 +91,7 @@ export class Member {
 
   @OneToOne(() => Point, (point) => point.member)
   point: Point;
+
+  @OneToOne(() => MemberDeletion, (memberDeletion) => memberDeletion.member)
+  memberDeletion: MemberDeletion;
 }

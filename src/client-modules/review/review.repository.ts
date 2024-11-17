@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/config/entities/review.entity';
-import { In, Repository } from 'typeorm';
+import { In, LessThan, Repository } from 'typeorm';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { Like } from 'src/config/entities/like.entity';
@@ -15,9 +15,11 @@ import { ReviewUpdateDto } from './dto/review.update.dto';
 import { ReviewIngredient } from 'src/config/entities/review.ingredient.entity';
 import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
-import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 import { Ingredient } from 'src/config/entities/ingredient.entity';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
+import { ReviewStatus } from 'src/common/enum/review.enum';
+import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
+import { MemberIdPagingDto } from './dto/review.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -31,200 +33,160 @@ export class ReviewRepository {
   ) {}
 
   /**
+   * 사용자가 선택한 카테고리의 2차 목록 조회
+   * @param memberIdDto
+   * @returns
+   */
+  async findMemberInterestList(memberIdDto: MemberIdDto) {
+    return await this.member
+      .createQueryBuilder('member')
+      .leftJoin('member.uids', 'uids')
+      .leftJoin(DessertCategory, 'dc', 'dc.parentDCId = uids.dcDessertCategoryId')
+      .select('dc.dessertCategoryId')
+      .where('dc.sessionNum = :sessionNum', { sessionNum: 2 })
+      .andWhere('member.memberId =:memberId', { memberId: memberIdDto.memberId })
+      .getRawMany();
+  }
+
+  /**
+   * 사용자가 고른 카테고리중에 리뷰 수가 5개 이상인 디저트카테고리 조회.
+   * 리뷰갯수가 많은 순으로 총 25개만 조회
+   * @param dessertCategoryId
+   * @returns
+   */
+  async findUsablecategoryList(dessertCategoryId) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
+      .andWhere({ status: ReviewStatus.SAVED })
+      .andWhere({ isUsable: true })
+      .andWhere('dc.dessertCategoryId IN (:...dessertCategoryId)', { dessertCategoryId })
+      .groupBy('dc.dessertCategoryId, dc.dessertName')
+      .having('COUNT(review.reviewId) >= :minReviewCount', { minReviewCount: 5 })
+      .orderBy('COUNT(review.reviewId)', 'DESC')
+      .select(['dc.dessertCategoryId', 'dc.dessertName'])
+      .limit(25)
+      .getMany();
+  }
+
+  /**
+   * 각 카테고리별 리뷰이미지 10개씩 조회
+   * @param dessertCategoryId
+   * @returns
+   */
+  async findReviewImgList(dessertCategoryId) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoin(DessertCategory, 'dc')
+      .leftJoin(ReviewImg, 'reviewImg')
+      .where('dc.dessertCategoryId=:dessertCategoryId', { dessertCategoryId })
+      .andWhere('reviewImg.isMain=:isMain', { isMain: true })
+      .select('review.reviewId')
+      .addSelect('reviewImg.middlepath')
+      .addSelect('reviewImg.path')
+      .addSelect('reviewImg.extention')
+      .addSelect('reviewImg.imgName')
+      .orderBy('review.createdDate', 'DESC')
+      .limit(10)
+      .getMany();
+  }
+
+  /**
+   * 사용자가 선택하지 않은 카테고리 중에서
+   * 리뷰수가 많은 2차 카테고리 목록 조회
+   * @param limitnum
+   * @returns
+   */
+  async findRandomCategoryList(limitnum: number) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
+      .andWhere({ status: ReviewStatus.SAVED })
+      .andWhere({ isUsable: true })
+      .andWhere('dc.sessionNum = :sessionNum', { sessionNum: 2 })
+      .groupBy('dc.dessertCategoryId, dc.dessertName')
+      .orderBy('COUNT(review.reviewId)', 'DESC')
+      .select(['dc.dessertCategoryId', 'dc.dessertName'])
+      .limit(limitnum)
+      .getMany();
+  }
+
+  /**
+   * 사용자가 선택하지 않은 카테고리의
+   * 리뷰이미지 리스트 조회
+   * @param dessertCategoryId
+   * @returns
+   */
+  async findRandomReviewImgList(dessertCategoryId) {
+    return await this.review
+      .createQueryBuilder('review')
+      .leftJoin(DessertCategory, 'dc')
+      .leftJoin(ReviewImg, 'reviewImg')
+      .where('dc.dessertCategoryId=:dessertCategoryId', { dessertCategoryId })
+      .andWhere('reviewImg.isMain=:isMain', { isMain: true })
+      .select('review.reviewId')
+      .addSelect('reviewImg.middlepath')
+      .addSelect('reviewImg.path')
+      .addSelect('reviewImg.extention')
+      .addSelect('reviewImg.imgName')
+      .orderBy('review.createdDate', 'DESC')
+      .limit(10)
+      .getMany();
+  }
+
+  /**
    * 리뷰 카테코리 날짜순 목록 조회
    * @param reviewCategoryDto
    * @returns
    */
-  async findReviewCategoryDateList(reviewCategoryDto: ReviewCategoryDto) {
-    return await this.review
+  async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
+    const { cursor, limit } = reviewCategoryDto;
+
+    let orderField;
+    reviewCategoryDto.selectedOrder === 'D' ? (orderField = 'createdDate') : (orderField = 'totalLikedNum');
+
+    const queryBuilder = await this.review
       .createQueryBuilder('review')
       .select([
-        'review.reviewId AS reviewId',
-        'review.totalLikedNum AS totalLikedNum',
-        'review.menuName AS menuName',
-        'review.content AS content',
-        'review.storeName AS storeName',
-        'review.score AS score',
-        'review.createdDate AS createdDate',
-        'dessertCategory.dessertCategoryId AS dessertCategoryId',
-        'member.nickName AS memberNickName',
-        'member.isHavingImg AS memberIsHavingImg',
-        'memberImg.middlepath AS memberImgMiddlepath',
-        'memberImg.path AS memberImgPath',
-        'memberImg.extention AS memberImgExtention',
-        'reviewImg.isMain AS reviewImgIsMain',
-        'reviewImg.num AS reviewImgNum',
-        'reviewImg.middlepath AS reviewImgMiddlepath',
-        'reviewImg.path AS reviewImgPath',
-        'reviewImg.extention AS reviewImgExtention',
-        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS isLiked',
+        'review.reviewId AS "reviewId"',
+        'review.totalLikedNum AS "totalLikedNum"',
+        'review.menuName AS "menuName"',
+        'review.content AS "content"',
+        'review.storeName AS "storeName"',
+        'review.score AS "score"',
+        'review.createdDate AS "createdDate"',
+        'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
+        'member.nickName AS "memberNickName"',
+        'member.isHavingImg AS "memberIsHavingImg"',
+        'profileImg.middlePath AS profileImgMiddlePath',
+        'profileImg.path AS profileImgPath',
+        'profileImg.extension AS profileImgExtention',
+        'reviewImg.isMain AS "reviewImgIsMain"',
+        'reviewImg.num AS "reviewImgNum"',
+        'reviewImg.middlepath AS "reviewImgMiddlepath"',
+        'reviewImg.path AS "reviewImgPath"',
+        'reviewImg.extention AS "reviewImgExtention"',
+        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
       ])
       .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
       .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      .leftJoin(ProfileImg, 'memberImg', 'member.memberId = memberImg.memberImgId')
+      .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
       .where('review.isUsable = :isUsable', { isUsable: true })
-      .andWhere('review.isUpdated = :isUpdated', { isUpdated: true })
-      .andWhere('review.isInitalized = :isInitalized', { isInitalized: true })
+      .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
       .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
         dessertCategoryId: reviewCategoryDto.dessertCategoryId,
       })
       .setParameter('memberId', reviewCategoryDto.memberId)
-      .orderBy('review.createdDate', 'DESC')
-      .getRawMany();
+      .orderBy(`review.${orderField}`, 'DESC')
+      .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
 
-    // .select([
-    //   'review.reviewId AS reviewId',
-    //   'review.totalLikedNum AS totalLikedNum',
-    //   'review.menuName AS menuName',
-    //   'review.content AS content',
-    //   'review.storeName AS storeName',
-    //   'review.score AS score',
-    //   'review.createdDate AS createdDate',
-    //   'dessertCategory.dessertCategoryId AS dessertCategoryId',
-    //   'member.nickName AS memberNickName',
-    //   'member.isHavingImg AS memberIsHavingImg',
-    //   'memberImg.middlepath AS memberImgMiddlepath',
-    //   'memberImg.path AS memberImgPath',
-    //   'memberImg.extention AS memberImgExtention',
-    //   'reviewImg.isMain AS reviewImgIsMain',
-    //   'reviewImg.num AS reviewImgNum',
-    //   'reviewImg.middlepath AS reviewImgMiddlepath',
-    //   'reviewImg.path AS reviewImgPath',
-    //   'reviewImg.extention AS reviewImgExtention',
-    //   'CASE WHEN like.memberId = :memberId THEN true ELSE false END AS isLiked',
-    // ])
-    // .leftJoin('review.dessertCategory', 'dessertCategory')
-    // .leftJoin('review.member', 'member')
-    // .leftJoin('member.memberImg', 'memberImg')
-    // .leftJoin('review.reviewImg', 'reviewImg')
-    // .leftJoin('review.likes', 'like')
-    // .where('review.isUsable = :isUsable', { isUsable: true })
-    // .andWhere('review.isUpdated = :isUpdated', { isUpdated: true })
-    // .andWhere('review.isInitalized = :isInitalized', { isInitalized: true })
-    // .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
-    //   dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-    // })
-    // .setParameters({ memberId: reviewCategoryDto.memberId }) // memberId를 전달합니다
-    // .orderBy('review.createdDate', 'DESC')
-    // .getRawMany();
+    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: Number(cursor) });
 
-    // find({
-    //   select: {
-    //     reviewId: true,
-    //     totalLikedNum: true,
-    //     menuName: true,
-    //     content: true,
-    //     storeName: true,
-    //     score: true,
-    //     createdDate: true,
-    //     dessertCategory: { dessertCategoryId: true },
-    //     member: {
-    //       nickName: true,
-    //       isHavingImg: true,
-    //       img: { middlepath: true, path: true, extention: true },
-    //     },
-    //     reviewImg: {
-    //       isMain: true,
-    //       num: true,
-    //       middlepath: true,
-    //       path: true,
-    //       extention: true,
-    //     },
+    const items = await queryBuilder.getRawMany();
 
-    //   },
-    //   where: {
-    //     isUsable: true,
-    //     isUpdated: true,
-    //     isInitalized: true,
-    //     dessertCategory: {
-    //       dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-    //     }
-    //   },
-    //   relations: ['member', 'reviewImg', 'dessertCategory','likes'],
-    //   order: { createdDate: 'DESC' },
-    // });
-  }
-
-  /**
-   * 리뷰 카테고리 좋아요 많은 순 목록 조회
-   * @param reviewCategoryDto
-   * @returns
-   */
-  async findReviewCategoryLikeList(reviewCategoryDto: ReviewCategoryDto) {
-    return await this.review
-      .createQueryBuilder('review')
-      .select([
-        'review.reviewId AS reviewId',
-        'review.totalLikedNum AS totalLikedNum',
-        'review.menuName AS menuName',
-        'review.content AS content',
-        'review.storeName AS storeName',
-        'review.score AS score',
-        'review.createdDate AS createdDate',
-        'dessertCategory.dessertCategoryId AS dessertCategoryId',
-        'member.nickName AS memberNickName',
-        'member.isHavingImg AS memberIsHavingImg',
-        'memberImg.middlepath AS memberImgMiddlepath',
-        'memberImg.path AS memberImgPath',
-        'memberImg.extention AS memberImgExtention',
-        'reviewImg.isMain AS reviewImgIsMain',
-        'reviewImg.num AS reviewImgNum',
-        'reviewImg.middlepath AS reviewImgMiddlepath',
-        'reviewImg.path AS reviewImgPath',
-        'reviewImg.extention AS reviewImgExtention',
-        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS isLiked',
-      ])
-      .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
-      .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
-      .leftJoin(ProfileImg, 'memberImg', 'member.memberId = memberImg.memberImgId')
-      .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
-      .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
-      .where('review.isUsable = :isUsable', { isUsable: true })
-      .andWhere('review.isUpdated = :isUpdated', { isUpdated: true })
-      .andWhere('review.isInitalized = :isInitalized', { isInitalized: true })
-      .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
-        dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-      })
-      .setParameter('memberId', reviewCategoryDto.memberId)
-      .orderBy('review.totalLikedNum', 'DESC')
-      .getRawMany();
-
-    // .find({
-    //   select: {
-    //     reviewId: true,
-    //     totalLikedNum: true,
-    //     menuName: true,
-    //     content: true,
-    //     storeName: true,
-    //     score: true,
-    //     createdDate: true,
-    //     dessertCategory: { dessertCategoryId: true },
-    //     member: {
-    //       nickName: true,
-    //       isHavingImg: true,
-    //       img: { middlepath: true, path: true, extention: true },
-    //     },
-    //     reviewImg: {
-    //       isMain: true,
-    //       num: true,
-    //       middlepath: true,
-    //       path: true,
-    //       extention: true,
-    //     },
-    //   },
-    //   where: {
-    //     isUsable: true,
-    //     isUpdated: true,
-    //     isInitalized: true,
-    //     dessertCategory: {
-    //       dessertCategoryId: reviewCategoryDto.dessertCategoryId,
-    //     },
-    //   },
-    //   relations: ['member', 'reviewImg', 'dessertCategory'],
-    //   order: { totalLikedNum: 'DESC' },
-    // });
+    return new ResponseCursorPagination(items, limit, 'reviewId');
   }
 
   /**
@@ -307,7 +269,7 @@ export class ReviewRepository {
    */
   async findGenerableReviewCount(memberIdDto: MemberIdDto) {
     return await this.review.count({
-      where: { isUsable: true, isUpdated: false, member: { memberId: memberIdDto.memberId } },
+      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdDto.memberId } },
     });
   }
 
@@ -316,12 +278,15 @@ export class ReviewRepository {
    * @param memberIdDto
    * @returns
    */
-  async findGenerableReviewList(memberIdDto: MemberIdDto) {
-    return await this.review.find({
-      select: { reviewId: true, menuName: true, storeName: true, isInitalized: true },
-      where: { isUsable: true, isUpdated: false, member: { memberId: memberIdDto.memberId } },
+  async findGenerableReviewList(memberIdPagingDto: MemberIdPagingDto) {
+    const { limit, cursor } = memberIdPagingDto;
+    const items = await this.review.find({
+      select: { reviewId: true, menuName: true, storeName: true, status: true },
+      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdPagingDto.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
       order: { createdDate: 'ASC', menuName: 'ASC' },
     });
+
+    return new ResponseCursorPagination(items, limit, 'reviewId');
   }
 
   /**
@@ -334,7 +299,7 @@ export class ReviewRepository {
   }
 
   /**
-   * 작성가능한 후기 하나 삭제
+   * 후기 하나 삭제
    * @returns
    */
   async deleteGenerableReview(reviewIdDto: ReviewIdDto) {
@@ -370,60 +335,11 @@ export class ReviewRepository {
       .leftJoinAndSelect('review.reviewIngredients', 'reviewIngredient')
       .leftJoinAndSelect('reviewIngredient.ingredient', 'ingredient')
       .where('review.reviewId = :reviewId', { reviewId: reviewIdDto.reviewId })
-      .andWhere('review.isUpdated = :isUpdated', { isUpdated: false })
+      .andWhere('review.status = :status', { status: In([ReviewStatus.WAIT, ReviewStatus.INIT]) })
       .andWhere('review.isUsable = :isUsable', { isUsable: true })
-      // .select([
-      //   'review.reviewId',
-      //   'review.content',
-      //   'review.menuName',
-      //   'review.storeName',
-      //   'review.score',
-      //   'dessertCategory.dessertCategoryId',
-      //   'reviewImg.reviewImgId',
-      //   'reviewImg.middlepath',
-      //   'reviewImg.path',
-      //   'reviewImg.extention',
-      //   'reviewImg.isMain',
-      //   'reviewImg.num',
-      //   'reviewImg.imgName',
-      //   'ingredient.ingredientId',
-      // ])
       .getOne();
+  }
 
-    // findOne({
-    //   where: {
-    //     reviewId: reviewIdDto.reviewId,
-    //     isUpdated: false,
-    //     isUsable: true,
-    //   },
-    //   relations: ['dessertCategory', 'reviewImg', 'reviewIngredients'],
-    //   select: {
-    //     reviewId: true,
-    //     content: true,
-    //     menuName: true,
-    //     storeName: true,
-    //     score: true,
-    //     dessertCategory: {
-    //       dessertCategoryId: true,
-    //     },
-    //     reviewImg: {
-    //       reviewImgId: true,
-    //       middlepath: true,
-    //       path: true,
-    //       extention: true,
-    //       isMain: true,
-    //       num: true,
-    //       imgName: true,
-    //     },
-    //     reviewIngredients: {
-    //       reviewIngredientId: true,
-    //     },
-    //   },
-    // });
-  }
-  async lll(data: any) {
-    return await this.reviewIngredient.find();
-  }
   /**
    * 기존 리뷰에 선택된 재료가 있는지 확인
    * @param reviewUpdateDto
@@ -456,8 +372,7 @@ export class ReviewRepository {
   async updateGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
     const saveReview = new Review();
     saveReview.content = reviewUpdateDto.content;
-    saveReview.isInitalized = true;
-    saveReview.isSaved = reviewUpdateDto.isSaved;
+    saveReview.status = reviewUpdateDto.status == 'WAIT' ? ReviewStatus.WAIT : ReviewStatus.INIT;
     saveReview.menuName = reviewUpdateDto.menuName;
     saveReview.score = reviewUpdateDto.score;
     saveReview.storeName = reviewUpdateDto.storeName;
@@ -474,6 +389,16 @@ export class ReviewRepository {
     return await this.review.save(saveReview);
   }
 
+  /**
+   * 리뷰 이미지 카운트
+   * @param reviewImgSaveDto
+   * @returns
+   */
+  async counteReviewImg(reviewImgSaveDto: ReviewImgSaveDto) {
+    return await this.reviewImg.count({
+      where: { reviewImg: { reviewId: reviewImgSaveDto.reviewId } },
+    });
+  }
   /**
    * 리뷰 이미지 파일 하나 저장
    * @param reviewImgSaveDto
@@ -514,12 +439,48 @@ export class ReviewRepository {
   }
 
   /**
-   * okay - 작성가능한 리뷰 하나 조회
-   * okay - 이미지 조회
-   * okay - 재료 목록 조회
-   * okay - 카테고리 검색 조회
-   * okay - 작성가능한 리뷰 그냥 저장
-   * okay - 작성완료 저장
-   * okay - 이미지 저장, 삭제, 순서변경, 메인변경
+   * 내가 좋아요를 누른 리뷰 목록조회하기
    */
+  async findLikedReviewList(memberIdPagingDto: MemberIdPagingDto) {
+    const { cursor, limit } = memberIdPagingDto;
+    const queryBuilder = await this.review
+      .createQueryBuilder('review')
+      .select([
+        'review.reviewId AS "reviewId"',
+        'review.totalLikedNum AS "totalLikedNum"',
+        'review.menuName AS "menuName"',
+        'review.content AS "content"',
+        'review.storeName AS "storeName"',
+        'review.score AS "score"',
+        'review.createdDate AS "createdDate"',
+        'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
+        'member.nickName AS "memberNickName"',
+        'member.isHavingImg AS "memberIsHavingImg"',
+        'profileImg.middlePath AS profileImgMiddlePath',
+        'profileImg.path AS profileImgPath',
+        'profileImg.extension AS profileImgExtention',
+        'reviewImg.isMain AS "reviewImgIsMain"',
+        'reviewImg.num AS "reviewImgNum"',
+        'reviewImg.middlepath AS "reviewImgMiddlepath"',
+        'reviewImg.path AS "reviewImgPath"',
+        'reviewImg.extention AS "reviewImgExtention"',
+        'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
+      ])
+      .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
+      .leftJoin(Member, 'member', 'member.memberId = review.memberMemberId')
+      .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
+      .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
+      .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
+      .where('review.isUsable = :isUsable', { isUsable: true })
+      .andWhere('review.status = :status', { status: ReviewStatus.SAVED }) // status: In([ReviewStatus.WAIT, ReviewStatus.INIT])
+      .andWhere('like.memberMemberId = :likeMemberId', { likeMemberId: memberIdPagingDto.memberId })
+      .orderBy('review.createdDate', 'DESC')
+      .setParameter('memberId', memberIdPagingDto.memberId)
+      .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
+
+    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: Number(cursor) });
+    const items = await queryBuilder.getRawMany();
+
+    return new ResponseCursorPagination(items, limit, 'reviewId');
+  }
 }

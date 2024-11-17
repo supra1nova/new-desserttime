@@ -1,24 +1,47 @@
 import { PageRequest } from '../../common/dto/page.request';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { MemberEnum } from './member.enum';
+import { SearchOrder, MemberSearchType } from '../../../common/enum/member.enum';
+import { Transform } from 'class-transformer';
 
 export class SearchAdminMemberDto extends PageRequest {
-  @IsEnum(MemberEnum)
-  @IsOptional()
   @ApiProperty({
-    type: MemberEnum,
-    description: '검색어 종류',
+    type: () => Boolean,
+    isArray: false,
+    description: '회원가입 상태: true / false',
     required: false,
   })
-  readonly searchType?: MemberEnum;
-
-  @IsString()
+  @IsBoolean()
   @IsOptional()
+  @Transform(({ obj }) => obj.isUsable === 'true')
+  readonly isUsable?: string;
+
+  @ApiProperty({
+    enum: MemberSearchType,
+    isArray: false,
+    description: '검색어 종류: memberEmail / nickName',
+    required: false,
+  })
+  @IsEnum(MemberSearchType)
+  @IsOptional()
+  readonly searchType?: MemberSearchType;
+
   @ApiProperty({
     type: String,
     description: '검색값',
     required: false,
   })
+  @IsString()
+  @IsOptional()
   readonly searchValue?: string;
+
+  @ApiProperty({
+    enum: SearchOrder,
+    isArray: false,
+    description: '회원정렬순서: DESC / ASC',
+    required: false,
+  })
+  @IsEnum(SearchOrder)
+  @IsOptional()
+  readonly orderValue?: SearchOrder = SearchOrder.DESC;
 }

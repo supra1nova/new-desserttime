@@ -5,24 +5,24 @@ import { Type } from 'class-transformer';
 const DEFAULT_LIMIT_SIZE = 10;
 
 export class PageRequest {
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
   @ApiProperty({
     type: Number,
     description: '페이지 번호',
     required: false,
   })
-  @Type(() => Number)
-  @IsNumber()
-  @IsOptional()
   pageNo?: number | 1;
 
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
   @ApiProperty({
     type: Number,
     description: '한 페이지에 로드할 최대 게시물 수량',
     required: false,
   })
-  @Type(() => Number)
-  @IsNumber()
-  @IsOptional()
   limitSize?: number | 10;
 
   /**

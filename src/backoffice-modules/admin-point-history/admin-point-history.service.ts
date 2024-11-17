@@ -3,6 +3,7 @@ import { AdminPointHistoryRepository } from './admin-point-history.repository';
 import { UpdateAdminPointDto } from '../admin-point/model/update-admin-point.dto';
 import { Page } from '../common/dto/page.dto';
 import { SearchAdminPointHistoryDto } from './model/search-admin-point-history.dto';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AdminPointHistoryService {
@@ -12,9 +13,11 @@ export class AdminPointHistoryService {
    * 신규 PointHistory 삽입
    * @param memberId
    * @param updateAdminPointDto
+   * @param reviewId
    * @return Promise<boolean>
    * */
-  async insert(memberId: number, updateAdminPointDto: UpdateAdminPointDto) {
+  @Transactional()
+  async insert(memberId: number, updateAdminPointDto: UpdateAdminPointDto, reviewId: number = null) {
     const member = {};
     member['memberId'] = memberId;
 
@@ -22,6 +25,12 @@ export class AdminPointHistoryService {
     pointHistory['member'] = member;
     pointHistory['newPoint'] = updateAdminPointDto.newPoint;
     pointHistory['pointType'] = updateAdminPointDto.pointType;
+
+    if (reviewId !== null) {
+      const review = {};
+      review['reviewId'] = reviewId;
+      pointHistory['review'] = review;
+    }
 
     return await this.adminPointHistoryRepository.insert(pointHistory);
   }

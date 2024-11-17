@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Page } from '../common/dto/page.dto';
 import { AdminMemberRepository } from './admin-member.repository';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
@@ -6,6 +6,7 @@ import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 import { Member } from '../../config/entities/member.entity';
 import { AdminUserInterestDessertService } from '../admin-user-interest-dessert/admin-user-interest-dessert.service';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AdminMemberService {
@@ -34,8 +35,12 @@ export class AdminMemberService {
    * @param memberId
    * @returns Promise<Member>
    */
-  async processFindOneById(memberId: number) {
-    return await this.adminMemberRepository.findOneById(memberId);
+  async findOneById(memberId: number) {
+    const member = await this.adminMemberRepository.findOneById(memberId);
+    if (member === null) {
+      throw new NotFoundException('일치하는 회원 정보를 찾을 수 없습니다');
+    }
+    return member;
   }
 
   /**
@@ -44,9 +49,7 @@ export class AdminMemberService {
    * @param updateAdminMemberDto
    * @returns Promise<boolean>
    */
-  /*async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
-    return this.adminMemberRepository.update(memberId, updateAdminMemberDto);
-  }*/
+  @Transactional()
   async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
     const memberData: Partial<Member> = {
       nickName: updateAdminMemberDto.nickName,
@@ -76,6 +79,7 @@ export class AdminMemberService {
    * @param memberId
    * @returns Promise<boolean>
    */
+  @Transactional()
   async delete(memberId: number) {
     const deleteDto = new DeleteAdminMemberDto(memberId, false);
     return this.adminMemberRepository.delete(deleteDto);
