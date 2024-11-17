@@ -10,13 +10,12 @@ export class APIDocument {
       .setDescription('Dessert Time API Document')
       .setVersion('1.0')
       .addTag('DT')
+      .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'Token',
+      })
       .build();
-    //   .addBearerAuth({
-    //     type: 'http',
-    //     scheme: 'bearer',
-    //     bearerFormat: 'Token',
-    //   })
-
 
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('desser-time', app, document);

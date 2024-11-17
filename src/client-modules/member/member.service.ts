@@ -15,10 +15,14 @@ import { v4 as uuid } from 'uuid';
 import { MemberPointListDto } from './dto/member.pointlist.dto';
 import { MemberDeletion } from '../../common/enum/member.enum';
 import { MemberIdPagingDto } from './dto/member.id.paging.dto';
+import { AuthService } from 'src/config/auth/auth.service';
 
 @Injectable()
 export class MemberService {
-  constructor(private memberRepository: MemberRepository) {}
+  constructor(
+    private memberRepository: MemberRepository,
+    private readonly authService: AuthService,
+  ) {}
 
   /**
    * 회원가입
@@ -75,7 +79,9 @@ export class MemberService {
           description: '가입되지않은 정보입니다.',
         });
       }
-      return memberData;
+      const token = await this.authService.jwtLogIn(memberData);
+
+      return token;
     } catch (error) {
       throw error;
     }

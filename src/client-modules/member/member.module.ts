@@ -10,9 +10,10 @@ import { PointHistory } from 'src/config/entities/point.history.entity';
 import { Notice } from 'src/config/entities/notice.entity';
 import { UserInterestDessert } from 'src/config/entities/user.interest.dessert.entity';
 import { MemberDeletion } from 'src/config/entities/member.deleteion.entity';
+import { AuthModule } from 'src/config/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member, Review, Point, PointHistory, Notice, UserInterestDessert, MemberDeletion])],
+  imports: [TypeOrmModule.forFeature([Member, Review, Point, PointHistory, Notice, UserInterestDessert, MemberDeletion]), AuthModule],
   exports: [],
   controllers: [MemberController],
   providers: [MemberService, MemberRepository],
