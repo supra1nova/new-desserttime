@@ -131,7 +131,7 @@ export class AdminReviewRepository {
    * @param adminSearchReviewDto
    */
   private _setWhereClause(queryBuilder: SelectQueryBuilder<Review>, adminSearchReviewDto: AdminSearchReviewDto) {
-    const { searchReviewWriterValue, searchReviewContentsValue } = adminSearchReviewDto;
+    const { searchReviewWriterValue, searchReviewContentsValue , searchReviewStatus} = adminSearchReviewDto;
 
     // nickname/email 을 OR 조건로 묶기 (brackets 사용)
     if (searchReviewWriterValue !== undefined && searchReviewWriterValue !== null && searchReviewWriterValue !== '') {
@@ -151,6 +151,21 @@ export class AdminReviewRepository {
           .orWhere('rv.menuName LIKE :menuName', { menuName: `%${searchReviewContentsValue}%` })
         )
       );
+    }
+
+    // 리뷰 상태에 따른 검색
+    if (searchReviewStatus !== undefined && searchReviewStatus !== null) {
+      queryBuilder.andWhere(`rv.status = :status`, { status: searchReviewStatus })
+      queryBuilder.andWhere(`rv.status != '초기'`)
+    } else {
+      queryBuilder.andWhere(
+        new Brackets((qb) => qb
+          .orWhere(`rv.status = '대기'`)
+          .orWhere(`rv.status = '등록'`)
+          .orWhere(`rv.status = '신고'`)
+          .orWhere(`rv.status = '삭제'`)
+        )
+      )
     }
     return queryBuilder;
   }
