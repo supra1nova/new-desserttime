@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
 import { AdminReviewService } from './admin-review.service';
 import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
+import { UpdateStatusAdminReviewDto } from './model/update-status-admin-review.dto';
 
 @ApiTags('Admin Review')
 @Controller('admin-review')
@@ -87,18 +88,27 @@ export class AdminReviewController {
   })
   @Patch(':reviewId')
   async update(@Param('reviewId') reviewId: string, @Body() updateAdminReviewDto: UpdateAdminReviewDto) {
-    return this.adminReviewService.processUpdate(+reviewId, updateAdminReviewDto);
+    return await this.adminReviewService.processUpdate(+reviewId, updateAdminReviewDto);
   }
 
-  @ApiOperation({ summary: '리뷰 삭제' })
-  @ApiParam({
-    name: 'reviewId',
-    type: Number,
-    description: '리뷰 아이디',
-    example: 4,
+  @ApiOperation({ summary: '리뷰 상태 변경' })
+  @ApiBody({
+    type: UpdateStatusAdminReviewDto,
+    description: `
+      reviewIdArr: 리뷰 id 배열
+  `,
+    examples: {
+      example1: {
+        value: {
+          reviewIdArr: [4, 5],
+        },
+      },
+    },
   })
-  @Delete(':reviewId')
-  remove(@Param('reviewId') reviewId: string) {
-    return this.adminReviewService.delete(+reviewId);
+  @Delete('update-status/:status')
+  async updateStatus(@Param('status') status: string, @Body() updateStatusAdminReviewDto: UpdateStatusAdminReviewDto) {
+    if (status !== 'save' && status !== 'delete') throw new BadRequestException('리뷰 상태 변경 요청 URL이 올바르지 않습니다.');
+
+    return await this.adminReviewService.updateStatus(status, updateStatusAdminReviewDto);
   }
 }

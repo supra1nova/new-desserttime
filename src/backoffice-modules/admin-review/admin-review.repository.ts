@@ -11,6 +11,7 @@ import { ReviewImg } from '../../config/entities/review.img.entity';
 import { ReceiptImg } from '../../config/entities/receipt.Img.entity';
 import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
 import { ReviewStatus } from '../../common/enum/review.enum';
+import { UpdateStatusAdminReviewDto } from './model/update-status-admin-review.dto';
 
 export class AdminReviewRepository {
   constructor(@InjectRepository(Review) private adminReviewRepository: Repository<Review>) {}
@@ -18,30 +19,56 @@ export class AdminReviewRepository {
   /**
    * 리뷰 수량 조회
    * @param adminSearchReviewDto
+   * @param reviewIdArr
    */
-  async count(adminSearchReviewDto: AdminSearchReviewDto) {
+  async count(adminSearchReviewDto: AdminSearchReviewDto, reviewIdArr: number[] = null) {
     const selectQueryBuilder = this._processSetListClause();
     selectQueryBuilder.addSelect(`('[' || rv.storeName || '] ' || rv.menuName)`, 'title');
 
-    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto);
+    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto, reviewIdArr);
     return await resultQueryBuilder.getCount();
   }
 
   /**
    * [페이지네이션 적용] 리뷰 목록 조회
    * @param adminSearchReviewDto
+   * @param reviewIdArr
    */
-  async findReviewList(adminSearchReviewDto: AdminSearchReviewDto) {
+  async findReviewList(adminSearchReviewDto: AdminSearchReviewDto, reviewIdArr: number[] = null) {
     const selectQueryBuilder = this._processSetListClause();
     selectQueryBuilder.addSelect(`('[' || rv.storeName || '] ' || rv.menuName)`, 'title');
-    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto);
+    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto, reviewIdArr);
 
-    resultQueryBuilder
-      .addSelect(this._aggregateColumns())
-      .orderBy('rv.reviewId', 'DESC');
+    resultQueryBuilder.addSelect(this._aggregateColumns()).orderBy('rv.reviewId', 'DESC');
 
     this._setPagination(resultQueryBuilder, adminSearchReviewDto);
     return await resultQueryBuilder.getRawMany();
+  }
+
+  /**
+   * 리뷰 id 배열 이용한 목록 조회
+   * @param reviewIdArr
+   */
+  async findReviewListByReviewId(reviewIdArr: number[] = null) {
+    const selectQueryBuilder = this.adminReviewRepository
+      .createQueryBuilder('rv')
+      .leftJoin(DessertCategory, 'dc', 'rv.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
+      .leftJoin(Member, 'mb', 'rv.memberMemberId = mb.memberId')
+      .leftJoin(ReviewIngredient, 'rvIngdnt', 'rv.reviewId = rvIngdnt.reviewReviewId')
+      .leftJoin(Ingredient, 'ing', 'rvIngdnt.ingredientIngredientId = ing.ingredientId')
+      .leftJoin(Accusation, 'acc', 'rv.reviewId = acc.reviewReviewId')
+      .leftJoin(ReviewImg, 'rvImg', 'rv.reviewId = rvImg.reviewImgReviewId')
+      .leftJoin(ReceiptImg, 'rcptImg', 'rv.receiptImgReceiptImgId = rcptImg.receiptImgId') // 조인 수정
+      .select('rv.reviewId', 'reviewId')
+      .addSelect('mb.memberId', 'memberId')
+      .groupBy('rv.reviewId, mb.memberId, mb.nickName, mb.memberEmail, dc.dessertCategoryId, dc.dessertName, rv.status, rv.content, rv.adminMemo, rv.storeName, rv.menuName');
+
+    selectQueryBuilder.andWhere(`rv.status = '대기'`);
+    if (reviewIdArr !== null && reviewIdArr.length > 0) {
+      selectQueryBuilder.andWhere(`rv.reviewId IN (:...reviewIdArr)`, { reviewIdArr: reviewIdArr });
+    }
+
+    return await selectQueryBuilder.getRawMany();
   }
 
   /**
@@ -52,9 +79,7 @@ export class AdminReviewRepository {
     const selectQueryBuilder = this._processSetListClause();
     const resultQueryBuilder = selectQueryBuilder.where('rv.reviewId = :reviewId', { reviewId: reviewId });
 
-    resultQueryBuilder
-      .addSelect(this._aggregateColumns())
-      .orderBy('rv.reviewId', 'DESC');
+    resultQueryBuilder.addSelect(this._aggregateColumns()).orderBy('rv.reviewId', 'DESC');
 
     return await resultQueryBuilder.getRawOne();
   }
@@ -80,23 +105,27 @@ export class AdminReviewRepository {
   }
 
   /**
-   * 리뷰 삭제
-   * @param reviewId
+   * 리뷰 상태 수정
+   * @param status  save/delete 상태
+   * @param updateStatusAdminReviewDto  reviewId
    */
-  async delete(reviewId: number) {
-    const deleteResult = await this.adminReviewRepository
+  async updateStatus(status: string, updateStatusAdminReviewDto: UpdateStatusAdminReviewDto) {
+    const { reviewIdArr } = updateStatusAdminReviewDto;
+    const isSave = status === 'save';
+
+    const updateResult = await this.adminReviewRepository
       .createQueryBuilder()
       .update(Review)
       .set({
-        isUsable: false,
-        status: ReviewStatus.DELETED,
+        isUsable: isSave,
+        status: isSave ? ReviewStatus.SAVED : ReviewStatus.DELETED,
       })
-      .where('reviewId = :reviewId', { reviewId })
+      .where('reviewId IN (:...reviewIdArr)', { reviewIdArr: reviewIdArr })
       .execute();
-    return !!deleteResult.affected;
+    return !!updateResult.affected;
   }
 
-  /* private 메서드 */
+  // private 메서드
 
   /**
    * [process] 공통 리스트 조회 쿼리 생성 프로세스
@@ -129,44 +158,33 @@ export class AdminReviewRepository {
    * where 절 세팅 메서드
    * @param queryBuilder
    * @param adminSearchReviewDto
+   * @param reviewIdArr
    */
-  private _setWhereClause(queryBuilder: SelectQueryBuilder<Review>, adminSearchReviewDto: AdminSearchReviewDto) {
-    const { searchReviewWriterValue, searchReviewContentsValue , searchReviewStatus} = adminSearchReviewDto;
+  private _setWhereClause(queryBuilder: SelectQueryBuilder<Review>, adminSearchReviewDto: AdminSearchReviewDto, reviewIdArr: number[] = null) {
+    const { searchReviewWriterValue, searchReviewContentsValue, searchReviewStatus } = adminSearchReviewDto;
 
     // nickname/email 을 OR 조건로 묶기 (brackets 사용)
     if (searchReviewWriterValue !== undefined && searchReviewWriterValue !== null && searchReviewWriterValue !== '') {
       queryBuilder.andWhere(
-        new Brackets((qb) => qb
-          .orWhere('mb.nickName LIKE :nickName', { nickName: `%${searchReviewWriterValue}%` })
-          .orWhere('mb.memberEmail LIKE :memberEmail', { memberEmail: `%${searchReviewWriterValue}%` })
-        )
+        new Brackets((qb) => qb.orWhere('mb.nickName LIKE :nickName', { nickName: `%${searchReviewWriterValue}%` }).orWhere('mb.memberEmail LIKE :memberEmail', { memberEmail: `%${searchReviewWriterValue}%` })),
       );
     }
 
     // 제목/내용 을 OR 조건로 묶기 (brackets 사용)
     if (searchReviewContentsValue !== undefined && searchReviewContentsValue !== null && searchReviewContentsValue !== '') {
       queryBuilder.andWhere(
-        new Brackets((qb) => qb
-          .orWhere('rv.storeName LIKE :storeName', { storeName: `%${searchReviewContentsValue}%` })
-          .orWhere('rv.menuName LIKE :menuName', { menuName: `%${searchReviewContentsValue}%` })
-        )
+        new Brackets((qb) => qb.orWhere('rv.storeName LIKE :storeName', { storeName: `%${searchReviewContentsValue}%` }).orWhere('rv.menuName LIKE :menuName', { menuName: `%${searchReviewContentsValue}%` })),
       );
     }
 
     // 리뷰 상태에 따른 검색
     if (searchReviewStatus !== undefined && searchReviewStatus !== null) {
-      queryBuilder.andWhere(`rv.status = :status`, { status: searchReviewStatus })
-      queryBuilder.andWhere(`rv.status != '초기'`)
+      queryBuilder.andWhere(`rv.status = :status`, { status: searchReviewStatus });
+      queryBuilder.andWhere(`rv.status != '초기'`);
     } else {
-      queryBuilder.andWhere(
-        new Brackets((qb) => qb
-          .orWhere(`rv.status = '대기'`)
-          .orWhere(`rv.status = '등록'`)
-          .orWhere(`rv.status = '신고'`)
-          .orWhere(`rv.status = '삭제'`)
-        )
-      )
+      queryBuilder.andWhere(new Brackets((qb) => qb.orWhere(`rv.status = '대기'`).orWhere(`rv.status = '등록'`).orWhere(`rv.status = '신고'`).orWhere(`rv.status = '삭제'`)));
     }
+
     return queryBuilder;
   }
 

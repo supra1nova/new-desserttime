@@ -8,7 +8,7 @@ import { AdminPointHistoryModule } from '../admin-point-history/admin-point-hist
 
 @Module({
   imports: [TypeOrmModule.forFeature([Point]), AdminPointHistoryModule],
-  exports: [],
+  exports: [AdminPointService],
   controllers: [AdminPointController],
   providers: [AdminPointService, AdminPointRepository],
 })

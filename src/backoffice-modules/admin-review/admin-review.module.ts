@@ -6,9 +6,10 @@ import { Review } from '../../config/entities/review.entity';
 import { AdminReviewRepository } from './admin-review.repository';
 import { AdminReviewIngredientModule } from '../admin-review-ingredient/admin-review-ingredient.module';
 import { AdminReviewImgModule } from '../admin-review-img/admin-review-img.module';
+import { AdminPointModule } from '../admin-point/admin-point.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Review]), AdminReviewIngredientModule, AdminReviewImgModule],
+  imports: [TypeOrmModule.forFeature([Review]), AdminReviewImgModule, AdminReviewIngredientModule, AdminPointModule],
   exports: [],
   controllers: [AdminReviewController],
   providers: [AdminReviewService, AdminReviewRepository],

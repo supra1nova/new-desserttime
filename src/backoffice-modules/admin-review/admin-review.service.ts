@@ -7,13 +7,18 @@ import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
 import { AdminReviewIngredientService } from '../admin-review-ingredient/admin-review-ingredient.service';
 import { AdminReviewImgService } from '../admin-review-img/admin-review-img.service';
 import { RuntimeException } from '@nestjs/core/errors/exceptions';
+import { UpdateStatusAdminReviewDto } from './model/update-status-admin-review.dto';
+import { UpdateAdminPointDto } from '../admin-point/model/update-admin-point.dto';
+import { AdminPointService } from '../admin-point/admin-point.service';
+import { PointType } from '../../common/enum/point.enum';
 
 @Injectable()
 export class AdminReviewService {
   constructor(
     private adminReviewIngredientService: AdminReviewIngredientService,
-    private adminReviewRepository: AdminReviewRepository,
     private adminReviewImgService: AdminReviewImgService,
+    private adminPointService: AdminPointService,
+    private adminReviewRepository: AdminReviewRepository,
   ) {}
 
   /**
@@ -74,21 +79,39 @@ export class AdminReviewService {
   /**
    * 리뷰 수정 메서드
    */
+  @Transactional()
   async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
     const result = await this.adminReviewRepository.update(reviewId, updateAdminReviewDto);
-    if (!result) throw new RuntimeException('testing');
+    if (!result) throw new RuntimeException('리뷰 수정에 실패했습니다.');
   }
 
   /**
-   * 리뷰 삭제 메서드
-   * @param reviewId
+   * 리뷰 상태 수정 메서드
+   * @param status  save/delete 상태
+   * @param updateStatusAdminReviewDto  reviewId
    */
   @Transactional()
-  async delete(reviewId: number) {
-    return await this.adminReviewRepository.delete(reviewId);
+  async updateStatus(status: string, updateStatusAdminReviewDto: UpdateStatusAdminReviewDto) {
+    const reviewArr = await this.adminReviewRepository.findReviewListByReviewId(updateStatusAdminReviewDto.reviewIdArr);
+
+    // status 업데이트
+    const result = await this.adminReviewRepository.updateStatus(status, updateStatusAdminReviewDto);
+
+    // status 가 save인 경우 각 리뷰의 멤버에 50 포인트 지급
+    if (result && status === 'save') {
+      for (const review of reviewArr) {
+        const { reviewId, memberId } = review;
+        const updateAdminPointDto = new UpdateAdminPointDto(50, PointType.REVIEW);
+        const pointInsertResult = await this.adminPointService.processInsertUpdatePoint('save', memberId, updateAdminPointDto, reviewId);
+        if (!pointInsertResult) throw new RuntimeException('포인트 적립에 실패했습니다.');
+      }
+    }
+
+    if (!result) throw new RuntimeException('리뷰 상태 변경에 실패했습니다.');
+    return result;
   }
 
-  /* private 메서드 */
+  // private 메서드
 
   /**
    * 일반 배열 정리 메서드
