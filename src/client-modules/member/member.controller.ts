@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseInterceptors } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/signin.dto';
 import { MemberService } from './member.service';
 import { UserValidationDto } from './dto/login.dto';
@@ -13,6 +14,7 @@ import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
 import { MemberPointListDto } from './dto/member.pointlist.dto';
 import { MemberIdPagingDto } from './dto/member.id.paging.dto';
+import { JwtAuthGuard } from 'src/config/auth/jwt/jwt.guard';
 
 @ApiTags('Member')
 @Controller('member')
@@ -27,8 +29,10 @@ export class MemberController {
 
   @ApiOperation({ summary: '사용자 유효성 검사' })
   @Get('validation/:snsId')
-  async memberValidate(@Param() userValidationDto: UserValidationDto) {
-    return await this.memberService.memberValidate(userValidationDto);
+  async memberValidate(@Param() userValidationDto: UserValidationDto, @Res() res: Response) {
+    const token = await this.memberService.memberValidate(userValidationDto);
+    res.setHeader('Authorization', 'Bearer ' + token);
+    return res.json(token);
   }
 
   @ApiOperation({ summary: '마이페이지 - 첫 화면 사용자 정보 요약' })
@@ -37,6 +41,8 @@ export class MemberController {
     return await this.memberService.myPageOverview(memberIdDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: '마이페이지 - 사용자 정보 조회' })
   @Get('/my-page/member/:memberId')
   async getMemberOne(@Query() memberIdDto: MemberIdDto) {

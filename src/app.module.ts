@@ -31,6 +31,7 @@ import { AccusationModule } from './client-modules/accusation/accusation.module'
 import { FileTransModule } from './config/file/filetrans.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
+import { AuthModule } from './config/auth/auth.module';
 
 @Module({
   imports: [
@@ -52,7 +53,7 @@ import { DataSource } from 'typeorm';
     ReviewModule,
     AccusationModule,
     FileTransModule,
-    //AuthModule,
+    AuthModule,
     ConfigModule.forRoot({
       envFilePath: [process.env.NODE_ENV === 'production' ? path.join(process.cwd(), 'config', '.env.production') : path.join(process.cwd(), 'config', '.env.development')],
       isGlobal: true,
