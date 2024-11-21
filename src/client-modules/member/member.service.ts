@@ -97,11 +97,14 @@ export class MemberService {
     try {
       const nickName = await this.memberRepository.findUserNickNameOne(memberIdDto);
       const usersReviewCount = await this.memberRepository.countReview(memberIdDto);
-      const usersTotalPoint = await this.memberRepository.findTotalPointOne(memberIdDto);
+      const usersPoint = await this.memberRepository.findTotalPointOne(memberIdDto);
+      const usersTotalPoint = usersPoint[0] ? usersPoint[0].totalPoint : 0;
+      console.log('usersReviewCount::', usersReviewCount);
+      console.log('usersTotalPoint::', usersTotalPoint);
       return {
         nickName: nickName.nickName,
         usersReviewCount,
-        usersTotalPoint: usersTotalPoint[0].totalPoint,
+        usersTotalPoint,
       };
     } catch (error) {
       throw error;
