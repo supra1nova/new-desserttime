@@ -28,15 +28,22 @@ export class UpdateAdminPointDto {
 
   toSavePointDto() {
     let resultPoint = this.newPoint;
-    if (isNaN(this.newPoint) || this.newPoint === null || this.newPoint === undefined) resultPoint = 0;
+    if (isNaN(this.newPoint) || this.newPoint === null || this.newPoint === undefined) {
+      resultPoint = 0;
+    } else {
+      resultPoint = Math.abs(resultPoint);
+    }
 
     return new UpdateAdminPointDto(resultPoint, this.pointType);
   }
 
   toRecallPointDto() {
     let resultPoint = this.newPoint;
-    if (isNaN(this.newPoint) || this.newPoint === null || this.newPoint === undefined) resultPoint = 0;
-    if (resultPoint > 0) resultPoint *= -1;
+    if (isNaN(this.newPoint) || this.newPoint === null || this.newPoint === undefined) {
+      resultPoint = 0;
+    } else {
+      resultPoint = Math.abs(resultPoint) * -1;
+    }
 
     return new UpdateAdminPointDto(resultPoint, this.pointType);
   }

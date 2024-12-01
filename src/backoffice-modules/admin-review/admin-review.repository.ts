@@ -19,25 +19,23 @@ export class AdminReviewRepository {
   /**
    * 리뷰 수량 조회
    * @param adminSearchReviewDto
-   * @param reviewIdArr
    */
-  async count(adminSearchReviewDto: AdminSearchReviewDto, reviewIdArr: number[] = null) {
+  async count(adminSearchReviewDto: AdminSearchReviewDto) {
     const selectQueryBuilder = this._processSetListClause();
     selectQueryBuilder.addSelect(`('[' || rv.storeName || '] ' || rv.menuName)`, 'title');
 
-    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto, reviewIdArr);
+    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto);
     return await resultQueryBuilder.getCount();
   }
 
   /**
    * [페이지네이션 적용] 리뷰 목록 조회
    * @param adminSearchReviewDto
-   * @param reviewIdArr
    */
-  async findReviewList(adminSearchReviewDto: AdminSearchReviewDto, reviewIdArr: number[] = null) {
+  async findReviewList(adminSearchReviewDto: AdminSearchReviewDto) {
     const selectQueryBuilder = this._processSetListClause();
     selectQueryBuilder.addSelect(`('[' || rv.storeName || '] ' || rv.menuName)`, 'title');
-    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto, reviewIdArr);
+    const resultQueryBuilder = this._setWhereClause(selectQueryBuilder, adminSearchReviewDto);
 
     resultQueryBuilder.addSelect(this._aggregateColumns()).orderBy('rv.reviewId', 'DESC');
 
@@ -158,9 +156,8 @@ export class AdminReviewRepository {
    * where 절 세팅 메서드
    * @param queryBuilder
    * @param adminSearchReviewDto
-   * @param reviewIdArr
    */
-  private _setWhereClause(queryBuilder: SelectQueryBuilder<Review>, adminSearchReviewDto: AdminSearchReviewDto, reviewIdArr: number[] = null) {
+  private _setWhereClause(queryBuilder: SelectQueryBuilder<Review>, adminSearchReviewDto: AdminSearchReviewDto) {
     const { searchReviewWriterValue, searchReviewContentsValue, searchReviewStatus } = adminSearchReviewDto;
 
     // nickname/email 을 OR 조건로 묶기 (brackets 사용)
@@ -195,8 +192,8 @@ export class AdminReviewRepository {
     return [
       `LISTAGG(DISTINCT ing.ingredientId || ':' || ing.ingredientName, ', ') 
         WITHIN GROUP (ORDER BY ing.ingredientId) AS "ingredients"`,
-      `LISTAGG(DISTINCT acc.accusationId || ':' || acc.reason, ', ') 
-        WITHIN GROUP (ORDER BY acc.accusationId) AS "accusations"`,
+      `LISTAGG(DISTINCT acc.accusationId || '_' || TO_CHAR(acc.createdDate, 'YYYY-MM-DD HH24/MI/SS/FF6') || ':' || acc.reason, ', ') 
+        WITHIN GROUP (ORDER BY acc.createdDate DESC) AS "accusations"`,
       `LISTAGG(DISTINCT rvImg.reviewImgId || '_' || rvImg.middlepath || '_' || rvImg.path || ':' || rvImg.imgName || rvImg.extention, ', ') 
         WITHIN GROUP (ORDER BY rvImg.reviewImgId) AS "reviewImgs"`,
       `LISTAGG(DISTINCT rcptImg.receiptImgId || '_' || rcptImg.middlepath || '_' || rcptImg.path || ':' || rcptImg.imgName || rcptImg.extention, ', ') 

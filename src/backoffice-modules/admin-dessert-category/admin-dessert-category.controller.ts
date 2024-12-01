@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Delete, Param } from '@nestjs/common';
 import { AdminDessertCategoryService } from './admin-dessert-category.service';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FirstCategoryAppendDto } from '../../client-modules/dessert-category/dto/firstcategory.append.dto';
 import { AdminSearchDessertCategoryDto } from './model/admin-search-dessert-category.dto';
+import { DessertCategoryIdDto } from '../../client-modules/dessert-category/dto/dessert.category.dto';
 
 @ApiTags('Admin Dessert Category')
 @Controller('admin-dessert-category')
@@ -33,7 +34,7 @@ export class AdminDessertCategoryController {
     return this.adminDessertCategoryService.findDessertCategoryListByDessertName(adminSearchDessertCategoryDto);
   }
 
-  @ApiOperation({ summary: '디저트카테고리 하나 생성' })
+  @ApiOperation({ summary: '카테고리 하나 생성' })
   @ApiBody({
     description: `
     sessionNum: 카테고리 차수 1차:1 or 2차:2,\n
@@ -42,7 +43,13 @@ export class AdminDessertCategoryController {
     type: FirstCategoryAppendDto,
   })
   @Post()
-  create(@Body() firstCategoryAppendDto: FirstCategoryAppendDto) {
+  createDessertCategory(@Body() firstCategoryAppendDto: FirstCategoryAppendDto) {
     return this.adminDessertCategoryService.insertDessertCategory(firstCategoryAppendDto);
+  }
+
+  @ApiOperation({ summary: '카테고리 하나 삭제' })
+  @Delete(':dessertCategoryId')
+  async deleteDessertCategory(@Param() dessertCategoryIdDto: DessertCategoryIdDto) {
+    return await this.adminDessertCategoryService.deleteDessertCategory(dessertCategoryIdDto);
   }
 }

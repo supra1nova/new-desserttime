@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
 import { AdminReviewService } from './admin-review.service';
 import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -91,7 +91,7 @@ export class AdminReviewController {
     return await this.adminReviewService.processUpdate(+reviewId, updateAdminReviewDto);
   }
 
-  @ApiOperation({ summary: '리뷰 상태 변경' })
+  @ApiOperation({ summary: '리뷰 다중 등록 처리' })
   @ApiBody({
     type: UpdateStatusAdminReviewDto,
     description: `
@@ -105,10 +105,27 @@ export class AdminReviewController {
       },
     },
   })
-  @Delete('update-status/:status')
-  async updateStatus(@Param('status') status: string, @Body() updateStatusAdminReviewDto: UpdateStatusAdminReviewDto) {
-    if (status !== 'save' && status !== 'delete') throw new BadRequestException('리뷰 상태 변경 요청 URL이 올바르지 않습니다.');
+  @Patch('register')
+  async register(@Body() updateStatusAdminReviewDto: UpdateStatusAdminReviewDto) {
+    return await this.adminReviewService.updateStatus('save', updateStatusAdminReviewDto);
+  }
 
-    return await this.adminReviewService.updateStatus(status, updateStatusAdminReviewDto);
+  @ApiOperation({ summary: '리뷰 다중 삭제 처리' })
+  @ApiBody({
+    type: UpdateStatusAdminReviewDto,
+    description: `
+      reviewIdArr: 리뷰 id 배열
+  `,
+    examples: {
+      example1: {
+        value: {
+          reviewIdArr: [4, 5],
+        },
+      },
+    },
+  })
+  @Delete('delete')
+  async delete(@Body() updateStatusAdminReviewDto: UpdateStatusAdminReviewDto) {
+    return await this.adminReviewService.updateStatus('delete', updateStatusAdminReviewDto);
   }
 }

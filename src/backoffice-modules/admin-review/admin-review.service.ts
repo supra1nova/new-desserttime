@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AdminReviewRepository } from './admin-review.repository';
 import { Transactional } from 'typeorm-transactional';
 import { Page } from '../common/dto/page.dto';
@@ -6,7 +6,6 @@ import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
 import { AdminReviewIngredientService } from '../admin-review-ingredient/admin-review-ingredient.service';
 import { AdminReviewImgService } from '../admin-review-img/admin-review-img.service';
-import { RuntimeException } from '@nestjs/core/errors/exceptions';
 import { UpdateStatusAdminReviewDto } from './model/update-status-admin-review.dto';
 import { UpdateAdminPointDto } from '../admin-point/model/update-admin-point.dto';
 import { AdminPointService } from '../admin-point/admin-point.service';
@@ -32,7 +31,7 @@ export class AdminReviewService {
     const items = rawItems.map((rv) => ({
       ...rv,
       ingredients: this.setStringToObjArr(rv.ingredients),
-      accusations: this.setStringToObjArr(rv.accusations),
+      accusations: this.setAccStringToObjArr(rv.accusations),
       reviewImgs: this.setImgStringToObjArr(rv.reviewImgs),
       receiptImgs: this.setImgStringToObjArr(rv.receiptImgs),
     }));
@@ -46,13 +45,13 @@ export class AdminReviewService {
    */
   async findOneById(reviewId: number) {
     const rawItem = await this.adminReviewRepository.findOneById(reviewId);
-
-    if (rawItem === undefined) throw new NotFoundException();
+    if (rawItem === undefined) throw new Error('리뷰가 존재하지 않습니다.');
 
     rawItem['ingredients'] = this.setStringToObjArr(rawItem['ingredients']);
-    rawItem['accusations'] = this.setStringToObjArr(rawItem['accusations']);
+    rawItem['accusations'] = this.setAccStringToObjArr(rawItem['accusations']);
     rawItem['reviewImgs'] = this.setImgStringToObjArr(rawItem['reviewImgs']);
     rawItem['receiptImgs'] = this.setImgStringToObjArr(rawItem['receiptImgs']);
+
     return rawItem;
   }
 
@@ -70,19 +69,12 @@ export class AdminReviewService {
       dessertCategory: { dessertCategoryId: updateAdminReviewDto.dessertCategoryId },
     };
 
-    await this.update(reviewId, updateData);
+    const updateReviewResult = await this.update(reviewId, updateData);
+    if (!updateReviewResult) throw new Error('리뷰 수정에 실패했습니다.');
+
     if (reviewIngredientIdArr) await this.adminReviewIngredientService.processDeleteInsert(reviewId, reviewIngredientIdArr);
     if (reviewImgs) await this.adminReviewImgService.update(reviewId, reviewImgs);
     return true;
-  }
-
-  /**
-   * 리뷰 수정 메서드
-   */
-  @Transactional()
-  async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
-    const result = await this.adminReviewRepository.update(reviewId, updateAdminReviewDto);
-    if (!result) throw new RuntimeException('리뷰 수정에 실패했습니다.');
   }
 
   /**
@@ -103,32 +95,81 @@ export class AdminReviewService {
         const { reviewId, memberId } = review;
         const updateAdminPointDto = new UpdateAdminPointDto(50, PointType.REVIEW);
         const pointInsertResult = await this.adminPointService.processInsertUpdatePoint('save', memberId, updateAdminPointDto, reviewId);
-        if (!pointInsertResult) throw new RuntimeException('포인트 적립에 실패했습니다.');
+        if (!pointInsertResult) throw new Error('포인트 적립에 실패했습니다.');
       }
     }
 
-    if (!result) throw new RuntimeException('리뷰 상태 변경에 실패했습니다.');
+    if (!result) throw new Error('리뷰 상태 변경에 실패했습니다.');
     return result;
   }
 
   // private 메서드
 
   /**
+   * 리뷰 수정 메서드
+   */
+  @Transactional()
+  private async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+    const result = await this.adminReviewRepository.update(reviewId, updateAdminReviewDto);
+
+    if (!result) throw new Error('리뷰 수정에 실패했습니다.');
+    return true;
+  }
+
+  /**
    * 일반 배열 정리 메서드
    * @param strConcatedWithComma
    */
   private setStringToObjArr(strConcatedWithComma: string) {
-    if (strConcatedWithComma === undefined || strConcatedWithComma === null || strConcatedWithComma === '' || strConcatedWithComma.toLowerCase() === 'null') return [];
-    return strConcatedWithComma && !strConcatedWithComma.includes('null')
-      ? strConcatedWithComma
-          .split(', ')
-          .map((item) => {
-            const [id, value] = item.split(':');
-            if (!id || id === 'null') return null;
-            return { id: parseInt(id, 10), value };
-          })
-          .filter((item) => item !== null)
-      : [];
+    if (
+      strConcatedWithComma === undefined ||
+      strConcatedWithComma === null ||
+      strConcatedWithComma === '' ||
+      strConcatedWithComma === ':' ||
+      strConcatedWithComma === '_:' ||
+      strConcatedWithComma.toLowerCase() === 'null'
+    ) {
+      return [];
+    }
+
+    return strConcatedWithComma
+      .split(', ')
+      .map((item) => {
+        const [id, value] = item.split(':');
+        if (!id || id === 'null') return null;
+        return { id: parseInt(id, 10), value };
+      })
+      .filter((item) => item !== null);
+  }
+
+  /**
+   * 신고 배열 정리 메서드
+   * @param strConcatedWithComma
+   */
+  private setAccStringToObjArr(strConcatedWithComma: string) {
+    const result = [];
+
+    // img 값에 _: 만 저장되어 있다면 값이 없다는 의미이므로 연산을 진행하지 않음
+    if (strConcatedWithComma && !(strConcatedWithComma === '_:')) {
+      const listArr = strConcatedWithComma.split(', ');
+      listArr.forEach((item) => {
+        // 이미지 db 내용이 없다면 result 추가 없이 return
+        if (item === undefined || item === null || item === '' || item.toLowerCase() === 'null') return;
+
+        // idWithPath 또는 value 가 없다면 result 추가 없이 return
+        const [idWithCreatedDate, value] = item.split(':');
+        if (idWithCreatedDate === undefined || idWithCreatedDate === null || idWithCreatedDate === '' || idWithCreatedDate.toLowerCase() === 'null') return;
+        if (value === undefined || value === null || value === '' || value.toLowerCase() === 'null') return;
+
+        // id 또는 tgtImgName 이 없다면 result 추가 없이 return
+        const [id, createdDate] = idWithCreatedDate.split('_');
+        if (id === undefined || id === null || id === '' || id.toLowerCase() === 'null') return;
+        if (createdDate === undefined || createdDate === null || createdDate === '' || createdDate.toLowerCase() === 'null') return;
+
+        result.push({ id: parseInt(id, 10), value, createdDate: createdDate.replaceAll('/', ':') });
+      });
+    }
+    return result;
   }
 
   /**
