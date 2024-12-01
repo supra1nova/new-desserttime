@@ -1,24 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { DessertCategoryService } from '../../client-modules/dessert-category/dessert-category.service';
 import { Transactional } from 'typeorm-transactional';
 import { FirstCategoryAppendDto } from '../../client-modules/dessert-category/dto/firstcategory.append.dto';
 import { AdminDessertCategoryRepository } from './admin-dessert-category.repository';
 import { AdminSearchDessertCategoryDto } from './model/admin-search-dessert-category.dto';
 import { Page } from '../common/dto/page.dto';
+import { DessertCategoryIdDto } from '../../client-modules/dessert-category/dto/dessert.category.dto';
 
 @Injectable()
 export class AdminDessertCategoryService {
-  constructor(
-    private adminDessertCategoryRepository: AdminDessertCategoryRepository,
-    private dessertCategoryService: DessertCategoryService,
-  ) {}
+  constructor(private adminDessertCategoryRepository: AdminDessertCategoryRepository) {}
 
   /**
-   * 통합 디저트 카테고리 목록조회
+   * 디저트 카테고리 목록 조회
    * @param adminSearchDessertCategoryDto
    * @returns Promise<Page<DessertCategoryDto>
    */
-  @Transactional()
   async processFindDessertCategoryList(adminSearchDessertCategoryDto: AdminSearchDessertCategoryDto) {
     const total = await this.adminDessertCategoryRepository.findDessertCategoryListCountByParentDCId(adminSearchDessertCategoryDto);
     const items = await this.adminDessertCategoryRepository.findDessertCategoryListByParentDCId(adminSearchDessertCategoryDto);
@@ -27,11 +23,10 @@ export class AdminDessertCategoryService {
   }
 
   /**
-   * 카테고리 명칭 검색
+   * 디저트 카테고리 명칭 검색
    * @param adminSearchDessertCategoryDto
    * @returns Promise<Page<AdminSearchDessertCategoryDto>
    */
-  @Transactional()
   async findDessertCategoryListByDessertName(adminSearchDessertCategoryDto: AdminSearchDessertCategoryDto) {
     const total = await this.adminDessertCategoryRepository.findDessertCategoryListCountByDessertCategoryName(adminSearchDessertCategoryDto);
     const items = await this.adminDessertCategoryRepository.findDessertCategoryListByDessertCategoryName(adminSearchDessertCategoryDto);
@@ -46,7 +41,23 @@ export class AdminDessertCategoryService {
    */
   @Transactional()
   async insertDessertCategory(firstCategoryAppendDto: FirstCategoryAppendDto) {
-    await this.dessertCategoryService.postDessertCategory(firstCategoryAppendDto);
+    try {
+      await this.adminDessertCategoryRepository.insertDessertCategory(firstCategoryAppendDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 디저트 카테고리 하나 삭제
+   * @param dessertCategoryIdDto
+   * @returns
+   */
+  @Transactional()
+  async deleteDessertCategory(dessertCategoryIdDto: DessertCategoryIdDto) {
+    const result = await this.adminDessertCategoryRepository.deleteDessertCategory(dessertCategoryIdDto);
+
+    if (!result) throw new Error('카테고리 삭제에 실패했습니다.');
   }
 
   /**

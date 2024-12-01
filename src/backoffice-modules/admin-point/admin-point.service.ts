@@ -3,7 +3,6 @@ import { UpdateAdminPointDto } from './model/update-admin-point.dto';
 import { AdminPointRepository } from './admin-point.repository';
 import { AdminPointHistoryService } from '../admin-point-history/admin-point-history.service';
 import { Transactional } from 'typeorm-transactional';
-import { RuntimeException } from '@nestjs/core/errors/exceptions';
 
 @Injectable()
 export class AdminPointService {
@@ -22,12 +21,12 @@ export class AdminPointService {
   async saveRecallPoint(pointFlag: string, memberId: number, updateAdminPointDto: UpdateAdminPointDto) {
     if (pointFlag === 'save') {
       const savePointDto = updateAdminPointDto.toSavePointDto();
-      if (savePointDto.newPoint < 1) throw new RuntimeException('적립 포인트는 0보다 더 큰 수만 가능합니다.');
+      if (savePointDto.newPoint < 1) throw new Error('적립 포인트는 0보다 더 큰 수만 가능합니다.');
       return await this.processInsertUpdatePoint(pointFlag, memberId, savePointDto);
     }
 
     const recallPointDto = updateAdminPointDto.toRecallPointDto();
-    if (recallPointDto.newPoint > -1) throw new RuntimeException('적립 포인트는 0보다 더 작은 수만 가능합니다.');
+    if (recallPointDto.newPoint > -1) throw new Error('회수 포인트는 0보다 더 작은 수만 가능합니다.');
     return await this.processInsertUpdatePoint(pointFlag, memberId, recallPointDto);
   }
 
@@ -45,7 +44,7 @@ export class AdminPointService {
     let pointResult: boolean = false;
 
     if (pointFlag === 'recall' && (point == null || point.totalPoint < updateAdminPointDto.newPoint * -1)) {
-      throw new RuntimeException('대상자의 보유 포인트가 부족해 포인트 회수에 실패했습니다.');
+      throw new Error('대상자의 보유 포인트가 부족해 포인트 회수에 실패했습니다.');
     }
     // 포인트 정보가 null 이면 포인트 정보를 합산하여 생성
     else if (point == null) {

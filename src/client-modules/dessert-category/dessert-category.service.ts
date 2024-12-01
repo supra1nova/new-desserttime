@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DessertCategoryRepository } from './dessert-category.repository';
 import { DessertSessionDto } from './dto/dessertsession.dto';
-import { FirstCategoryAppendDto } from './dto/firstcategory.append.dto';
 import { ParentIdDto } from './dto/parent.id.dto';
-import { DessertCategoryIdDto } from './dto/dessert.category.dto';
 import { DessertCategoryNameDto } from './dto/dessert.category.name.dto';
 import { Transactional } from 'typeorm-transactional';
 
@@ -72,32 +70,6 @@ export class DessertCategoryService {
     try {
       const subCategoryList = await this.dessertCategoryRepository.findSessionSubDessertCategoryList(parentIdDto);
       return subCategoryList;
-    } catch (error) {
-      throw error;
-    }
-  }
-  /**
-   * 디저트 카테고리 하나 생성
-   * @param firstCategoryAppendDto
-   */
-  @Transactional()
-  async postDessertCategory(firstCategoryAppendDto: FirstCategoryAppendDto) {
-    try {
-      await this.dessertCategoryRepository.insertDessertCategory(firstCategoryAppendDto);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  /**
-   * 디저트 카테고리 하나 삭제
-   * @param dessertCategoryIdDto
-   */
-  @Transactional()
-  async deleteDessertCategory(dessertCategoryIdDto: DessertCategoryIdDto) {
-    try {
-      console.log('여기');
-      await this.dessertCategoryRepository.deleteDessertCategory(dessertCategoryIdDto);
     } catch (error) {
       throw error;
     }

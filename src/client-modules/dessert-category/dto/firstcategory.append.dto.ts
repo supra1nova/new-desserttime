@@ -12,8 +12,7 @@ export class FirstCategoryAppendDto {
 
   @ApiProperty({
     example: '1',
-    description:
-      '부모 차수의 DessertCategoryId // 등록하려는 차수가 1차면 0입력 ',
+    description: '부모 차수의 DessertCategoryId // 등록하려는 차수가 1차면 0입력 ',
     required: true,
   })
   @IsNotEmpty()

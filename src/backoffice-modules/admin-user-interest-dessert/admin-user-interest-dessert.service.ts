@@ -22,12 +22,10 @@ export class AdminUserInterestDessertService {
     //  memberId를 이용해서 해당하는 인원의 UserInterestDessert 를 가져와서 savedUserInterestDessertArr 에 저장
     const savedUserInterestDessertArr = await this.findByMemberId(memberId);
 
+    //  memberId 에 해당하는 savedUIDArr 정보가 존재할 시 UserInterestDessert 테이블에서 삭제
     if (savedUserInterestDessertArr === undefined || savedUserInterestDessertArr === null) {
-      return;
+      await this.delete(savedUserInterestDessertArr);
     }
-
-    //  memberId 에 해당하는 모든 savedUIDArr 정보를 UserInterestDessert 테이블에서 삭제
-    await this.delete(savedUserInterestDessertArr);
 
     //  uidIdArr 에 해당하는 모든 정보를 UserInterestDessert 테이블에 삽입
     const newUserInterestDessertArr = [];

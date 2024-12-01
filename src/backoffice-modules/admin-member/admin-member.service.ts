@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Page } from '../common/dto/page.dto';
 import { AdminMemberRepository } from './admin-member.repository';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
@@ -38,7 +38,7 @@ export class AdminMemberService {
   async findOneById(memberId: number) {
     const member = await this.adminMemberRepository.findOneById(memberId);
     if (member === null) {
-      throw new NotFoundException('일치하는 회원 정보를 찾을 수 없습니다');
+      throw new Error('일치하는 회원 정보를 찾을 수 없습니다');
     }
     return member;
   }
@@ -63,12 +63,12 @@ export class AdminMemberService {
       isAgreeAlarm: updateAdminMemberDto.isAgreeAlarm,
     };
 
-    const userInterestDessertData: number[] = updateAdminMemberDto.uidIdArr;
+    const uidIdArr: number[] = updateAdminMemberDto.uidIdArr;
 
     const result = await this.adminMemberRepository.update(memberId, memberData);
 
-    if (result && userInterestDessertData !== undefined) {
-      await this.userInterestDessertService.processInsertMultipleData(memberId, userInterestDessertData);
+    if (result && uidIdArr !== undefined && uidIdArr.length > 0) {
+      await this.userInterestDessertService.processInsertMultipleData(memberId, uidIdArr);
     }
 
     return result;

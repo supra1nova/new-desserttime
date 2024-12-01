@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AdminQnaRepository } from './admin-qna.repository';
 import { SearchAdminQnaDto } from './model/search-admin-qna.dto';
 import { Page } from '../common/dto/page.dto';
@@ -53,10 +53,7 @@ export class AdminQnaService {
   async findOneById(qnaId: number) {
     const result = await this.adminQnaRepository.findOneById(qnaId);
 
-    if (result === null) {
-      throw new NotFoundException('일치하는 QnA 글이 존재하지 않습니다.');
-    }
-
+    if (result === null) throw new Error('일치하는 QnA 글이 존재하지 않습니다.');
     return result;
   }
 }

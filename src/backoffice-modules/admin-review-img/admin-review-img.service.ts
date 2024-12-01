@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AdminReviewImgRepository } from './admin-review-img.repository';
 import { UpdateReviewImgDto } from '../../client-modules/review/dto/reviewimg.change.dto';
-import { RuntimeException } from '@nestjs/core/errors/exceptions';
 
 @Injectable()
 export class AdminReviewImgService {
@@ -14,6 +13,6 @@ export class AdminReviewImgService {
    */
   async update(reviewId: number, updateReviewImgDtoArr: UpdateReviewImgDto[]) {
     const result = await this.adminReviewImgRepository.update(reviewId, updateReviewImgDtoArr);
-    if (!result) throw new RuntimeException(`Failed to update review images(reviewId: ${reviewId})`);
+    if (!result) throw new Error(`리뷰 이미지 수정에 실패했습니다.(reviewId: ${reviewId})`);
   }
 }
