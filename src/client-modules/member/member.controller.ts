@@ -29,10 +29,11 @@ export class MemberController {
 
   @ApiOperation({ summary: '사용자 유효성 검사' })
   @Get('validation/:snsId')
-  async memberValidate(@Param() userValidationDto: UserValidationDto, @Res() res: Response) {
+  async memberValidate(@Param() userValidationDto: UserValidationDto) {
+    //, @Res() res: Response
     const token = await this.memberService.memberValidate(userValidationDto);
-    res.setHeader('Authorization', 'Bearer ' + token);
-    return res.json(token);
+    //res.setHeader('Authorization', 'Bearer ' + token);
+    return token;
   }
 
   @UseGuards(JwtAuthGuard)
