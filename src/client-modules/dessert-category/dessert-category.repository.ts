@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
-import { In, Like, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { DessertSessionDto } from './dto/dessertsession.dto';
-import { FirstCategoryAppendDto } from './dto/firstcategory.append.dto';
 import { ParentIdDto } from './dto/parent.id.dto';
-import { DessertCategoryIdDto } from './dto/dessert.category.dto';
 import { DessertCategoryNameDto } from './dto/dessert.category.name.dto';
 
 @Injectable()
@@ -53,14 +51,7 @@ export class DessertCategoryRepository {
       order: { dessertCategoryId: 'ASC' },
     });
   }
-  async insertDessertCategory(firstCategoryAppendDto: FirstCategoryAppendDto) {
-    await this.dessertCategory.insert(firstCategoryAppendDto);
-  }
-  async deleteDessertCategory(dessertCategoryIdDto: DessertCategoryIdDto) {
-    await this.dessertCategory.delete({
-      dessertCategoryId: dessertCategoryIdDto.dessertCategoryId,
-    });
-  }
+
   /**
    * 후기작성- 카테고리명 검색
    * @param dessertCategoryNameDto

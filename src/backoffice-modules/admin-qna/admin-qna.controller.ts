@@ -15,6 +15,17 @@ export class AdminQnaController {
     return this.adminQnaService.findAll(searchAdminQnaDto);
   }
 
+  @ApiOperation({ summary: 'qna 정보 단건 조회' })
+  @ApiParam({
+    name: 'qnaId',
+    type: Number,
+    description: 'qna 아이디',
+  })
+  @Get(':qnaId')
+  async findOne(@Param('qnaId') qnaId: number) {
+    return this.adminQnaService.findOneById(+qnaId);
+  }
+
   @ApiOperation({ summary: 'qna 답글 등록/수정' })
   @ApiParam({
     name: 'qnaId',
@@ -28,16 +39,5 @@ export class AdminQnaController {
   @Post(':qnaId')
   async reply(@Param('qnaId') qnaId: number, @Body() replyAdminQnaDto: ReplyAdminQnaDto) {
     return this.adminQnaService.processCreateUpdateReply(+qnaId, replyAdminQnaDto);
-  }
-
-  @ApiOperation({ summary: 'qna 정보 단건 조회' })
-  @ApiParam({
-    name: 'qnaId',
-    type: Number,
-    description: 'qna 아이디',
-  })
-  @Get(':qnaId')
-  async findOne(@Param('qnaId') qnaId: number) {
-    return this.adminQnaService.findOneById(+qnaId);
   }
 }

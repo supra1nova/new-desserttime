@@ -16,6 +16,17 @@ export class NoticeController {
     return await this.noticeService.findAll(searchNoticeDto);
   }
 
+  @ApiOperation({ summary: '공지사항 조회 by noticeId' })
+  @ApiParam({
+    name: 'noticeId',
+    type: Number,
+    description: 'notice 아이디',
+  })
+  @Get(':noticeId')
+  async findOneById(@Param('noticeId') noticeId: number) {
+    return await this.noticeService.findOneById(noticeId);
+  }
+
   @ApiOperation({ summary: '신규 공지사항 삽입' })
   @ApiBody({
     type: CreateNoticeDto,
@@ -28,17 +39,6 @@ export class NoticeController {
   @Post()
   async create(@Body() createNoticeDto: CreateNoticeDto) {
     return await this.noticeService.create(createNoticeDto);
-  }
-
-  @ApiOperation({ summary: '공지사항 조회 by noticeId' })
-  @ApiParam({
-    name: 'noticeId',
-    type: Number,
-    description: 'notice 아이디',
-  })
-  @Get(':noticeId')
-  async findOneById(@Param('noticeId') noticeId: number) {
-    return await this.noticeService.findOneById(noticeId);
   }
 
   @ApiOperation({ summary: '공지사항 수정' })

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { AdminReviewIngredientRepository } from './admin-review-ingredient.repository';
 import { CreateAdminReviewIngredientDto } from './model/create-admin-review-ingredient.dto';
 import { DeleteAdminReviewIngredientDto } from './model/delete-admin-review-ingredient.dto';
-import { RuntimeException } from '@nestjs/core/errors/exceptions';
 
 @Injectable()
 export class AdminReviewIngredientService {
@@ -28,7 +27,7 @@ export class AdminReviewIngredientService {
   private async insert(reviewId: number, reviewIngredientIdArr: number[]) {
     const createAdminReviewIngredientDtoArr = reviewIngredientIdArr.map((ingredientId) => new CreateAdminReviewIngredientDto(reviewId, ingredientId));
     const result = await this.adminReviewIngredientRepository.insert(createAdminReviewIngredientDtoArr);
-    if (!result) throw new RuntimeException(`Failed to insert review ingredient(reviewId: ${reviewId})`);
+    if (!result) throw new Error(`리뷰 재료 추가에 실패했습니다.(reviewId: ${reviewId})`);
   }
 
   /**
@@ -38,6 +37,6 @@ export class AdminReviewIngredientService {
   private async delete(reviewId: number) {
     const deleteAdminReview = new DeleteAdminReviewIngredientDto(reviewId);
     const result = await this.adminReviewIngredientRepository.deleteByReviewId(deleteAdminReview);
-    if (!result) throw new RuntimeException(`Failed to delete review ingredient(reviewId: ${reviewId})`);
+    if (!result) throw new Error(`리뷰 재료 삭제에 실패했습니다.(reviewId: ${reviewId})`);
   }
 }
