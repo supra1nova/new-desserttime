@@ -108,7 +108,7 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기 하나 생성 및 수정' })
+  @ApiOperation({ summary: '후기 하나 생성 및 수정 (뒤로가기)' })
   @Post('generable')
   async postGenerableReview(@Body() reviewSaveDto: ReviewSaveDto) {
     return await this.reviewService.postGenerableReview(reviewSaveDto);
@@ -116,7 +116,7 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기 작성완료' })
+  @ApiOperation({ summary: '후기 등록 (작성완료)' })
   @Patch('generable')
   async patchGenerableReview(@Body() reviewUpdateDto: ReviewUpdateDto) {
     return await this.reviewService.patchGenerableReview(reviewUpdateDto);
