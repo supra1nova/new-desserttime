@@ -66,7 +66,7 @@ export class ReviewUpdateDto {
   readonly content: string;
 
   @ApiProperty({
-    example: 'true',
+    example: 'SAVED',
     description: '작성완료 : SAVED',
     required: true,
   })

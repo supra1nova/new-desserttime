@@ -62,8 +62,8 @@ export class ReviewSaveDto {
   readonly content: string;
 
   @ApiProperty({
-    example: 'true',
-    description: '작성완료 : INIT',
+    example: 'INIT',
+    description: '뒤로가기 : INIT',
     required: true,
   })
   @IsNotEmpty()

@@ -296,7 +296,7 @@ export class ReviewService {
         resultData['menuName'] = reviewData.menuName;
         resultData['storeName'] = reviewData.storeName;
         resultData['score'] = reviewData.score;
-        resultData['dessertCategory'] = { dessertCategoryId: reviewData.dessertCategory.dessertCategoryId, dessertName: reviewData.dessertCategory.dessertName };
+        resultData['dessertCategory'] = { dessertCategoryId: reviewData.dessertCategory?.dessertCategoryId, dessertName: reviewData.dessertCategory?.dessertName };
 
         if (reviewData.reviewImg.length > 0) {
           const reviewImg = reviewData.reviewImg.map((imgData) => {
@@ -340,7 +340,7 @@ export class ReviewService {
     try {
       const { content, status, menuName, score, storeName, reviewId, memberId, dessertCategoryId } = reviewSaveDto;
 
-      if (dessertCategoryId) {
+      if (dessertCategoryId && reviewId) {
         //1. 재료 삭제
         const ingredientList = await this.reviewRepository.findReviewIngredient(reviewSaveDto);
         if (ingredientList.length > 0) await this.reviewRepository.deleteReviewIngredient(reviewSaveDto);
@@ -351,8 +351,8 @@ export class ReviewService {
         }
       }
       //마지막. 리뷰 저장
-      await this.reviewRepository.updateGenerableReview(reviewSaveDto);
-      return;
+      const review = await this.reviewRepository.updateGenerableReview(reviewSaveDto);
+      return { reviewId: review.reviewId };
     } catch (error) {
       throw error;
     }
