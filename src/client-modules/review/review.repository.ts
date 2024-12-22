@@ -328,6 +328,7 @@ export class ReviewRepository {
    * @returns
    */
   async findGenerableReview(reviewIdDto: ReviewIdDto) {
+    const statusArray = [ReviewStatus.WAIT, ReviewStatus.INIT];
     return await this.review
       .createQueryBuilder('review')
       .leftJoinAndSelect('review.dessertCategory', 'dessertCategory')
@@ -335,7 +336,7 @@ export class ReviewRepository {
       .leftJoinAndSelect('review.reviewIngredients', 'reviewIngredient')
       .leftJoinAndSelect('reviewIngredient.ingredient', 'ingredient')
       .where('review.reviewId = :reviewId', { reviewId: reviewIdDto.reviewId })
-      .andWhere('review.status = :status', { status: In([ReviewStatus.WAIT, ReviewStatus.INIT]) })
+      .andWhere('review.status IN (:...statuses)', { statuses: statusArray })
       .andWhere('review.isUsable = :isUsable', { isUsable: true })
       .getOne();
   }
@@ -344,7 +345,7 @@ export class ReviewRepository {
    * 기존 리뷰에 선택된 재료가 있는지 확인
    * @param reviewUpdateDto
    */
-  async findReviewIngredient(reviewUpdateDto: ReviewUpdateDto) {
+  async findReviewIngredient(reviewUpdateDto: any) {
     return await this.reviewIngredient.find({ where: { review: { reviewId: reviewUpdateDto.reviewId } } });
   }
 
@@ -352,7 +353,7 @@ export class ReviewRepository {
    * 기존 리뷰에 선택된 재료 삭제
    * @param reviewUpdateDto
    */
-  async deleteReviewIngredient(reviewUpdateDto: ReviewUpdateDto) {
+  async deleteReviewIngredient(reviewUpdateDto: any) {
     await this.reviewIngredient.delete({ review: { reviewId: reviewUpdateDto.reviewId } });
   }
 
@@ -369,10 +370,10 @@ export class ReviewRepository {
    * @param reviewUpdateDto
    * @returns
    */
-  async updateGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
+  async updateGenerableReview(reviewUpdateDto: any) {
     const saveReview = new Review();
     saveReview.content = reviewUpdateDto.content;
-    saveReview.status = reviewUpdateDto.status == 'WAIT' ? ReviewStatus.WAIT : ReviewStatus.INIT;
+    saveReview.status = reviewUpdateDto.status == 'SAVED' ? ReviewStatus.SAVED : ReviewStatus.INIT;
     saveReview.menuName = reviewUpdateDto.menuName;
     saveReview.score = reviewUpdateDto.score;
     saveReview.storeName = reviewUpdateDto.storeName;
