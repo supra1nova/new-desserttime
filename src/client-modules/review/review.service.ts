@@ -14,6 +14,7 @@ import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { Transactional } from 'typeorm-transactional';
 import { MemberIdPagingDto } from './dto/review.dto';
+import { ReviewSaveDto } from './dto/review.save.dto';
 
 @Injectable()
 export class ReviewService {
@@ -324,6 +325,34 @@ export class ReviewService {
         }
       }
       return resultData;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 후기 하나 생성 및 수정
+   * @param reviewUpdateDto
+   * @returns
+   */
+  @Transactional()
+  async postGenerableReview(reviewSaveDto: ReviewSaveDto) {
+    try {
+      const { content, status, menuName, score, storeName, reviewId, memberId, dessertCategoryId } = reviewSaveDto;
+
+      if (dessertCategoryId) {
+        //1. 재료 삭제
+        const ingredientList = await this.reviewRepository.findReviewIngredient(reviewSaveDto);
+        if (ingredientList.length > 0) await this.reviewRepository.deleteReviewIngredient(reviewSaveDto);
+        //2. 재료 저장
+        if (reviewSaveDto.ingredientId.length > 0) {
+          const saveReviewIngre = reviewSaveDto.ingredientId.map((data) => ({ ingredient: { ingredientId: data }, review: { reviewId: reviewSaveDto.reviewId } }));
+          await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
+        }
+      }
+      //마지막. 리뷰 저장
+      await this.reviewRepository.updateGenerableReview(reviewSaveDto);
+      return;
     } catch (error) {
       throw error;
     }

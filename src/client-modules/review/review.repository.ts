@@ -344,7 +344,7 @@ export class ReviewRepository {
    * 기존 리뷰에 선택된 재료가 있는지 확인
    * @param reviewUpdateDto
    */
-  async findReviewIngredient(reviewUpdateDto: ReviewUpdateDto) {
+  async findReviewIngredient(reviewUpdateDto: any) {
     return await this.reviewIngredient.find({ where: { review: { reviewId: reviewUpdateDto.reviewId } } });
   }
 
@@ -369,10 +369,10 @@ export class ReviewRepository {
    * @param reviewUpdateDto
    * @returns
    */
-  async updateGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
+  async updateGenerableReview(reviewUpdateDto: any) {
     const saveReview = new Review();
     saveReview.content = reviewUpdateDto.content;
-    saveReview.status = reviewUpdateDto.status == 'WAIT' ? ReviewStatus.WAIT : ReviewStatus.INIT;
+    saveReview.status = reviewUpdateDto.status == 'SAVED' ? ReviewStatus.SAVED : ReviewStatus.INIT;
     saveReview.menuName = reviewUpdateDto.menuName;
     saveReview.score = reviewUpdateDto.score;
     saveReview.storeName = reviewUpdateDto.storeName;
