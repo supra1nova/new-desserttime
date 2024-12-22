@@ -15,6 +15,7 @@ import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { MemberIdPagingDto } from './dto/review.dto';
 import { JwtAuthGuard } from 'src/config/auth/jwt/jwt.guard';
+import { ReviewSaveDto } from './dto/review.save.dto';
 
 @Controller('review')
 @ApiTags('Review')
@@ -68,7 +69,7 @@ export class ReviewController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '후기 작성목록 등록' })
-  @Post('generable')
+  @Post('generable/list')
   async postGernerableReviewList(@Body() reviewCreateDto: ReviewCreateDto) {
     return await this.reviewService.postGenerableReviewList(reviewCreateDto);
   }
@@ -107,7 +108,15 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기 작성목록 수정/ 작성완료' })
+  @ApiOperation({ summary: '후기 하나 생성 및 수정 (뒤로가기)' })
+  @Post('generable')
+  async postGenerableReview(@Body() reviewSaveDto: ReviewSaveDto) {
+    return await this.reviewService.postGenerableReview(reviewSaveDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '후기 등록 (작성완료)' })
   @Patch('generable')
   async patchGenerableReview(@Body() reviewUpdateDto: ReviewUpdateDto) {
     return await this.reviewService.patchGenerableReview(reviewUpdateDto);
