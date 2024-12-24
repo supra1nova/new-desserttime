@@ -23,12 +23,4 @@ export class QnAController {
   async getQnA(@Query() qnAIdDto: QnAIdDto) {
     return await this.qnaService.getQnA(qnAIdDto);
   }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '문의 목록 전체 조회하기' })
-  @Get('list')
-  async getQnAList() {
-    return await this.qnaService.getQnAList();
-  }
 }
