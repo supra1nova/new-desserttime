@@ -24,14 +24,4 @@ export class QnAService {
       throw error;
     }
   }
-
-  @Transactional()
-  async getQnAList() {
-    try {
-      const qnaList = await this.qnaRepository.findQnAList();
-      return qnaList;
-    } catch (error) {
-      throw error;
-    }
-  }
 }

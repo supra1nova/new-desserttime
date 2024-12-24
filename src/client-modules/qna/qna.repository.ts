@@ -11,12 +11,9 @@ export class QnARepository {
     @InjectRepository(QnA)
     private qnaRepository: Repository<QnA>,
   ) {}
+
   async insertQnA(createQnADto: CreateQnADto) {
     await this.qnaRepository.insert(createQnADto);
-  }
-
-  async findQnAList() {
-    return await this.qnaRepository.find({ select: { qnaId: true, content: true, email: true, createdDate: true }, where: { isUsable: true } });
   }
 
   async findQnA(qnAIdDto: QnAIdDto) {
