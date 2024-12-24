@@ -80,7 +80,7 @@ export class MemberRepository {
    */
   async memberValidate(userValidationDto: UserValidationDto) {
     return await this.memberRepository.findOne({
-      where: { snsId: userValidationDto.snsId },
+      where: { snsId: userValidationDto.snsId, isUsable: true },
     });
   }
 

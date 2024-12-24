@@ -73,6 +73,7 @@ export class MemberService {
   async memberValidate(userValidationDto: UserValidationDto) {
     try {
       const memberData = await this.memberRepository.memberValidate(userValidationDto);
+
       if (!memberData) {
         throw new BadRequestException('미등록정보', {
           cause: new Error(),
@@ -80,8 +81,12 @@ export class MemberService {
         });
       }
       const token = await this.authService.jwtLogIn(memberData);
-
-      return token;
+      const result = {
+        memberId: memberData.memberId,
+        nickName: memberData.nickName,
+        token: token.token,
+      };
+      return result;
     } catch (error) {
       throw error;
     }
