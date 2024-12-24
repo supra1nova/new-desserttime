@@ -337,7 +337,7 @@ export class MemberService {
         const createdDate: string = data.createdDate.toISOString().substring(0, 10);
         return {
           pointHistoryId: data.pointHistoryId,
-          menuName: data.review?.menuName,
+          menuName: data.review ? data.review.menuName : '관리자 소관',
           point: data.newPoint,
           createdDate,
         };

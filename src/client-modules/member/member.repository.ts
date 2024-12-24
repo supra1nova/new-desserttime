@@ -273,14 +273,6 @@ export class MemberRepository {
       .orderBy('pointHistory.createdDate', 'DESC')
       .take(limit + 1)
       .getMany();
-
-    // .find({
-    //   select: { pointHistoryId: true, createdDate: true, newPoint: true, review: { menuName: true } },
-    //   relations: ['review'],
-    //   where: { member: { memberId: memberPointListDto.memberId, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) } },
-    //   order: { createdDate: 'DESC' },
-    //   take: limit + 1,
-    // });
     return new ResponseCursorPagination(items, limit, 'pointHistoryId');
   }
 
