@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/signin.dto';
 import { MemberService } from './member.service';
 import { UserValidationDto } from './dto/login.dto';
@@ -59,7 +59,7 @@ export class MemberController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '마이페이지 - 사용자 정보 수정하기' })
+  @ApiOperation({ summary: '마이페이지 - 사용자 정보 수정하기 // id를 제외한 요청데이터들은 optional이라 입력안해도됨!' })
   @Patch('/my-page')
   async patchMember(@Query() memberUpdateDto: MemberUpdateDto) {
     return await this.memberService.patchMember(memberUpdateDto);
