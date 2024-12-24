@@ -25,15 +25,15 @@ export class PostAccusationDto {
 
   @ApiProperty({
     example: '1',
-    description: '사용자ID',
+    description: '신고하는 당사자의 ID',
     required: true,
   })
   @IsNotEmpty()
   readonly memberId: number;
 
   @ApiProperty({
-    example: '1',
-    description: '리뷰 Id',
+    example: '21',
+    description: '신고할 리뷰 Id',
     required: true,
   })
   @IsNotEmpty()
