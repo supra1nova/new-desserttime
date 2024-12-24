@@ -25,8 +25,8 @@ export class AccusationController {
     description: `
     reason: 선택된 신고사유 {    "COPYRIGHT_INFRINGEMENT": "저작권 침해", "OBSCENE": "음란/선정적", "ABUSE": "욕설", "PRIVATE": "개인정보 노출", "ETC": "기타(직접입력)"    }\n
     content : ETC (기타) - 신고사유내용, \n 
-    memberId : 사용자 id, \n
-    reviewId : 리뷰 id`,
+    memberId : 신고하는 당사자의 사용자 id, \n
+    reviewId : 신고할 리뷰 id`,
     type: PostAccusationDto,
   })
   @Post()
@@ -36,7 +36,7 @@ export class AccusationController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '해당 리뷰 신고이력 확인' })
+  @ApiOperation({ summary: '해당 리뷰 신고이력 확인 //신고한적있으면 true' })
   @Get('record/:reviewId/:memberId')
   async getPreAccuRecord(@Param() accusationRecordDto: AccusationRecordDto) {
     return await this.accusationService.getPreAccuRecord(accusationRecordDto);
