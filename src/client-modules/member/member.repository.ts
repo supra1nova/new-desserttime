@@ -85,6 +85,18 @@ export class MemberRepository {
   }
 
   /**
+   * snsId 조회
+   * @param loginDto
+   * @returns
+   */
+  async findSnsId(memberId) {
+    return await this.memberRepository.findOne({
+      select: { snsId: true },
+      where: { memberId },
+    });
+  }
+
+  /**
    * 회원가입
    * @param email
    * @returns

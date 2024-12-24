@@ -53,6 +53,7 @@ export class MemberService {
           }
         });
         await this.memberRepository.insertPickCategoryList(pickedDCList);
+        return await this.memberRepository.findSnsId(newMemberId);
       } else {
         throw new BadRequestException('중복정보', {
           cause: new Error(),
