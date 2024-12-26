@@ -30,31 +30,30 @@ export class ReviewService {
     try {
       // 사용자가 선호하는 카테고리의 2차 카테고리ID 목록 조회
       const memberInterestList = await this.reviewRepository.findMemberInterestList(memberIdDto);
-      if (!memberInterestList || memberInterestList.length === 0) {
-        return [];
-      }
-      const dessertCategoryList = memberInterestList.map((category) => category.dc_dessertCategoryId);
       let randomReviewCount = 25;
       let reviewImgList = [];
+      if (memberInterestList.length > 0) {
+        const dessertCategoryList = memberInterestList.map((category) => category.dc_dessertCategoryId);
 
-      if (dessertCategoryList.length > 0) {
-        const usableCategoryList = await this.reviewRepository.findUsablecategoryList(dessertCategoryList);
+        if (dessertCategoryList.length > 0) {
+          const usableCategoryList = await this.reviewRepository.findUsablecategoryList(dessertCategoryList);
 
-        if (usableCategoryList && usableCategoryList.length > 0) {
-          randomReviewCount -= usableCategoryList.length;
+          if (usableCategoryList && usableCategoryList.length > 0) {
+            randomReviewCount -= usableCategoryList.length;
 
-          // 사용 가능한 카테고리가 있을 경우
-          const mainCategoryList = await Promise.all(
-            usableCategoryList.map(async (category) => {
-              const categoryReviewImgList = await this.reviewRepository.findReviewImgList(category['dc_dessertCategoryId']);
-              return {
-                dessertCategoryId: category['dc_dessertCategoryId'],
-                dessertName: category['dc_dessertName'],
-                categoryReviewImgList,
-              };
-            }),
-          );
-          reviewImgList = reviewImgList.concat(mainCategoryList);
+            // 사용 가능한 카테고리가 있을 경우
+            const mainCategoryList = await Promise.all(
+              usableCategoryList.map(async (category) => {
+                const categoryReviewImgList = await this.reviewRepository.findReviewImgList(category['dc_dessertCategoryId']);
+                return {
+                  dessertCategoryId: category['dc_dessertCategoryId'],
+                  dessertName: category['dc_dessertName'],
+                  categoryReviewImgList,
+                };
+              }),
+            );
+            reviewImgList = reviewImgList.concat(mainCategoryList);
+          }
         }
       }
 

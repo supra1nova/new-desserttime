@@ -77,8 +77,8 @@ export class ReviewRepository {
   async findReviewImgList(dessertCategoryId) {
     return await this.review
       .createQueryBuilder('review')
-      .leftJoin(DessertCategory, 'dc')
-      .leftJoin(ReviewImg, 'reviewImg')
+      .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
+      .leftJoin(ReviewImg, 'reviewImg', 'review.reviewId = reviewImg.reviewImgReviewId')
       .where('dc.dessertCategoryId=:dessertCategoryId', { dessertCategoryId })
       .andWhere('reviewImg.isMain=:isMain', { isMain: true })
       .select('review.reviewId')
@@ -108,7 +108,7 @@ export class ReviewRepository {
       .orderBy('COUNT(review.reviewId)', 'DESC')
       .select(['dc.dessertCategoryId', 'dc.dessertName'])
       .limit(limitnum)
-      .getMany();
+      .getRawMany();
   }
 
   /**
@@ -120,8 +120,8 @@ export class ReviewRepository {
   async findRandomReviewImgList(dessertCategoryId) {
     return await this.review
       .createQueryBuilder('review')
-      .leftJoin(DessertCategory, 'dc')
-      .leftJoin(ReviewImg, 'reviewImg')
+      .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
+      .leftJoin(ReviewImg, 'reviewImg', 'review.reviewId = reviewImg.reviewImgReviewId')
       .where('dc.dessertCategoryId=:dessertCategoryId', { dessertCategoryId })
       .andWhere('reviewImg.isMain=:isMain', { isMain: true })
       .select('review.reviewId')
