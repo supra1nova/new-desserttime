@@ -80,7 +80,19 @@ export class MemberRepository {
    */
   async memberValidate(userValidationDto: UserValidationDto) {
     return await this.memberRepository.findOne({
-      where: { snsId: userValidationDto.snsId },
+      where: { snsId: userValidationDto.snsId, isUsable: true },
+    });
+  }
+
+  /**
+   * snsId 조회
+   * @param loginDto
+   * @returns
+   */
+  async findSnsId(memberId) {
+    return await this.memberRepository.findOne({
+      select: { snsId: true },
+      where: { memberId },
     });
   }
 
@@ -261,14 +273,6 @@ export class MemberRepository {
       .orderBy('pointHistory.createdDate', 'DESC')
       .take(limit + 1)
       .getMany();
-
-    // .find({
-    //   select: { pointHistoryId: true, createdDate: true, newPoint: true, review: { menuName: true } },
-    //   relations: ['review'],
-    //   where: { member: { memberId: memberPointListDto.memberId, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) } },
-    //   order: { createdDate: 'DESC' },
-    //   take: limit + 1,
-    // });
     return new ResponseCursorPagination(items, limit, 'pointHistoryId');
   }
 

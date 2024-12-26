@@ -43,7 +43,9 @@ export class MemberService {
 
         await this.memberRepository.updateMemberNickname(newMemberId, nickName);
 
-        const categories = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5];
+        const categories = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5].filter(
+          (category) => category !== undefined,
+        );
         categories.forEach((category) => {
           if (category) {
             pickedDCList.push({
@@ -52,7 +54,11 @@ export class MemberService {
             });
           }
         });
-        await this.memberRepository.insertPickCategoryList(pickedDCList);
+
+        if (categories.length > 0) {
+          await this.memberRepository.insertPickCategoryList(pickedDCList);
+        }
+        return await this.memberRepository.findSnsId(newMemberId);
       } else {
         throw new BadRequestException('중복정보', {
           cause: new Error(),
@@ -73,6 +79,7 @@ export class MemberService {
   async memberValidate(userValidationDto: UserValidationDto) {
     try {
       const memberData = await this.memberRepository.memberValidate(userValidationDto);
+
       if (!memberData) {
         throw new BadRequestException('미등록정보', {
           cause: new Error(),
@@ -80,8 +87,12 @@ export class MemberService {
         });
       }
       const token = await this.authService.jwtLogIn(memberData);
-
-      return token;
+      const result = {
+        memberId: memberData.memberId,
+        nickName: memberData.nickName,
+        token: token.token,
+      };
+      return result;
     } catch (error) {
       throw error;
     }
@@ -99,8 +110,6 @@ export class MemberService {
       const usersReviewCount = await this.memberRepository.countReview(memberIdDto);
       const usersPoint = await this.memberRepository.findTotalPointOne(memberIdDto);
       const usersTotalPoint = usersPoint[0] ? usersPoint[0].totalPoint : 0;
-      console.log('usersReviewCount::', usersReviewCount);
-      console.log('usersTotalPoint::', usersTotalPoint);
       return {
         nickName: nickName.nickName,
         usersReviewCount,
@@ -184,8 +193,9 @@ export class MemberService {
       await this.memberRepository.saveMember(memberUpdateDto);
 
       const pickDessertList = [];
-      const categories = [memberUpdateDto.memberPickCategory1, memberUpdateDto.memberPickCategory2, memberUpdateDto.memberPickCategory3, memberUpdateDto.memberPickCategory4, memberUpdateDto.memberPickCategory5];
-
+      const categories = [memberUpdateDto.memberPickCategory1, memberUpdateDto.memberPickCategory2, memberUpdateDto.memberPickCategory3, memberUpdateDto.memberPickCategory4, memberUpdateDto.memberPickCategory5].filter(
+        (category) => category !== undefined,
+      );
       categories.forEach((category) => {
         if (category) {
           pickDessertList.push({
@@ -194,9 +204,10 @@ export class MemberService {
           });
         }
       });
-
-      await this.memberRepository.deletePickCategoryList(memberUpdateDto);
-      await this.memberRepository.insertPickCategoryList(pickDessertList);
+      if (categories.length > 0) {
+        await this.memberRepository.deletePickCategoryList(memberUpdateDto);
+        await this.memberRepository.insertPickCategoryList(pickDessertList);
+      }
     } catch (error) {
       throw error;
     }
@@ -326,7 +337,7 @@ export class MemberService {
         const createdDate: string = data.createdDate.toISOString().substring(0, 10);
         return {
           pointHistoryId: data.pointHistoryId,
-          menuName: data.review?.menuName,
+          menuName: data.review ? data.review.menuName : '관리자 소관',
           point: data.newPoint,
           createdDate,
         };

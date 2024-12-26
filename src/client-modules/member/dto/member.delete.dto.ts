@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class MemberDeleteDto {
   @ApiProperty({
@@ -23,5 +23,6 @@ export class MemberDeleteDto {
     description: '탈퇴사유-기타 내용',
     required: false,
   })
+  @IsOptional()
   readonly context: string;
 }
