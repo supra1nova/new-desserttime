@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -16,15 +16,22 @@ import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { MemberIdPagingDto } from './dto/review.dto';
 import { JwtAuthGuard } from 'src/config/auth/jwt/jwt.guard';
 import { ReviewSaveDto } from './dto/review.save.dto';
+import { ReviewMemberIdDto } from './dto/review.member.dto';
 
 @Controller('review')
 @ApiTags('Review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
+  @ApiOperation({ summary: '리뷰 하나 조회' })
+  @Get('/:reviewId/:memberId')
+  async findReviewOne(@Param() reviewMemberIdDto: ReviewMemberIdDto) {
+    return await this.reviewService.findReviewOne(reviewMemberIdDto);
+  }
+
   @ApiOperation({ summary: '홈화면 - 카테고리별 리뷰 이미지 목록 조회' })
   @Get('home/list/:memberId')
-  async getHomeReviewImgList(@Param() memberIdDto: MemberIdDto) {
+  async getHomeReviewImgList(@Param(new ValidationPipe({ whitelist: true, transform: true })) memberIdDto: MemberIdDto) {
     return await this.reviewService.getHomeReviewImgList(memberIdDto);
   }
 

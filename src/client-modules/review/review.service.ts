@@ -15,11 +15,24 @@ import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { Transactional } from 'typeorm-transactional';
 import { MemberIdPagingDto } from './dto/review.dto';
 import { ReviewSaveDto } from './dto/review.save.dto';
+import { ReviewMemberIdDto } from './dto/review.member.dto';
 
 @Injectable()
 export class ReviewService {
   constructor(private reviewRepository: ReviewRepository) {}
 
+  /**
+   * 리뷰 하나 조회
+   * @param reviewIdDto
+   * @returns
+   */
+  async findReviewOne(reviewMemberIdDto: ReviewMemberIdDto) {
+    try {
+      return await this.reviewRepository.findReviewOne(reviewMemberIdDto);
+    } catch (error) {
+      throw error;
+    }
+  }
   /**
    * 홈화면 리뷰이미지 목록 랜덤리스트
    * @param memberIdDto
@@ -29,9 +42,11 @@ export class ReviewService {
   async getHomeReviewImgList(memberIdDto: MemberIdDto) {
     try {
       // 사용자가 선호하는 카테고리의 2차 카테고리ID 목록 조회
-      const memberInterestList = await this.reviewRepository.findMemberInterestList(memberIdDto);
+      let memberInterestList = [];
       let randomReviewCount = 25;
       let reviewImgList = [];
+      if (memberIdDto.memberId) memberInterestList = await this.reviewRepository.findMemberInterestList(memberIdDto);
+
       if (memberInterestList.length > 0) {
         const dessertCategoryList = memberInterestList.map((category) => category.dc_dessertCategoryId);
 
@@ -60,8 +75,11 @@ export class ReviewService {
       if (randomReviewCount > 0) {
         //사용가능한 카테고리가 없거나 25개보다 적은경우
         const randomCategoryList = await this.reviewRepository.findRandomCategoryList(randomReviewCount);
+        console.log('randomCategoryList ::', randomCategoryList);
+
         const mainRandomCategoryList = await Promise.all(
           randomCategoryList.map(async (category) => {
+            console.log('category ::', category);
             const randomCategoryReviewImgList = await this.reviewRepository.findRandomReviewImgList(category['dc_dessertCategoryId']);
             return {
               dessertCategoryId: category['dc_dessertCategoryId'],
