@@ -114,16 +114,16 @@ export class ReviewRepository {
       .createQueryBuilder('review')
       .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
       .leftJoin(ReviewImg, 'reviewImg', 'review.reviewId = reviewImg.reviewImgReviewId')
-      .where('dc.dessertCategoryId=:dessertCategoryId', { dessertCategoryId })
+      .where('review.dessertCategoryDessertCategoryId=:dessertCategoryId', { dessertCategoryId })
       .andWhere('reviewImg.isMain=:isMain', { isMain: true })
-      .select('review.reviewId')
-      .addSelect('reviewImg.middlepath')
-      .addSelect('reviewImg.path')
-      .addSelect('reviewImg.extention')
-      .addSelect('reviewImg.imgName')
+      .select('review.reviewId', 'reviewId')
+      .addSelect('reviewImg.middlepath', 'middlepath')
+      .addSelect('reviewImg.path', 'path')
+      .addSelect('reviewImg.extention', 'extention')
+      .addSelect('reviewImg.imgName', 'imgName')
       .orderBy('review.createdDate', 'DESC')
       .limit(10)
-      .getMany();
+      .getRawMany();
   }
 
   /**
@@ -157,16 +157,16 @@ export class ReviewRepository {
       .createQueryBuilder('review')
       .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
       .leftJoin(ReviewImg, 'reviewImg', 'review.reviewId = reviewImg.reviewImgReviewId')
-      .where('dc.dessertCategoryId=:dessertCategoryId', { dessertCategoryId })
+      .where('review.dessertCategoryDessertCategoryId=:dessertCategoryId', { dessertCategoryId })
       .andWhere('reviewImg.isMain=:isMain', { isMain: true })
-      .select('review.reviewId')
-      .addSelect('reviewImg.middlepath')
-      .addSelect('reviewImg.path')
-      .addSelect('reviewImg.extention')
-      .addSelect('reviewImg.imgName')
+      .select('review.reviewId', 'reviewId')
+      .addSelect('reviewImg.middlepath', 'middlepath')
+      .addSelect('reviewImg.path', 'path')
+      .addSelect('reviewImg.extention', 'extention')
+      .addSelect('reviewImg.imgName', 'imgName')
       .orderBy('review.createdDate', 'DESC')
       .limit(10)
-      .getMany();
+      .getRawMany();
   }
 
   /**

@@ -79,7 +79,6 @@ export class ReviewService {
 
         const mainRandomCategoryList = await Promise.all(
           randomCategoryList.map(async (category) => {
-            console.log('category ::', category);
             const randomCategoryReviewImgList = await this.reviewRepository.findRandomReviewImgList(category['dc_dessertCategoryId']);
             return {
               dessertCategoryId: category['dc_dessertCategoryId'],
