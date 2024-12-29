@@ -16,10 +16,16 @@ import { Transactional } from 'typeorm-transactional';
 import { MemberIdPagingDto } from './dto/review.dto';
 import { ReviewSaveDto } from './dto/review.save.dto';
 import { ReviewMemberIdDto } from './dto/review.member.dto';
+import { AdminPointService } from 'src/backoffice-modules/admin-point/admin-point.service';
+import { UpdateAdminPointDto } from 'src/backoffice-modules/admin-point/model/update-admin-point.dto';
+import { PointType } from 'src/common/enum/point.enum';
 
 @Injectable()
 export class ReviewService {
-  constructor(private reviewRepository: ReviewRepository) {}
+  constructor(
+    private reviewRepository: ReviewRepository,
+    private adminPointService: AdminPointService,
+  ) {}
 
   /**
    * 리뷰 하나 조회
@@ -393,10 +399,12 @@ export class ReviewService {
 
       //3. 리뷰 저장
       const newReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
-      if (reviewUpdateDto.reviewId) {
+      if (!reviewUpdateDto.reviewId) {
         reviewUpdateDto.reviewId = newReview.reviewId;
         await this.saveIngredient(reviewUpdateDto);
       }
+      const updateAdminPointDto = new UpdateAdminPointDto(5, PointType.REVIEW);
+      await this.adminPointService.processInsertUpdatePoint('save', reviewUpdateDto.memberId, updateAdminPointDto, reviewUpdateDto.reviewId);
       return;
     } catch (error) {
       throw error;
