@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -24,8 +24,8 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @ApiOperation({ summary: '리뷰 하나 조회' })
-  @Get('/:reviewId/:memberId')
-  async findReviewOne(@Param() reviewMemberIdDto: ReviewMemberIdDto) {
+  @Get()
+  async findReviewOne(@Query() reviewMemberIdDto: ReviewMemberIdDto) {
     return await this.reviewService.findReviewOne(reviewMemberIdDto);
   }
 
@@ -51,15 +51,15 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기작성가능한 후기 갯수' })
+  @ApiOperation({ summary: '후기작성가능한 총 후기 갯수' })
   @Get('generable/count/:memberId')
-  async getGenerableReviewCount(@Param() memberIdDto: MemberIdDto) {
+  async getGenerableReviewCount(@Query() memberIdDto: MemberIdDto) {
     return await this.reviewService.getGenerableReviewCount(memberIdDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기 작성가능한 일수' })
+  @ApiOperation({ summary: '이번달, 후기 작성가능한 일수' })
   @Get('generable/date')
   async getGenerableReviewDate() {
     return await this.reviewService.getGenerableReviewDate();
@@ -83,7 +83,7 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기 삭제' })
+  @ApiOperation({ summary: '작성 가능한 후기 하나 삭제' })
   @Delete('generable')
   async deleteGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
     return await this.reviewService.deleteGenerableReview(reviewIdDto);
@@ -91,15 +91,7 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'test용 API - 재료 하나 생성' })
-  @Post('ingredient/:ingredientName')
-  async postIngredientList(@Param() ingredientNameDto: IngredientNameDto) {
-    return await this.reviewService.postIngredientList(ingredientNameDto);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '재료목록조회' })
+  @ApiOperation({ summary: '후기 작성 - 재료목록조회' })
   @Get('ingredient/list')
   async getIngredientList() {
     return await this.reviewService.getIngredientList();
@@ -107,7 +99,7 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '작성가능한 후기 하나 조회' })
+  @ApiOperation({ summary: '후기작성 - 작성가능한 후기 하나 조회' })
   @Get('generable/:reviewId')
   async getGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
     return await this.reviewService.getGenerableReview(reviewIdDto);
@@ -115,7 +107,7 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기 하나 생성 및 수정 (뒤로가기)' })
+  @ApiOperation({ summary: '후기작성 - 후기 하나 생성 및 수정 (뒤로가기)' })
   @Post('generable')
   async postGenerableReview(@Body() reviewSaveDto: ReviewSaveDto) {
     return await this.reviewService.postGenerableReview(reviewSaveDto);
@@ -123,7 +115,7 @@ export class ReviewController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기 등록 (작성완료)' })
+  @ApiOperation({ summary: '후기 작성 - 후기 등록 (작성완료)' })
   @Patch('generable')
   async patchGenerableReview(@Body() reviewUpdateDto: ReviewUpdateDto) {
     return await this.reviewService.patchGenerableReview(reviewUpdateDto);

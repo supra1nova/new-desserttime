@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class ReviewUpdateDto {
   @ApiProperty({
@@ -13,10 +13,10 @@ export class ReviewUpdateDto {
   @ApiProperty({
     example: '4',
     description: '리뷰 Id',
-    required: true,
+    required: false,
   })
-  @IsNotEmpty()
-  readonly reviewId: number;
+  @IsOptional()
+  reviewId: number;
 
   @ApiProperty({
     example: '온혜화',
