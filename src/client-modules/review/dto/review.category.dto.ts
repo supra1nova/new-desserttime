@@ -4,7 +4,7 @@ import { CursorPaginationDto } from 'src/common/pagination/dto/cursor.pagination
 
 export class ReviewCategoryDto extends CursorPaginationDto {
   @ApiProperty({
-    example: '1',
+    example: '74',
     description: '카테고리 Id',
     required: true,
   })

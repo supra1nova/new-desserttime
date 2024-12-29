@@ -382,22 +382,44 @@ export class ReviewService {
   @Transactional()
   async patchGenerableReview(reviewUpdateDto: ReviewUpdateDto) {
     try {
-      //1. 재료 삭제
-      const ingredientList = await this.reviewRepository.findReviewIngredient(reviewUpdateDto);
-      if (ingredientList.length > 0) await this.reviewRepository.deleteReviewIngredient(reviewUpdateDto);
-      //2. 재료 저장
-      if (reviewUpdateDto.ingredientId.length > 0) {
-        const saveReviewIngre = reviewUpdateDto.ingredientId.map((data) => ({ ingredient: { ingredientId: data }, review: { reviewId: reviewUpdateDto.reviewId } }));
-        await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
+      let ingredientList = [];
+      if (reviewUpdateDto.reviewId) {
+        ingredientList = await this.reviewRepository.findReviewIngredient(reviewUpdateDto);
+        //1. 재료 삭제
+        if (ingredientList.length > 0) await this.reviewRepository.deleteReviewIngredient(reviewUpdateDto);
+        //2. 재료 저장
+        await this.saveIngredient(reviewUpdateDto);
       }
-      //마지막. 리뷰 저장
-      await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
+
+      //3. 리뷰 저장
+      const newReview = await this.reviewRepository.updateGenerableReview(reviewUpdateDto);
+      if (reviewUpdateDto.reviewId) {
+        reviewUpdateDto.reviewId = newReview.reviewId;
+        await this.saveIngredient(reviewUpdateDto);
+      }
       return;
     } catch (error) {
       throw error;
     }
   }
 
+  /**
+   * 재료 저장 로직
+   * @param reviewUpdateDto
+   */
+  async saveIngredient(reviewUpdateDto: ReviewUpdateDto) {
+    try {
+      if (reviewUpdateDto.ingredientId.length > 0) {
+        const saveReviewIngre = reviewUpdateDto.ingredientId.map((data) => ({
+          ingredient: { ingredientId: data },
+          review: { reviewId: reviewUpdateDto.reviewId },
+        }));
+        await this.reviewRepository.insertReviewIngredient(saveReviewIngre);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
   /**
    * 리뷰 이미지 하나 저장
    * @param reviewImgSaveDto
