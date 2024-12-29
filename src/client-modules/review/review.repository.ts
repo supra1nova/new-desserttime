@@ -412,7 +412,7 @@ export class ReviewRepository {
     saveReview.menuName = reviewUpdateDto.menuName;
     saveReview.score = reviewUpdateDto.score;
     saveReview.storeName = reviewUpdateDto.storeName;
-    saveReview.reviewId = reviewUpdateDto.reviewId;
+    if (reviewUpdateDto.reviewId) saveReview.reviewId = reviewUpdateDto.reviewId;
 
     const member = new Member();
     member.memberId = reviewUpdateDto.memberId;
