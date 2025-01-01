@@ -447,7 +447,7 @@ export class ReviewRepository {
       extention: file.extention,
       imgName: file.imgName,
       isMain: reviewImgSaveDto.isMain,
-      num: reviewImgSaveDto.reviewId,
+      num: reviewImgSaveDto.num,
       reviewImg: { reviewId: reviewImgSaveDto.reviewId },
     });
   }
