@@ -446,7 +446,7 @@ export class ReviewService {
       }
       const extention = path.extname(file.originalname); // 파일 확장자 추출
       const imgName = path.basename(file.originalname, extention); // 파일 이름
-      const lastpath = file.originalname;
+      const lastpath = file.filename;
       const fileData = {
         imgName,
         extention,
