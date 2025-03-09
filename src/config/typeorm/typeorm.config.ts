@@ -1,6 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import * as path from 'path';
 import { UserInterestDessert } from '../entities/user.interest.dessert.entity';
 import { Member } from '../entities/member.entity';
 import { ProfileImg } from '../entities/profile.img.entity';
@@ -17,21 +16,20 @@ import { ReceiptImg } from '../entities/receipt.Img.entity';
 import { ReviewIngredient } from '../entities/review.ingredient.entity';
 import { Ingredient } from '../entities/ingredient.entity';
 import { MemberDeletion } from '../entities/member.deleteion.entity';
+import { DataSourceOptions } from 'typeorm';
 
 export const typeORMConfig = async (configService: ConfigService): Promise<TypeOrmModuleOptions> => {
   return {
     //keepConnectionAlive: false,
-    type: 'oracle',
-    connectString: `(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=ga0c4cbf63f5084_dbdesserttime_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))`,
-    username: 'admin',
-    password: 'DTelwjxmxkdla8*',
-
-    entities: [MemberDeletion, UserInterestDessert, Member, ProfileImg, Like, Review, ReviewImg, QnA, Notice, Accusation, DessertCategory, Point, PointHistory, ReceiptImg, Ingredient, ReviewIngredient],
-
-    synchronize: false,
-    logging: true,
+    type: process.env.DB_TYPE as DataSourceOptions['type'],
+    connectString: process.env.DB_TNS_ALIAS,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    synchronize: Boolean(process.env.DB_SYNCHRONIZE),
+    logging: Boolean(process.env.DB_LOGGING),
     //connectTimeout: 30, //30초가 지나면 트랜잭션을 롤백한다.
     // migrations: [process.cwd() + '\\src\\database\\migrations\\*.ts'],
     // migrationsRun: true, //자동적으로 처음 migration이 실행되도록 한다.
+    entities: [MemberDeletion, UserInterestDessert, Member, ProfileImg, Like, Review, ReviewImg, QnA, Notice, Accusation, DessertCategory, Point, PointHistory, ReceiptImg, Ingredient, ReviewIngredient],
   };
 };
