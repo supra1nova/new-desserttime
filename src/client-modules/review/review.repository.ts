@@ -63,10 +63,13 @@ export class ReviewRepository {
       .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
-      .where('review.reviewId = :reviewId', { reviewId: reviewMemberIdDto.reviewId })
+      .where('review.isUsable = :isUsable', { isUsable: true })
+      .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
+      .andWhere('review.reviewId = :reviewId', { reviewId: reviewMemberIdDto.reviewId })
       .setParameter('memberId', memberId)
-      .getRawOne();
+      .getRawMany();
   }
+
   /**
    * 사용자가 선택한 카테고리의 2차 목록 조회
    * @param memberIdDto

@@ -34,7 +34,43 @@ export class ReviewService {
    */
   async findReviewOne(reviewMemberIdDto: ReviewMemberIdDto) {
     try {
-      return await this.reviewRepository.findReviewOne(reviewMemberIdDto);
+      const rawReviews = await this.reviewRepository.findReviewOne(reviewMemberIdDto);
+      const reviews = rawReviews.reduce((map, row) => {
+        if (!map.has(row.reviewId)) {
+          map.set(row.reviewId, {
+            reviewId: row.reviewId,
+            totalLikedNum: row.totalLikedNum,
+            menuName: row.menuName,
+            content: row.content,
+            storeName: row.storeName,
+            score: row.score,
+            createdDate: row.createdDate,
+            dessertCategoryId: row.dessertCategoryId,
+            memberNickName: row.memberNickName,
+            memberIsHavingImg: row.memberIsHavingImg,
+            isLiked: row.isLiked,
+            profileImgMiddlePath: row.profileImgMiddlePath ? row.profileImgMiddlePath : null,
+            profileImgPath: row.profileImgPath ? row.profileImgPath : null,
+            profileImgExtension: row.profileImgExtension ? row.profileImgExtension : null,
+            reviewImg: [],
+          });
+        }
+
+        const review = map.get(row.reviewId);
+
+        row.reviewImgPath &&
+          review.reviewImg.push({
+            reviewImgIsMain: row.reviewImgIsMain,
+            reviewImgNum: row.reviewImgNum,
+            reviewImgMiddlepath: row.reviewImgMiddlepath,
+            reviewImgPath: row.reviewImgPath,
+            reviewImgExtention: row.reviewImgExtention,
+          });
+
+        return map;
+      }, new Map());
+
+      return Array.from(reviews.values());
     } catch (error) {
       throw error;
     }
