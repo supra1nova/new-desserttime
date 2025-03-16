@@ -19,6 +19,7 @@ import { ReviewMemberIdDto } from './dto/review.member.dto';
 import { AdminPointService } from 'src/backoffice-modules/admin-point/admin-point.service';
 import { UpdateAdminPointDto } from 'src/backoffice-modules/admin-point/model/update-admin-point.dto';
 import { PointType } from 'src/common/enum/point.enum';
+import { Ingredient } from 'src/config/entities/ingredient.entity';
 
 @Injectable()
 export class ReviewService {
@@ -35,9 +36,9 @@ export class ReviewService {
   async findReviewOne(reviewMemberIdDto: ReviewMemberIdDto) {
     try {
       const rawReviews = await this.reviewRepository.findReviewOne(reviewMemberIdDto);
-      const reviews = rawReviews.reduce((map, row) => {
-        if (!map.has(row.reviewId)) {
-          map.set(row.reviewId, {
+      const review = rawReviews.reduce((result, row) => {
+        if (!result.reviewId) {
+          Object.assign(result, {
             reviewId: row.reviewId,
             totalLikedNum: row.totalLikedNum,
             menuName: row.menuName,
@@ -49,28 +50,37 @@ export class ReviewService {
             memberNickName: row.memberNickName,
             memberIsHavingImg: row.memberIsHavingImg,
             isLiked: row.isLiked,
-            profileImgMiddlePath: row.profileImgMiddlePath ? row.profileImgMiddlePath : null,
-            profileImgPath: row.profileImgPath ? row.profileImgPath : null,
-            profileImgExtension: row.profileImgExtension ? row.profileImgExtension : null,
+            profileImgMiddlePath: row.profileImgMiddlePath || null,
+            profileImgPath: row.profileImgPath || null,
+            profileImgExtension: row.profileImgExtension || null,
             reviewImg: [],
+            ingredients: [],
           });
         }
+        if (row.ingredientName) {
+          const isDuplicate = result.ingredients.some((ingredient) => ingredient === row.ingredientName);
 
-        const review = map.get(row.reviewId);
+          if (!isDuplicate) {
+            result.ingredients.push(row.ingredientName);
+          }
+        }
+        if (row.reviewImgPath) {
+          const isDuplicate = result.reviewImg.some((img) => img.reviewImgNum === row.reviewImgNum && img.reviewImgPath === row.reviewImgPath);
 
-        row.reviewImgPath &&
-          review.reviewImg.push({
-            reviewImgIsMain: row.reviewImgIsMain,
-            reviewImgNum: row.reviewImgNum,
-            reviewImgMiddlepath: row.reviewImgMiddlepath,
-            reviewImgPath: row.reviewImgPath,
-            reviewImgExtention: row.reviewImgExtention,
-          });
+          if (!isDuplicate) {
+            result.reviewImg.push({
+              reviewImgIsMain: row.reviewImgIsMain,
+              reviewImgNum: row.reviewImgNum,
+              reviewImgMiddlepath: row.reviewImgMiddlepath,
+              reviewImgPath: row.reviewImgPath,
+              reviewImgExtention: row.reviewImgExtention,
+            });
+          }
+        }
 
-        return map;
-      }, new Map());
-
-      return Array.from(reviews.values());
+        return result;
+      }, {});
+      return review;
     } catch (error) {
       throw error;
     }
