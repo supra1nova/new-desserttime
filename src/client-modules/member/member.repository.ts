@@ -23,6 +23,7 @@ import { MemberDeletion } from 'src/config/entities/member.deleteion.entity';
 import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
 import { MemberPointListDto } from './dto/member.pointlist.dto';
 import { MemberIdPagingDto } from './dto/member.id.paging.dto';
+import { NoticeType } from 'src/common/enum/noticetype.enum';
 
 @Injectable()
 export class MemberRepository {
@@ -283,9 +284,10 @@ export class MemberRepository {
    */
   async findNoticeList(noticeListDto: NoticeListDto) {
     const { cursor, limit } = noticeListDto;
-
+    const selectFields: any = { title: true, createdDate: true, noticeId: true };
+    if (noticeListDto.noticeType == NoticeType.FAQ) selectFields.content = true;
     const items = await this.noticeRepository.find({
-      select: { title: true, createdDate: true, noticeId: true },
+      select: selectFields,
       where: { noticeType: noticeListDto.noticeType, ...(cursor ? { noticeId: LessThan(Number(cursor)) } : {}) },
       order: { createdDate: 'DESC' },
       take: limit + 1, // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
