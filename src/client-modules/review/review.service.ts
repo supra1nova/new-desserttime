@@ -19,6 +19,7 @@ import { ReviewMemberIdDto } from './dto/review.member.dto';
 import { AdminPointService } from 'src/backoffice-modules/admin-point/admin-point.service';
 import { UpdateAdminPointDto } from 'src/backoffice-modules/admin-point/model/update-admin-point.dto';
 import { PointType } from 'src/common/enum/point.enum';
+import { Ingredient } from 'src/config/entities/ingredient.entity';
 
 @Injectable()
 export class ReviewService {
@@ -34,7 +35,52 @@ export class ReviewService {
    */
   async findReviewOne(reviewMemberIdDto: ReviewMemberIdDto) {
     try {
-      return await this.reviewRepository.findReviewOne(reviewMemberIdDto);
+      const rawReviews = await this.reviewRepository.findReviewOne(reviewMemberIdDto);
+      const review = rawReviews.reduce((result, row) => {
+        if (!result.reviewId) {
+          Object.assign(result, {
+            reviewId: row.reviewId,
+            totalLikedNum: row.totalLikedNum,
+            menuName: row.menuName,
+            content: row.content,
+            storeName: row.storeName,
+            score: row.score,
+            createdDate: row.createdDate,
+            dessertCategoryId: row.dessertCategoryId,
+            memberNickName: row.memberNickName,
+            memberIsHavingImg: row.memberIsHavingImg,
+            isLiked: row.isLiked,
+            profileImgMiddlePath: row.profileImgMiddlePath || null,
+            profileImgPath: row.profileImgPath || null,
+            profileImgExtension: row.profileImgExtension || null,
+            reviewImg: [],
+            ingredients: [],
+          });
+        }
+        if (row.ingredientName) {
+          const isDuplicate = result.ingredients.some((ingredient) => ingredient === row.ingredientName);
+
+          if (!isDuplicate) {
+            result.ingredients.push(row.ingredientName);
+          }
+        }
+        if (row.reviewImgPath) {
+          const isDuplicate = result.reviewImg.some((img) => img.reviewImgNum === row.reviewImgNum && img.reviewImgPath === row.reviewImgPath);
+
+          if (!isDuplicate) {
+            result.reviewImg.push({
+              reviewImgIsMain: row.reviewImgIsMain,
+              reviewImgNum: row.reviewImgNum,
+              reviewImgMiddlepath: row.reviewImgMiddlepath,
+              reviewImgPath: row.reviewImgPath,
+              reviewImgExtention: row.reviewImgExtention,
+            });
+          }
+        }
+
+        return result;
+      }, {});
+      return review;
     } catch (error) {
       throw error;
     }

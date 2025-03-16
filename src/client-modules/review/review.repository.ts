@@ -56,6 +56,7 @@ export class ReviewRepository {
         'reviewImg.middlepath AS "reviewImgMiddlepath"',
         'reviewImg.path AS "reviewImgPath"',
         'reviewImg.extention AS "reviewImgExtention"',
+        'ingredient.ingredientName AS "ingredientName"',
         'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
       ])
       .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
@@ -63,10 +64,15 @@ export class ReviewRepository {
       .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = member.memberId')
       .leftJoin(ReviewImg, 'reviewImg', 'reviewImg.reviewImgReviewId = review.reviewId')
       .leftJoin(Like, 'like', 'like.reviewReviewId = review.reviewId')
-      .where('review.reviewId = :reviewId', { reviewId: reviewMemberIdDto.reviewId })
+      .leftJoin(ReviewIngredient, 'reviewIngredient', 'reviewIngredient.reviewReviewId = review.reviewId') // 수정됨
+      .leftJoin(Ingredient, 'ingredient', 'ingredient.ingredientId = reviewIngredient.ingredientIngredientId') // 수정됨
+      .where('review.isUsable = :isUsable', { isUsable: true })
+      .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
+      .andWhere('review.reviewId = :reviewId', { reviewId: reviewMemberIdDto.reviewId })
       .setParameter('memberId', memberId)
-      .getRawOne();
+      .getRawMany();
   }
+
   /**
    * 사용자가 선택한 카테고리의 2차 목록 조회
    * @param memberIdDto
