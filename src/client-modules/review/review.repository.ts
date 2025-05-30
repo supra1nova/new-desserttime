@@ -34,7 +34,7 @@ export class ReviewRepository {
   ) {}
 
   async findReviewOne(reviewMemberIdDto: ReviewMemberIdDto) {
-    const memberId = reviewMemberIdDto.memberId > 0 ? reviewMemberIdDto.memberId : 0;
+    const memberId = reviewMemberIdDto.memberId;
     return await this.review
       .createQueryBuilder('review')
       .select([
@@ -223,7 +223,7 @@ export class ReviewRepository {
       .orderBy(`review.${orderField}`, 'DESC')
       .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
 
-    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: Number(cursor) });
+    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: String(cursor) });
 
     const items = await queryBuilder.getRawMany();
 
@@ -273,7 +273,7 @@ export class ReviewRepository {
    * 리뷰 좋아요 기록 삭제
    * @param likeId
    */
-  async deleteReviewLike(likeId: number) {
+  async deleteReviewLike(likeId: string) {
     await this.like.delete({ likeId });
   }
 
@@ -448,9 +448,9 @@ export class ReviewRepository {
    */
   async insertReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
     return await this.reviewImg.insert({
-      middlepath: 'reviewImg', //process.env.REVIEW_IMG_MIDDLE_PATH,
+      middlePath: 'reviewImg', //process.env.REVIEW_IMG_MIDDLE_PATH,
       path: file.path,
-      extention: file.extention,
+      extension: file.extention,
       imgName: file.imgName,
       isMain: reviewImgSaveDto.isMain,
       num: reviewImgSaveDto.num,
@@ -520,7 +520,7 @@ export class ReviewRepository {
       .setParameter('memberId', memberIdPagingDto.memberId)
       .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
 
-    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: Number(cursor) });
+    if (cursor) queryBuilder.andWhere('notice.noticeId < :noticeId', { noticeId: String(cursor) });
     const items = await queryBuilder.getRawMany();
 
     return new ResponseCursorPagination(items, limit, 'reviewId');

@@ -4,8 +4,8 @@ import { Review } from './review.entity';
 
 @Entity()
 export class Accusation {
-  @PrimaryGeneratedColumn()
-  accusationId: number;
+  @PrimaryGeneratedColumn('uuid')
+  accusationId: string;
 
   @Column()
   reason:string;

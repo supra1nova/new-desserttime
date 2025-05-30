@@ -3,8 +3,8 @@ import { Member } from './member.entity';
 
 @Entity()
 export class Point {
-  @PrimaryGeneratedColumn()
-  pointId: number;
+  @PrimaryGeneratedColumn('uuid')
+  pointId: string;
 
   @Column()
   totalPoint: number;

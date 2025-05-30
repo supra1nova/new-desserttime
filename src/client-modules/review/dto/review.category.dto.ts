@@ -9,7 +9,7 @@ export class ReviewCategoryDto extends CursorPaginationDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly dessertCategoryId: number;
+  readonly dessertCategoryId: string;
 
   @ApiProperty({
     example: 'D',
@@ -25,5 +25,5 @@ export class ReviewCategoryDto extends CursorPaginationDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 }

@@ -5,8 +5,8 @@ import { PointType } from '../../common/enum/point.enum';
 
 @Entity()
 export class PointHistory {
-  @PrimaryGeneratedColumn()
-  pointHistoryId: number;
+  @PrimaryGeneratedColumn('uuid')
+  pointHistoryId: string;
 
   @Column()
   newPoint: number;

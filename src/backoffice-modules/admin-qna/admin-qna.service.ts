@@ -3,7 +3,7 @@ import { AdminQnaRepository } from './admin-qna.repository';
 import { SearchAdminQnaDto } from './model/search-admin-qna.dto';
 import { Page } from '../common/dto/page.dto';
 import { ReplyAdminQnaDto } from './model/reply-admin-qna.dto';
-import { QnA } from '../../config/entities/qna.entity';
+import { Qna } from '../../config/entities/qna.entity';
 import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
@@ -27,31 +27,31 @@ export class AdminQnaService {
 
   /**
    * qna 답글 삽입/수정
-   * @param qnaId
+   * @param qNAId
    * @param replyAdminQnaDto
    * @return Promise<boolean>
    * */
   @Transactional()
-  async processCreateUpdateReply(qnaId: number, replyAdminQnaDto: ReplyAdminQnaDto) {
-    const qnaData: Partial<QnA> = {};
+  async processCreateUpdateReply(qNAId: string, replyAdminQnaDto: ReplyAdminQnaDto) {
+    const qnaData: Partial<Qna> = {};
     qnaData['replyContent'] = replyAdminQnaDto.replyContent;
     qnaData['replyAdminId'] = replyAdminQnaDto.replyAdminId;
 
-    const qnA = await this.findOneById(qnaId);
+    const qnA = await this.findOneById(qNAId);
 
     if (qnA.isAnswered) {
-      return await this.adminQnaRepository.update(qnaId, replyAdminQnaDto);
+      return await this.adminQnaRepository.update(qNAId, replyAdminQnaDto);
     }
-    return await this.adminQnaRepository.create(qnaId, replyAdminQnaDto);
+    return await this.adminQnaRepository.create(qNAId, replyAdminQnaDto);
   }
 
   /**
    * qna 단건 조회
-   * @param qnaId
-   * @returns Promise<QnA>
+   * @param qNAId
+   * @returns Promise<Qna>
    */
-  async findOneById(qnaId: number) {
-    const result = await this.adminQnaRepository.findOneById(qnaId);
+  async findOneById(qNAId: string) {
+    const result = await this.adminQnaRepository.findOneById(qNAId);
 
     if (result === null) throw new Error('일치하는 QnA 글이 존재하지 않습니다.');
     return result;

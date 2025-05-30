@@ -24,7 +24,7 @@ import { LoggerMiddleware } from './config/middleware/logger.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ResponseInterceptor } from './config/interceptor/respons.interceptor';
+import { ResponseInterceptor } from './config/interceptor/response.interceptor';
 import { ReviewModule } from './client-modules/review/review.module';
 import { AccusationModule } from './client-modules/accusation/accusation.module';
 import { FileTransModule } from './config/file/filetrans.module';

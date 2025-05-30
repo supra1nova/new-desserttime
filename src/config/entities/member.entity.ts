@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { UserInterestDessert } from './user.interest.dessert.entity';
-import { QnA } from './qna.entity';
+import { Qna } from './qna.entity';
 import { Review } from './review.entity';
 import { Like } from './like.entity';
 import { ProfileImg } from './profile.img.entity';
@@ -11,8 +11,8 @@ import { MemberDeletion } from './member.deleteion.entity';
 
 @Entity()
 export class Member {
-  @PrimaryGeneratedColumn()
-  memberId: number;
+  @PrimaryGeneratedColumn('uuid')
+  memberId: string;
 
   @Column()
   snsId: string;
@@ -74,8 +74,8 @@ export class Member {
   @OneToMany(() => UserInterestDessert, (udi) => udi.member)
   uids: UserInterestDessert[];
 
-  @OneToMany(() => QnA, (qna) => qna.member)
-  qnas: QnA[];
+  @OneToMany(() => Qna, (qna) => qna.member)
+  qnas: Qna[];
 
   @OneToMany(() => Accusation, (accusation) => accusation.member)
   accusations: Accusation[];

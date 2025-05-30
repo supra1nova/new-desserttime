@@ -370,9 +370,9 @@ export class ReviewService {
           const reviewImg = reviewData.reviewImg.map((imgData) => {
             return {
               reviewImgId: imgData.reviewImgId,
-              middlepath: imgData.middlepath,
+              middlepath: imgData.middlePath,
               path: imgData.path,
-              extention: imgData.extention,
+              extention: imgData.extension,
               imgName: imgData.imgName,
               isMain: imgData.isMain,
               num: imgData.num,

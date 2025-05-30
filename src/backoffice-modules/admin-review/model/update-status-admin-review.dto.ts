@@ -10,5 +10,5 @@ export class UpdateStatusAdminReviewDto {
   })
   @IsArray()
   @IsOptional()
-  readonly reviewIdArr: number[];
+  readonly reviewIdArr: string[];
 }

@@ -46,7 +46,7 @@ export class MemberRepository {
 
   /**
    * 회원가입시 사용자 검사
-   * @param loginDto
+   * @param memberEmail
    * @returns
    */
   async findEmailOne(memberEmail: string) {
@@ -61,7 +61,7 @@ export class MemberRepository {
 
   /**
    * 회원가입시 사용자 검사
-   * @param loginDto
+   * @param snsId
    * @returns
    */
   async findSnsIdOne(snsId: string) {
@@ -76,7 +76,7 @@ export class MemberRepository {
 
   /**
    * 사용자 로그인시도시 유효성 검사
-   * @param loginDto
+   * @param userValidationDto
    * @returns
    */
   async memberValidate(userValidationDto: UserValidationDto) {
@@ -87,7 +87,7 @@ export class MemberRepository {
 
   /**
    * snsId 조회
-   * @param loginDto
+   * @param memberId
    * @returns
    */
   async findSnsId(memberId) {
@@ -99,7 +99,7 @@ export class MemberRepository {
 
   /**
    * 회원가입
-   * @param email
+   * @param signInDto
    * @returns
    */
   async insertMember(signInDto: SignInDto) {
@@ -122,7 +122,7 @@ export class MemberRepository {
    * @param newMemberId
    * @param nickName
    */
-  async updateMemberNickname(newMemberId: number, nickName: string) {
+  async updateMemberNickname(newMemberId: string, nickName: string) {
     await this.memberRepository.update({ memberId: newMemberId }, { nickName });
   }
   /**
@@ -233,7 +233,7 @@ export class MemberRepository {
 
   /**
    * 사용자 탈퇴
-   * @param memberDeleteDto
+   * @param userData
    */
   async deleteMember(userData) {
     await this.memberRepository.update({ memberId: userData.memberId }, { isUsable: false, snsId: userData.snsId, nickName: userData.nickName, memberEmail: userData.memberEmail, memberName: userData.memberName });
@@ -259,7 +259,7 @@ export class MemberRepository {
 
   /**
    * 보유밀 상세내역
-   * @param memberIdDto
+   * @param memberPointListDto
    * @returns
    */
   async findPointHisoryList(memberPointListDto: MemberPointListDto) {
@@ -288,7 +288,11 @@ export class MemberRepository {
     if (noticeListDto.noticeType == NoticeType.FAQ) selectFields.content = true;
     const items = await this.noticeRepository.find({
       select: selectFields,
-      where: { noticeType: noticeListDto.noticeType, ...(cursor ? { noticeId: LessThan(Number(cursor)) } : {}) },
+      // where: { noticeType: noticeListDto.noticeType, ...(cursor ? { noticeId: LessThan(Number(cursor)) } : {}) },
+      /*where: {
+        noticeType: noticeListDto.noticeType,
+        // ...(cursor ? { noticeId: LessThan(Number(cursor)) } : {})
+      },*/
       order: { createdDate: 'DESC' },
       take: limit + 1, // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
     });
@@ -344,7 +348,7 @@ export class MemberRepository {
 
   /**
    * 내 리뷰 리스트 조회
-   * @param memberIdDto
+   * @param memberIdPagingDto
    * @returns
    */
   async findMyReviewList(memberIdPagingDto: MemberIdPagingDto) {

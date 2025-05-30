@@ -4,20 +4,20 @@ import { IsNotEmpty } from 'class-validator';
 
 export class LikeDto {
   @ApiProperty({
-    example: '1',
+    example: 'aaaaaa',
     description: '사용자 Id',
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @ApiProperty({
-    example: '1',
+    example: 'bbbbbb',
     description: '리뷰 Id',
     required: true,
   })
   @IsNotEmpty()
-  readonly reviewId: number;
+  readonly reviewId: string;
 
   @Transform((value) => {
     return value.value == 'true' ? true : false;

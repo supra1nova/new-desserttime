@@ -11,7 +11,7 @@ export class AdminReviewImgRepository {
    * @param reviewId
    * @param updateReviewImgDtoArr
    */
-  async update(reviewId: number, updateReviewImgDtoArr: UpdateReviewImgDto[]) {
+  async update(reviewId: string, updateReviewImgDtoArr: UpdateReviewImgDto[]) {
     const reviewImgIdArr = updateReviewImgDtoArr.map((item) => item.reviewImgId);
 
     const numClause = updateReviewImgDtoArr.map((item) => `WHEN reviewImgId = ${item.reviewImgId} THEN ${item.num}`).join(' ');

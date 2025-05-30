@@ -1,11 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { QnA } from '../../config/entities/qna.entity';
+import { Qna } from '../../config/entities/qna.entity';
 import { Like, Repository } from 'typeorm';
 import { SearchAdminQnaDto } from './model/search-admin-qna.dto';
 import { SearchQnaEnum } from '../../common/enum/qna.enum';
 
 export class AdminQnaRepository {
-  constructor(@InjectRepository(QnA) private readonly adminQnaRepository: Repository<QnA>) {}
+  constructor(@InjectRepository(Qna) private readonly adminQnaRepository: Repository<Qna>) {}
 
   /**
    * qna 수량 조회
@@ -27,7 +27,7 @@ export class AdminQnaRepository {
   async findAll(searchAdminQnaDto: SearchAdminQnaDto) {
     const selectClause = {
       isAnswered: true,
-      qnaId: true,
+      qNAId: true,
       email: true,
       content: true,
       createdDate: true,
@@ -50,30 +50,30 @@ export class AdminQnaRepository {
 
   /**
    * qna 답변 생성
-   * @param qnaId
-   * @param qnaData
+   * @param qNAId
+   * @param qNAData
    * */
-  async create(qnaId: number, qnaData: Partial<QnA>) {
-    // await this.adminQnaRepository.update(qnaId, qnaData);
-    await this.adminQnaRepository.update({ qnaId: qnaId }, { isAnswered: true, replyContent: qnaData.replyContent, replyAdminId: qnaData.replyAdminId, replyCreatedDate: new Date() });
+  async create(qNAId: string, qNAData: Partial<Qna>) {
+    // await this.adminQnaRepository.update(qNAId, qNAData);
+    await this.adminQnaRepository.update({ qnaId: qNAId }, { isAnswered: true, replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyCreatedDate: new Date() });
   }
 
   /**
    * qna 단건 조회
-   * @param qnaId
-   * @returns Promise<QnA>
+   * @param qNAId
+   * @returns Promise<Qna>
    */
-  async findOneById(qnaId: number) {
-    return await this.adminQnaRepository.createQueryBuilder('qna').select().where('qna.qnaId = :qnaId', { qnaId: true }).setParameter('qnaId', qnaId).orderBy('qna.createdDate', 'DESC').getOne();
+  async findOneById(qNAId: string) {
+    return await this.adminQnaRepository.createQueryBuilder('qna').select().where('qna.qNAId = :qNAId', { qNAId: true }).setParameter('qNAId', qNAId).orderBy('qna.createdDate', 'DESC').getOne();
   }
 
   /**
    * qna 답변 수정
-   * @param qnaId
-   * @param qnaData
+   * @param qNAId
+   * @param qNAData
    * */
-  async update(qnaId: number, qnaData: Partial<QnA>) {
-    await this.adminQnaRepository.update({ qnaId: qnaId }, { replyContent: qnaData.replyContent, replyAdminId: qnaData.replyAdminId, replyUpdateDate: new Date() });
+  async update(qNAId: string, qNAData: Partial<Qna>) {
+    await this.adminQnaRepository.update({ qnaId: qNAId }, { replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyUpdateDate: new Date() });
   }
 
   /**

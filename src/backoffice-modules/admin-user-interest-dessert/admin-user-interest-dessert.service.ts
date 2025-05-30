@@ -18,7 +18,7 @@ export class AdminUserInterestDessertService {
    * @param uidIdArr
    * */
   @Transactional()
-  async processInsertMultipleData(memberId: number, uidIdArr: number[]) {
+  async processInsertMultipleData(memberId: string, uidIdArr: string[]) {
     //  memberId를 이용해서 해당하는 인원의 UserInterestDessert 를 가져와서 savedUserInterestDessertArr 에 저장
     const savedUserInterestDessertArr = await this.findByMemberId(memberId);
 
@@ -61,7 +61,7 @@ export class AdminUserInterestDessertService {
    * @param memberId
    * @return Promise<UserInterestDessert>
    * */
-  async findByMemberId(memberId: number) {
+  async findByMemberId(memberId: string) {
     return this.adminUserInterestDessertRepository.findListByMemberId(memberId);
   }
 
@@ -81,7 +81,7 @@ export class AdminUserInterestDessertService {
    * @param uidIdArr
    * @returns Promise<InsertResult>
    *!/
-  async create(memberId: number, uidIdArr: number[]) {
+  async create(memberId: string, uidIdArr: number[]) {
     const userInterestDessertArray = this.getMakeUserInterestDessertArray(
       memberId,
       uidIdArr,
@@ -92,7 +92,7 @@ export class AdminUserInterestDessertService {
   }*/
 
   /*private getMakeUserInterestDessertArray(
-    memberId: number,
+    memberId: string,
     uidIdArr: number[],
   ) {
     return uidIdArr.map((uidId) => {

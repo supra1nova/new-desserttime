@@ -10,8 +10,8 @@ import { DessertCategory } from './dessert.category.entity';
 
 @Entity()
 export class UserInterestDessert {
-  @PrimaryGeneratedColumn()
-  UIDid: number;
+  @PrimaryGeneratedColumn('uuid')
+  userInterestId: string;
 
   @CreateDateColumn()
   createdDate: Date;

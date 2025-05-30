@@ -101,5 +101,5 @@ export class UpdateAdminMemberDto {
   })
   @IsArray()
   @IsOptional()
-  readonly uidIdArr: number[];
+  readonly uidIdArr: string[];
 }

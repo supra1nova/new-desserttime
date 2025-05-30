@@ -12,7 +12,7 @@ export class AdminReviewIngredientService {
    * @param reviewId
    * @param reviewIngredientIdArr
    */
-  async processDeleteInsert(reviewId: number, reviewIngredientIdArr: number[]) {
+  async processDeleteInsert(reviewId: string, reviewIngredientIdArr: string[]) {
     await this.delete(reviewId);
     await this.insert(reviewId, reviewIngredientIdArr);
   }
@@ -24,7 +24,7 @@ export class AdminReviewIngredientService {
    * @param reviewId
    * @param reviewIngredientIdArr
    */
-  private async insert(reviewId: number, reviewIngredientIdArr: number[]) {
+  private async insert(reviewId: string, reviewIngredientIdArr: string[]) {
     const createAdminReviewIngredientDtoArr = reviewIngredientIdArr.map((ingredientId) => new CreateAdminReviewIngredientDto(reviewId, ingredientId));
     const result = await this.adminReviewIngredientRepository.insert(createAdminReviewIngredientDtoArr);
     if (!result) throw new Error(`리뷰 재료 추가에 실패했습니다.(reviewId: ${reviewId})`);
@@ -34,7 +34,7 @@ export class AdminReviewIngredientService {
    * 리뷰 재료 삭제
    * @param reviewId
    */
-  private async delete(reviewId: number) {
+  private async delete(reviewId: string) {
     const deleteAdminReview = new DeleteAdminReviewIngredientDto(reviewId);
     const result = await this.adminReviewIngredientRepository.deleteByReviewId(deleteAdminReview);
     if (!result) throw new Error(`리뷰 재료 삭제에 실패했습니다.(reviewId: ${reviewId})`);

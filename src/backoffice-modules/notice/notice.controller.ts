@@ -23,7 +23,7 @@ export class NoticeController {
     description: 'notice 아이디',
   })
   @Get(':noticeId')
-  async findOneById(@Param('noticeId') noticeId: number) {
+  async findOneById(@Param('noticeId') noticeId: string) {
     return await this.noticeService.findOneById(noticeId);
   }
 
@@ -56,8 +56,8 @@ export class NoticeController {
     `,
   })
   @Patch(':noticeId')
-  async update(@Param('noticeId') noticeId: number, @Body() updateNoticeDto: UpdateNoticeDto) {
-    return await this.noticeService.update(+noticeId, updateNoticeDto);
+  async update(@Param('noticeId') noticeId: string, @Body() updateNoticeDto: UpdateNoticeDto) {
+    return await this.noticeService.update(noticeId, updateNoticeDto);
   }
 
   @ApiOperation({ summary: '공지사항 삭제' })
@@ -67,7 +67,7 @@ export class NoticeController {
     description: 'notice 아이디',
   })
   @Delete(':noticeId')
-  async delete(@Param('noticeId') noticeId: number) {
-    return await this.noticeService.delete(+noticeId);
+  async delete(@Param('noticeId') noticeId: string) {
+    return await this.noticeService.delete(noticeId);
   }
 }
