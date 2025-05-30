@@ -5,14 +5,13 @@ import { UpdateReviewImgDto } from '../../../client-modules/review/dto/reviewimg
 
 export class UpdateAdminReviewDto {
   @ApiProperty({
-    type: () => Number,
+    type: String,
     description: '2차 카테고리 id',
     required: true,
   })
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  @Type(() => Number)
-  readonly dessertCategoryId: number;
+  readonly dessertCategoryId: string;
 
   @ApiProperty({
     type: String,
@@ -52,14 +51,14 @@ export class UpdateAdminReviewDto {
 
   @ApiProperty({
     type: Array,
-    items: { type: 'number' },
+    items: { type: 'string' },
     description: '재료 id 배열',
     required: false,
   })
   @IsArray()
   @IsInt({ each: true })
   @IsOptional()
-  readonly reviewIngredientIdArr?: number[];
+  readonly reviewIngredientIdArr?: string[];
 
   @ApiProperty({
     type: Array,

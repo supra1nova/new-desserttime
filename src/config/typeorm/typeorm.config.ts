@@ -5,7 +5,7 @@ import { Member } from '../entities/member.entity';
 import { ProfileImg } from '../entities/profile.img.entity';
 import { Review } from '../entities/review.entity';
 import { ReviewImg } from '../entities/review.img.entity';
-import { QnA } from '../entities/qna.entity';
+import { Qna } from '../entities/qna.entity';
 import { Notice } from '../entities/notice.entity';
 import { Accusation } from '../entities/accusation.entity';
 import { DessertCategory } from '../entities/dessert.category.entity';
@@ -30,6 +30,6 @@ export const typeORMConfig = async (configService: ConfigService): Promise<TypeO
     connectTimeout: parseInt(process.env.DB_CONNECT_TIMEOUT), //30초가 지나면 트랜잭션을 롤백한다.
     // migrations: [process.cwd() + '\\src\\database\\migrations\\*.ts'],
     // migrationsRun: true, //자동적으로 처음 migration이 실행되도록 한다.
-    entities: [MemberDeletion, UserInterestDessert, Member, ProfileImg, Like, Review, ReviewImg, QnA, Notice, Accusation, DessertCategory, Point, PointHistory, ReceiptImg, Ingredient, ReviewIngredient],
+    entities: [MemberDeletion, UserInterestDessert, Member, ProfileImg, Like, Review, ReviewImg, Qna, Notice, Accusation, DessertCategory, Point, PointHistory, ReceiptImg, Ingredient, ReviewIngredient],
   };
 };

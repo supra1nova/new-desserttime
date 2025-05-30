@@ -62,7 +62,7 @@ export class NoticeRepository {
    * @param noticeId
    * @returns Promise<Notice>
    */
-  async findOneById(noticeId: number) {
+  async findOneById(noticeId: string) {
     return await this.noticeRepository.findOneBy({
       noticeId: noticeId,
       isUsable: true,
@@ -75,7 +75,7 @@ export class NoticeRepository {
    * @param updateNoticeDto
    * @returns Promise<boolean>
    */
-  async update(noticeIdFromParam: number, updateNoticeDto: UpdateNoticeDto) {
+  async update(noticeIdFromParam: string, updateNoticeDto: UpdateNoticeDto) {
     const { ...elements } = updateNoticeDto;
     const updateResult = await this.noticeRepository.update({ noticeId: noticeIdFromParam }, { ...elements });
     return !!updateResult.affected;

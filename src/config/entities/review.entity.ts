@@ -11,8 +11,8 @@ import { ReviewStatus } from '../../common/enum/review.enum';
 
 @Entity()
 export class Review {
-  @PrimaryGeneratedColumn()
-  reviewId: number;
+  @PrimaryGeneratedColumn('uuid')
+  reviewId: string;
 
   @Column({ default: 0 })
   totalLikedNum: number;

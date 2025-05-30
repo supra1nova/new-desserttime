@@ -17,7 +17,7 @@ export class AdminPointHistoryService {
    * @return Promise<boolean>
    * */
   @Transactional()
-  async insert(memberId: number, updateAdminPointDto: UpdateAdminPointDto, reviewId: number = null) {
+  async insert(memberId: string, updateAdminPointDto: UpdateAdminPointDto, reviewId: string = null) {
     const member = {};
     member['memberId'] = memberId;
 
@@ -41,7 +41,7 @@ export class AdminPointHistoryService {
    * @param searchAdminPointHistoryDto
    * @return Promise<insertResult>
    * */
-  async processFindAllByMemberId(memberId: number, searchAdminPointHistoryDto: SearchAdminPointHistoryDto) {
+  async processFindAllByMemberId(memberId: string, searchAdminPointHistoryDto: SearchAdminPointHistoryDto) {
     if (searchAdminPointHistoryDto.getTake() < 20) {
       searchAdminPointHistoryDto.limitSize = 20;
     }

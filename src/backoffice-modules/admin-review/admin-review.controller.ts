@@ -19,19 +19,19 @@ export class AdminReviewController {
   @ApiOperation({ summary: '리뷰 조회' })
   @ApiParam({
     name: 'reviewId',
-    type: Number,
+    type: String,
     description: 'review 아이디',
     example: 4,
   })
   @Get(':reviewId')
   async findOneById(@Param('reviewId') reviewId: string) {
-    return await this.adminReviewService.findOneById(+reviewId);
+    return await this.adminReviewService.findOneById(reviewId);
   }
 
   @ApiOperation({ summary: '리뷰 수정' })
   @ApiParam({
     name: 'reviewId',
-    type: Number,
+    type: String,
     description: '리뷰 아이디',
     example: 4,
   })
@@ -88,7 +88,7 @@ export class AdminReviewController {
   })
   @Patch(':reviewId')
   async update(@Param('reviewId') reviewId: string, @Body() updateAdminReviewDto: UpdateAdminReviewDto) {
-    return await this.adminReviewService.processUpdate(+reviewId, updateAdminReviewDto);
+    return await this.adminReviewService.processUpdate(reviewId, updateAdminReviewDto);
   }
 
   @ApiOperation({ summary: '리뷰 다중 등록 처리' })

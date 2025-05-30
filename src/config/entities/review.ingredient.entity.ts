@@ -1,11 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, RelationId } from 'typeorm';
 import { Review } from './review.entity';
 import { Ingredient } from './ingredient.entity';
 
 @Entity()
 export class ReviewIngredient {
-  @PrimaryGeneratedColumn()
-  reviewIngredientId: number;
+  @PrimaryGeneratedColumn('uuid')
+  reviewIngredientId: string;
 
   @CreateDateColumn()
   createdDate: Date;

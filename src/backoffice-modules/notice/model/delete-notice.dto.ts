@@ -2,13 +2,18 @@ import { IsBoolean, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class DeleteNoticeDto {
+  constructor(noticeId: string, isUsable: boolean) {
+    this.noticeId = noticeId;
+    this.isUsable = isUsable;
+  }
+
   @IsNumber()
   @ApiProperty({
-    type: Number,
+    type: String,
     description: '공지사항 순번',
     required: true,
   })
-  readonly noticeId: number;
+  readonly noticeId: string;
 
   @IsBoolean()
   @ApiProperty({
@@ -18,8 +23,4 @@ export class DeleteNoticeDto {
   })
   readonly isUsable: boolean;
 
-  constructor(noticeId: number, isUsable: boolean) {
-    this.noticeId = noticeId;
-    this.isUsable = isUsable;
-  }
 }

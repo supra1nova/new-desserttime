@@ -34,7 +34,7 @@ export class AdminUserInterestDessertRepository {
    * @param memberId
    * @returns Promise<UserInterestDessert>
    */
-  async findListByMemberId(memberId: number) {
+  async findListByMemberId(memberId: string) {
     const member = new Member();
     member.memberId = memberId;
     return await this.adminUserInterestDessertRepository.find({

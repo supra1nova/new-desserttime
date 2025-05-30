@@ -35,7 +35,7 @@ export class AdminMemberService {
    * @param memberId
    * @returns Promise<Member>
    */
-  async findOneById(memberId: number) {
+  async findOneById(memberId: string) {
     const member = await this.adminMemberRepository.findOneById(memberId);
     if (member === null) {
       throw new Error('일치하는 회원 정보를 찾을 수 없습니다');
@@ -50,7 +50,7 @@ export class AdminMemberService {
    * @returns Promise<boolean>
    */
   @Transactional()
-  async update(memberId: number, updateAdminMemberDto: UpdateAdminMemberDto) {
+  async update(memberId: string, updateAdminMemberDto: UpdateAdminMemberDto) {
     const memberData: Partial<Member> = {
       nickName: updateAdminMemberDto.nickName,
       memo: updateAdminMemberDto.memo,
@@ -63,7 +63,7 @@ export class AdminMemberService {
       isAgreeAlarm: updateAdminMemberDto.isAgreeAlarm,
     };
 
-    const uidIdArr: number[] = updateAdminMemberDto.uidIdArr;
+    const uidIdArr: string[] = updateAdminMemberDto.uidIdArr;
 
     const result = await this.adminMemberRepository.update(memberId, memberData);
 
@@ -80,7 +80,7 @@ export class AdminMemberService {
    * @returns Promise<boolean>
    */
   @Transactional()
-  async delete(memberId: number) {
+  async delete(memberId: string) {
     const deleteDto = new DeleteAdminMemberDto(memberId, false);
     return this.adminMemberRepository.delete(deleteDto);
   }

@@ -8,5 +8,5 @@ export class MemberIdDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 }

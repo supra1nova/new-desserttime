@@ -1,6 +1,5 @@
-import { CallHandler, ExecutionContext, HttpException, Injectable, InternalServerErrorException, Logger, NestInterceptor } from '@nestjs/common';
-import { Observable, catchError, tap } from 'rxjs';
-import { DataSource } from 'typeorm';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { Observable } from 'rxjs';
 import { winstonLogger } from '../logger/winston.util';
 import { map } from 'rxjs/operators';
 

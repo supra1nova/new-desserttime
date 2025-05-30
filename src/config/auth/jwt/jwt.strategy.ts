@@ -30,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: Payload) {
     //인증부분 가드가 여기를 바로 실행시킨다.
-    const memberId = Number(payload.id);
+    const memberId = payload.id;
     const member = await this.userRepository.findOne({
       select: {
         memberId: true,

@@ -8,7 +8,7 @@ export class MemberDeleteDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @ApiProperty({
     example: 'ETC',

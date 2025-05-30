@@ -9,7 +9,7 @@ export class ReviewImgSaveDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly reviewId: number;
+  readonly reviewId: string;
 
   @ApiProperty({
     example: 'true',

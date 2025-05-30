@@ -1,13 +1,13 @@
 import { IsBoolean, IsNumber } from 'class-validator';
 
 export class DeleteAdminMemberDto {
-  constructor(memberId: number, isUsable: boolean) {
+  constructor(memberId: string, isUsable: boolean) {
     this.memberId = memberId;
     this.isUsable = isUsable;
   }
 
   @IsNumber()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @IsBoolean()
   readonly isUsable: boolean;

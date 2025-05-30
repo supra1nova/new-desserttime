@@ -9,5 +9,5 @@ export class MemberIdPagingDto extends CursorPaginationDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 }

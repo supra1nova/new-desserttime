@@ -1,7 +1,7 @@
 export class DeleteAdminReviewIngredientDto {
-  constructor(reviewId: number) {
+  constructor(reviewId: string) {
     this.review = { reviewId: reviewId };
   }
 
-  readonly review: { reviewId: number };
+  readonly review: { reviewId: string };
 }

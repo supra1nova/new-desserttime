@@ -29,7 +29,7 @@ export class PostAccusationDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @ApiProperty({
     example: '21',
@@ -37,5 +37,5 @@ export class PostAccusationDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly reviewId: number;
+  readonly reviewId: string;
 }

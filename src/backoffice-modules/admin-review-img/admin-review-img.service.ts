@@ -11,7 +11,7 @@ export class AdminReviewImgService {
    * @param reviewId
    * @param updateReviewImgDtoArr
    */
-  async update(reviewId: number, updateReviewImgDtoArr: UpdateReviewImgDto[]) {
+  async update(reviewId: string, updateReviewImgDtoArr: UpdateReviewImgDto[]) {
     const result = await this.adminReviewImgRepository.update(reviewId, updateReviewImgDtoArr);
     if (!result) throw new Error(`리뷰 이미지 수정에 실패했습니다.(reviewId: ${reviewId})`);
   }

@@ -16,10 +16,10 @@ export class NoticeDto {
   readonly noticeType: string;
 
   @ApiProperty({
-    example: '1',
+    example: 'aaaaaaa',
     description: '공지/이벤트 하나조회',
     required: true,
   })
   @IsNotEmpty()
-  readonly noticeId: number;
+  readonly noticeId: string;
 }

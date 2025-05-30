@@ -3,8 +3,8 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 
 @Entity()
 export class Notice {
-  @PrimaryGeneratedColumn()
-  noticeId: number;
+  @PrimaryGeneratedColumn('uuid')
+  noticeId: string;
 
   @Column()
   title: string;

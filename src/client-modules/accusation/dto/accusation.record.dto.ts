@@ -8,7 +8,7 @@ export class AccusationRecordDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @ApiProperty({
     example: '1',
@@ -16,5 +16,5 @@ export class AccusationRecordDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly reviewId: number;
+  readonly reviewId: string;
 }

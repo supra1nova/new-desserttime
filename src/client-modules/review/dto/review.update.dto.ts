@@ -8,7 +8,7 @@ export class ReviewUpdateDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @ApiProperty({
     example: '4',
@@ -16,7 +16,7 @@ export class ReviewUpdateDto {
     required: false,
   })
   @IsOptional()
-  reviewId: number;
+  reviewId: string;
 
   @ApiProperty({
     example: '온혜화',
@@ -40,7 +40,7 @@ export class ReviewUpdateDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly dessertCategoryId: number;
+  readonly dessertCategoryId: string;
 
   @ApiProperty({
     example: '4',

@@ -47,7 +47,7 @@ export class AdminReviewRepository {
    * 리뷰 id 배열 이용한 목록 조회
    * @param reviewIdArr
    */
-  async findReviewListByReviewId(reviewIdArr: number[] = null) {
+  async findReviewListByReviewId(reviewIdArr: string[] = null) {
     const selectQueryBuilder = this.adminReviewRepository
       .createQueryBuilder('rv')
       .leftJoin(DessertCategory, 'dc', 'rv.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
@@ -73,7 +73,7 @@ export class AdminReviewRepository {
    * 리뷰 단건 조회
    * @param reviewId
    */
-  async findOneById(reviewId: number) {
+  async findOneById(reviewId: string) {
     const selectQueryBuilder = this._processSetListClause();
     const resultQueryBuilder = selectQueryBuilder.where('rv.reviewId = :reviewId', { reviewId: reviewId });
 
@@ -87,7 +87,7 @@ export class AdminReviewRepository {
    * @param reviewId
    * @param updateAdminReviewDto
    */
-  async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+  async update(reviewId: string, updateAdminReviewDto: UpdateAdminReviewDto) {
     const { dessertCategoryId, ...otherFields } = updateAdminReviewDto;
 
     const updateResult = await this.adminReviewRepository

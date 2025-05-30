@@ -3,17 +3,17 @@ import { Review } from './review.entity';
 
 @Entity()
 export class ReviewImg {
-  @PrimaryGeneratedColumn()
-  reviewImgId: number;
+  @PrimaryGeneratedColumn('uuid')
+  reviewImgId: string;
 
   @Column()
-  middlepath: string;
+  middlePath: string;
 
   @Column()
   path: string;
 
   @Column()
-  extention: string;
+  extension: string;
 
   @Column()
   imgName: string;
