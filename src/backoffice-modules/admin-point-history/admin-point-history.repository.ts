@@ -20,7 +20,7 @@ export class AdminPointHistoryRepository {
    * 특정 회원 PointHistory 내역 수량 조회
    * @returns Promise<number>
    */
-  async count(memberId: number) {
+  async count(memberId: string) {
     return await this.adminPointHistoryRepository.count({
       where: {
         member: {
@@ -36,7 +36,7 @@ export class AdminPointHistoryRepository {
    * @param searchAdminPointHistoryDto
    * @return Promise<insertResult>
    * */
-  async findAllByMemberId(memberId: number, searchAdminPointHistoryDto: SearchAdminPointHistoryDto) {
+  async findAllByMemberId(memberId: string, searchAdminPointHistoryDto: SearchAdminPointHistoryDto) {
     return this.adminPointHistoryRepository.find({
       select: {
         pointHistoryId: true,

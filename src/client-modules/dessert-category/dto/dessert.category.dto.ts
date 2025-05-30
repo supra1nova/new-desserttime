@@ -11,5 +11,5 @@ export class DessertCategoryIdDto {
   @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
-  readonly dessertCategoryId: number;
+  readonly dessertCategoryId: string;
 }

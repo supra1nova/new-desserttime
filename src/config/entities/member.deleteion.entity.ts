@@ -3,8 +3,8 @@ import { Member } from './member.entity';
 
 @Entity()
 export class MemberDeletion {
-  @PrimaryGeneratedColumn()
-  memberDeletionId: number;
+  @PrimaryGeneratedColumn('uuid')
+  memberDeletionId: string;
 
   @Column()
   reason: string;
@@ -19,7 +19,7 @@ export class MemberDeletion {
   updateDate: Date;
 
   @Column()
-  memberId: number;
+  memberId: string;
 
   @OneToOne(() => Member, (member) => member.memberDeletion)
   member: Member;

@@ -3,8 +3,8 @@ import { ReviewIngredient } from './review.ingredient.entity';
 
 @Entity()
 export class Ingredient {
-  @PrimaryGeneratedColumn()
-  ingredientId: number;
+  @PrimaryGeneratedColumn('uuid')
+  ingredientId: string;
 
   @Column()
   ingredientName: string;

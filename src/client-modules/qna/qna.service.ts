@@ -1,25 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { QnARepository } from './qna.repository';
-import { CreateQnADto } from './dto/create.qna.dto';
-import { QnAIdDto } from './dto/qna.id.dto';
+import { QnaRepository } from './qna.repository';
+import { CreateQnaDto } from './dto/create-qna.dto';
+import { QnaDto } from './dto/qna.dto';
 import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
-export class QnAService {
-  constructor(private qnaRepository: QnARepository) {}
+export class QnaService {
+  constructor(private qnaRepository: QnaRepository) {}
+
   @Transactional()
-  async postQnA(createQnADto: CreateQnADto) {
+  async postQna(createQnaDto: CreateQnaDto) {
     try {
-      await this.qnaRepository.insertQnA(createQnADto);
+      await this.qnaRepository.insertQna(createQnaDto);
     } catch (error) {
       throw error;
     }
   }
+
   @Transactional()
-  async getQnA(qnAIdDto: QnAIdDto) {
+  async getQna(qnaDto: QnaDto) {
     try {
-      const oneQna = await this.qnaRepository.findQnA(qnAIdDto);
-      return oneQna;
+      return await this.qnaRepository.findQNA(qnaDto);
     } catch (error) {
       throw error;
     }

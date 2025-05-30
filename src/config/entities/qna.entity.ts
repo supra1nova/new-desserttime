@@ -2,9 +2,9 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { Member } from './member.entity';
 
 @Entity()
-export class QnA {
-  @PrimaryGeneratedColumn()
-  qnaId: number;
+export class Qna {
+  @PrimaryGeneratedColumn('uuid')
+  qnaId: string;
 
   @Column({ nullable: true })
   email: string;

@@ -4,8 +4,8 @@ import { Review } from './review.entity';
 
 @Entity()
 export class Like {
-  @PrimaryGeneratedColumn()
-  likeId: number;
+  @PrimaryGeneratedColumn('uuid')
+  likeId: string;
 
   @CreateDateColumn()
   createdDate: Date;

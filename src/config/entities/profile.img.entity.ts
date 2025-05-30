@@ -11,8 +11,8 @@ import { Member } from './member.entity';
 
 @Entity()
 export class ProfileImg {
-  @PrimaryGeneratedColumn()
-  profileImgId: number;
+  @PrimaryGeneratedColumn('uuid')
+  profileImgId: string;
 
   @Column()
   middlePath: string;

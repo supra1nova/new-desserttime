@@ -8,7 +8,7 @@ export class MemberUpdateDto {
     description: '사용자 id',
     required: true,
   })
-  readonly memberId: number;
+  readonly memberId: string;
 
   @IsOptional()
   @ApiProperty({

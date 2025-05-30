@@ -16,7 +16,7 @@ export class AdminPointController {
     example: 4,
   })
   @Post('save/:memberId')
-  async save(@Param('memberId') memberId: number, @Body() createAdminPointDto: UpdateAdminPointDto) {
+  async save(@Param('memberId') memberId: string, @Body() createAdminPointDto: UpdateAdminPointDto) {
     return await this.adminPointService.saveRecallPoint('save', memberId, createAdminPointDto);
   }
 
@@ -29,7 +29,7 @@ export class AdminPointController {
     example: 4,
   })
   @Post('recall/:memberId')
-  async recall(@Param('memberId') memberId: number, @Body() createAdminPointDto: UpdateAdminPointDto) {
+  async recall(@Param('memberId') memberId: string, @Body() createAdminPointDto: UpdateAdminPointDto) {
     return await this.adminPointService.saveRecallPoint('recall', memberId, createAdminPointDto);
   }
 }

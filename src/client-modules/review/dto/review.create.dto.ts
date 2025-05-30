@@ -8,7 +8,7 @@ export class ReviewCreateDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @ApiProperty({
     example: '온혜화',

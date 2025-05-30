@@ -39,7 +39,7 @@ export class NoticeService {
    * @param noticeId
    * @returns Promise<Notice>
    */
-  async findOneById(noticeId: number) {
+  async findOneById(noticeId: string) {
     return this.noticeRepository.findOneById(noticeId);
   }
 
@@ -49,7 +49,7 @@ export class NoticeService {
    * @param updateNoticeDto
    * @returns Promise<boolean>
    */
-  async update(noticeId: number, updateNoticeDto: UpdateNoticeDto) {
+  async update(noticeId: string, updateNoticeDto: UpdateNoticeDto) {
     return this.noticeRepository.update(noticeId, updateNoticeDto);
   }
 
@@ -58,7 +58,7 @@ export class NoticeService {
    * @param noticeId
    * @returns Promise<boolean>
    */
-  async delete(noticeId: number) {
+  async delete(noticeId: string) {
     const deleteDto = new DeleteNoticeDto(noticeId, false);
     return this.noticeRepository.delete(deleteDto);
   }

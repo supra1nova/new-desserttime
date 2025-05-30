@@ -22,8 +22,8 @@ export class AdminMemberController {
     description: '회원 아이디',
   })
   @Get(':memberId')
-  async findOne(@Param('memberId') memberId: number) {
-    return this.adminMemberService.findOneById(+memberId);
+  async findOne(@Param('memberId') memberId: string) {
+    return this.adminMemberService.findOneById(memberId);
   }
 
   @ApiOperation({ summary: '회원 정보 수정' })
@@ -48,8 +48,8 @@ export class AdminMemberController {
   `,
   })
   @Patch(':memberId')
-  async update(@Param('memberId') memberId: number, @Body() updateAdminMemberDto: UpdateAdminMemberDto) {
-    return this.adminMemberService.update(+memberId, updateAdminMemberDto);
+  async update(@Param('memberId') memberId: string, @Body() updateAdminMemberDto: UpdateAdminMemberDto) {
+    return this.adminMemberService.update(memberId, updateAdminMemberDto);
   }
 
   @ApiOperation({ summary: '회원 삭제' })
@@ -59,7 +59,7 @@ export class AdminMemberController {
     description: '회원 아이디',
   })
   @Delete(':memberId')
-  async delete(@Param('memberId') memberId: number) {
-    return this.adminMemberService.delete(+memberId);
+  async delete(@Param('memberId') memberId: string) {
+    return this.adminMemberService.delete(memberId);
   }
 }

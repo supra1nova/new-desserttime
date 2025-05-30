@@ -10,7 +10,7 @@ export class AdminPointRepository {
    * @param memberId
    * @param totalPoint
    * */
-  async insert(memberId: number, totalPoint: number) {
+  async insert(memberId: string, totalPoint: number) {
     const insertResult = await this.adminPointRepository.insert({ member: { memberId: memberId }, totalPoint: totalPoint });
     return insertResult.identifiers.length > 0;
   }
@@ -19,7 +19,7 @@ export class AdminPointRepository {
    * 회원 번호를 이용한 포인트 검색
    * @param memberId
    * */
-  async findOneByMemberId(memberId: number) {
+  async findOneByMemberId(memberId: string) {
     return await this.adminPointRepository.findOneBy({ member: { memberId: memberId } });
   }
 
@@ -28,7 +28,7 @@ export class AdminPointRepository {
    * @param memberId
    * @param totalPoint
    * */
-  async update(memberId: number, totalPoint: number) {
+  async update(memberId: string, totalPoint: number) {
     const updateResult = await this.adminPointRepository.update({ member: { memberId: memberId } }, { totalPoint: totalPoint });
     return !!updateResult.affected;
   }

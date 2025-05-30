@@ -18,7 +18,7 @@ export class AdminPointService {
    * @param updateAdminPointDto
    * */
   @Transactional()
-  async saveRecallPoint(pointFlag: string, memberId: number, updateAdminPointDto: UpdateAdminPointDto) {
+  async saveRecallPoint(pointFlag: string, memberId: string, updateAdminPointDto: UpdateAdminPointDto) {
     if (pointFlag === 'save') {
       const savePointDto = updateAdminPointDto.toSavePointDto();
       if (savePointDto.newPoint < 1) throw new Error('적립 포인트는 0보다 더 큰 수만 가능합니다.');
@@ -38,7 +38,7 @@ export class AdminPointService {
    * @param reviewId
    * */
   @Transactional()
-  public async processInsertUpdatePoint(pointFlag: string, memberId: number, updateAdminPointDto: UpdateAdminPointDto, reviewId: number = null) {
+  public async processInsertUpdatePoint(pointFlag: string, memberId: string, updateAdminPointDto: UpdateAdminPointDto, reviewId: string = null) {
     // 멤버로 생성된 포인트 정보가 있는지 확인
     const point = await this.adminPointRepository.findOneByMemberId(memberId);
     let pointResult: boolean = false;

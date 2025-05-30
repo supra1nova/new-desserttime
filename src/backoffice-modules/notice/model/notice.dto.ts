@@ -9,7 +9,7 @@ export class NoticeDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  readonly noticeId: number;
+  readonly noticeId: string;
 
   @ApiProperty({
     description: '공지사항 제목',

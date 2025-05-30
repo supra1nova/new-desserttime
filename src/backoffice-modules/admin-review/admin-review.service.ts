@@ -43,7 +43,7 @@ export class AdminReviewService {
    * 리뷰 단건 조회 메서드
    * @param reviewId
    */
-  async findOneById(reviewId: number) {
+  async findOneById(reviewId: string) {
     const rawItem = await this.adminReviewRepository.findOneById(reviewId);
     if (rawItem === undefined) throw new Error('리뷰가 존재하지 않습니다.');
 
@@ -61,7 +61,7 @@ export class AdminReviewService {
    * @param updateAdminReviewDto
    */
   @Transactional()
-  async processUpdate(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+  async processUpdate(reviewId: string, updateAdminReviewDto: UpdateAdminReviewDto) {
     const { reviewIngredientIdArr, reviewImgs, ...otherFields } = updateAdminReviewDto;
 
     const updateData = {
@@ -109,7 +109,7 @@ export class AdminReviewService {
    * 리뷰 수정 메서드
    */
   @Transactional()
-  private async update(reviewId: number, updateAdminReviewDto: UpdateAdminReviewDto) {
+  private async update(reviewId: string, updateAdminReviewDto: UpdateAdminReviewDto) {
     const result = await this.adminReviewRepository.update(reviewId, updateAdminReviewDto);
 
     if (!result) throw new Error('리뷰 수정에 실패했습니다.');

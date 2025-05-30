@@ -11,8 +11,8 @@ import { Review } from './review.entity';
 
 @Entity()
 export class DessertCategory {
-  @PrimaryGeneratedColumn()
-  dessertCategoryId: number;
+  @PrimaryGeneratedColumn('uuid')
+  dessertCategoryId: string;
 
   @Column()
   dessertName: string;

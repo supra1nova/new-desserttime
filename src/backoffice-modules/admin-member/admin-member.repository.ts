@@ -55,7 +55,7 @@ export class AdminMemberRepository {
    * @param memberId
    * @returns Promise<Member>
    */
-  async findOneById(memberId: number) {
+  async findOneById(memberId: string) {
     return await this.adminMemberRepository
       .createQueryBuilder('member')
       .select([
@@ -106,7 +106,7 @@ export class AdminMemberRepository {
    * @param partialMember
    * @returns Promise<boolean>
    */
-  async update(memberId: number, partialMember: Partial<Member>) {
+  async update(memberId: string, partialMember: Partial<Member>) {
     const updateResult = await this.adminMemberRepository.update(memberId, partialMember);
     return !!updateResult.affected;
   }

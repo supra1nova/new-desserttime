@@ -8,14 +8,14 @@ export class ReviewSaveDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @ApiProperty({
     example: '4',
     description: '리뷰 Id',
     required: false,
   })
-  readonly reviewId: number;
+  readonly reviewId: string;
 
   @ApiProperty({
     example: '온혜화',
@@ -38,7 +38,7 @@ export class ReviewSaveDto {
     description: '디저트 카테고리 Id',
     required: false,
   })
-  readonly dessertCategoryId: number;
+  readonly dessertCategoryId: string;
 
   @ApiProperty({
     example: '4',

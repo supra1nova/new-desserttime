@@ -9,7 +9,7 @@ export class MemberAlarmDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly memberId: number;
+  readonly memberId: string;
 
   @Transform((value) => {
     return value.value == 'true' ? true : false;

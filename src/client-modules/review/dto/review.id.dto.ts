@@ -8,5 +8,5 @@ export class ReviewIdDto {
     required: true,
   })
   @IsNotEmpty()
-  readonly reviewId: number;
+  readonly reviewId: string;
 }

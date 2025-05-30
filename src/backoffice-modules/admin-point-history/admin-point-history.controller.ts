@@ -15,7 +15,7 @@ export class AdminPointHistoryController {
     description: '회원 아이디',
   })
   @Get(':memberId')
-  async findAllByMemberId(@Param('memberId') memberId: number, @Query() searchAdminPointHistoryDto: SearchAdminPointHistoryDto) {
+  async findAllByMemberId(@Param('memberId') memberId: string, @Query() searchAdminPointHistoryDto: SearchAdminPointHistoryDto) {
     return this.adminPointHistoryService.processFindAllByMemberId(memberId, searchAdminPointHistoryDto);
   }
 }

@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
-export class CreateQnADto{
+export class CreateQnaDto {
     @ApiProperty({
         example: 'dessert1@naver.com',
         description: '이메일',
