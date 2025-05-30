@@ -2,7 +2,6 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import * as path from 'path';
 import { AdminLoginModule } from './backoffice-modules/admin-login/admin-login.module';
 import { AdminMemberModule } from './backoffice-modules/admin-member/admin-member.module';
 import { AdminUserInterestDessertModule } from './backoffice-modules/admin-user-interest-dessert/admin-user-interest-dessert.module';
@@ -55,18 +54,16 @@ import { AuthModule } from './config/auth/auth.module';
     FileTransModule,
     AuthModule,
     ConfigModule.forRoot({
-      envFilePath: [process.env.NODE_ENV === 'production' ? path.join(process.cwd(), 'config', '.env.production') : path.join(process.cwd(), 'config', '.env.development')],
+      envFilePath: [`env/.env.${process.env.NODE_ENV}`],
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
-      rootPath: path.join(process.cwd(), 'uploads'), // 'uploads' 디렉토리를 제공
-      //rootPath: path.join(String(process.env.fileroot)),
-
+      rootPath: process.env.ROOT_PATH, // 파일 업로드할 디렉토리를 제공
       serveStaticOptions: {
         //index: false, // 디렉토리 색인 페이지 표시 비활성화
         setHeaders: (res, filePath) => {
-          const filename = filePath.split('/').pop(); // 파일 경로에서 파일명 추출
+          const filename= filePath.split('/').pop(); // 파일 경로에서 파일명 추출
           res.setHeader('Content-Security-Policy', 'upgrade-insecure-requests', `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`);
         },
       },
