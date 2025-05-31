@@ -19,7 +19,7 @@ export class SearchAdminMemberDto extends PageRequest {
   @ApiProperty({
     enum: MemberSearchType,
     isArray: false,
-    description: '검색어 종류: memberEmail / nickName',
+    description: '검색어 종류: memberEmail / nickname',
     required: false,
   })
   @IsEnum(MemberSearchType)

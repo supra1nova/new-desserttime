@@ -6,7 +6,7 @@ import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
 import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 import { Member } from '../../config/entities/member.entity';
 import { AdminUserInterestDessertService } from '../admin-user-interest-dessert/admin-user-interest-dessert.service';
-import { Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class AdminMemberService {
@@ -52,15 +52,15 @@ export class AdminMemberService {
   @Transactional()
   async update(memberId: string, updateAdminMemberDto: UpdateAdminMemberDto) {
     const memberData: Partial<Member> = {
-      nickName: updateAdminMemberDto.nickName,
+      nickname: updateAdminMemberDto.nickname,
       memo: updateAdminMemberDto.memo,
       gender: updateAdminMemberDto.gender,
       firstCity: updateAdminMemberDto.firstCity,
       secondaryCity: updateAdminMemberDto.secondaryCity,
       thirdCity: updateAdminMemberDto.thirdCity,
       type: updateAdminMemberDto.type,
-      isAgreeAD: updateAdminMemberDto.isAgreeAD,
-      isAgreeAlarm: updateAdminMemberDto.isAgreeAlarm,
+      adStatus: updateAdminMemberDto.isAgreeAD,
+      alarmStatus: updateAdminMemberDto.isAgreeAlarm,
     };
 
     const uidIdArr: string[] = updateAdminMemberDto.uidIdArr;

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Length, IsNotEmpty, Matches, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class MemberUpdateDto {
   @IsNotEmpty()
@@ -56,7 +56,7 @@ export class MemberUpdateDto {
     description: '닉네임',
     required: false,
   })
-  readonly nickName: string;
+  readonly nickname: string;
 
   @IsOptional()
   @ApiProperty({

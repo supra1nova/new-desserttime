@@ -59,7 +59,7 @@ export class AdminReviewRepository {
       .leftJoin(ReceiptImg, 'rcptImg', 'rv.receiptImgReceiptImgId = rcptImg.receiptImgId') // 조인 수정
       .select('rv.reviewId', 'reviewId')
       .addSelect('mb.memberId', 'memberId')
-      .groupBy('rv.reviewId, mb.memberId, mb.nickName, mb.memberEmail, dc.dessertCategoryId, dc.dessertName, rv.status, rv.content, rv.adminMemo, rv.storeName, rv.menuName');
+      .groupBy('rv.reviewId, mb.memberId, mb.nickname, mb.memberEmail, dc.dessertCategoryId, dc.dessertName, rv.status, rv.content, rv.adminMemo, rv.storeName, rv.menuName');
 
     selectQueryBuilder.andWhere(`rv.status = '대기'`);
     if (reviewIdArr !== null && reviewIdArr.length > 0) {
@@ -141,7 +141,7 @@ export class AdminReviewRepository {
       .select('rv.status', 'status')
       .addSelect('rv.reviewId', 'reviewId')
       .addSelect('mb.memberId', 'memberId')
-      .addSelect('mb.nickName', 'nickName')
+      .addSelect('mb.nickname', 'nickname')
       .addSelect('mb.memberEmail', 'memberEmail')
       .addSelect('dc.dessertCategoryId', 'dessertCategoryId')
       .addSelect('dc.dessertName', 'dessertName')
@@ -149,7 +149,7 @@ export class AdminReviewRepository {
       .addSelect('rv.storeName', 'storeName')
       .addSelect('rv.content', 'content')
       .addSelect('rv.adminMemo', 'adminMemo')
-      .groupBy('rv.reviewId, mb.memberId, mb.nickName, mb.memberEmail, dc.dessertCategoryId, dc.dessertName, rv.status, rv.content, rv.adminMemo, rv.storeName, rv.menuName');
+      .groupBy('rv.reviewId, mb.memberId, mb.nickname, mb.memberEmail, dc.dessertCategoryId, dc.dessertName, rv.status, rv.content, rv.adminMemo, rv.storeName, rv.menuName');
   }
 
   /**
@@ -163,7 +163,7 @@ export class AdminReviewRepository {
     // nickname/email 을 OR 조건로 묶기 (brackets 사용)
     if (searchReviewWriterValue !== undefined && searchReviewWriterValue !== null && searchReviewWriterValue !== '') {
       queryBuilder.andWhere(
-        new Brackets((qb) => qb.orWhere('mb.nickName LIKE :nickName', { nickName: `%${searchReviewWriterValue}%` }).orWhere('mb.memberEmail LIKE :memberEmail', { memberEmail: `%${searchReviewWriterValue}%` })),
+        new Brackets((qb) => qb.orWhere('mb.nickname LIKE :nickname', { nickname: `%${searchReviewWriterValue}%` }).orWhere('mb.memberEmail LIKE :memberEmail', { memberEmail: `%${searchReviewWriterValue}%` })),
       );
     }
 
@@ -194,9 +194,9 @@ export class AdminReviewRepository {
         WITHIN GROUP (ORDER BY ing.ingredientId) AS "ingredients"`,
       `LISTAGG(DISTINCT acc.accusationId || '_' || TO_CHAR(acc.createdDate, 'YYYY-MM-DD HH24/MI/SS/FF6') || ':' || acc.reason, ', ') 
         WITHIN GROUP (ORDER BY acc.createdDate DESC) AS "accusations"`,
-      `LISTAGG(DISTINCT rvImg.reviewImgId || '_' || rvImg.middlepath || '_' || rvImg.path || ':' || rvImg.imgName || rvImg.extention, ', ') 
+      `LISTAGG(DISTINCT rvImg.reviewImgId || '_' || rvImg.middlePath || '_' || rvImg.path || ':' || rvImg.imgName || rvImg.extention, ', ') 
         WITHIN GROUP (ORDER BY rvImg.reviewImgId) AS "reviewImgs"`,
-      `LISTAGG(DISTINCT rcptImg.receiptImgId || '_' || rcptImg.middlepath || '_' || rcptImg.path || ':' || rcptImg.imgName || rcptImg.extention, ', ') 
+      `LISTAGG(DISTINCT rcptImg.receiptImgId || '_' || rcptImg.middlePath || '_' || rcptImg.path || ':' || rcptImg.imgName || rcptImg.extention, ', ') 
         WITHIN GROUP (ORDER BY rcptImg.receiptImgId) AS "receiptImgs"`,
     ];
   }

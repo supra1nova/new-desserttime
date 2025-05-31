@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { AdminReviewRepository } from './admin-review.repository';
-import { Transactional } from 'typeorm-transactional';
 import { Page } from '../common/dto/page.dto';
 import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
@@ -10,6 +9,7 @@ import { UpdateStatusAdminReviewDto } from './model/update-status-admin-review.d
 import { UpdateAdminPointDto } from '../admin-point/model/update-admin-point.dto';
 import { AdminPointService } from '../admin-point/admin-point.service';
 import { PointType } from '../../common/enum/point.enum';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class AdminReviewService {

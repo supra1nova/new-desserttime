@@ -7,8 +7,6 @@ import { SignInDto } from './dto/signin.dto';
 import { Review } from 'src/config/entities/review.entity';
 import { MemberIdDto } from './dto/member.id';
 import { Point } from 'src/config/entities/point.entity';
-import { MemberAlarmDto } from './dto/member.alarm.dto';
-import { MemberAdDto } from './dto/member.add.dto';
 import { PointHistory } from 'src/config/entities/point.history.entity';
 import { Notice } from 'src/config/entities/notice.entity';
 import { NoticeListDto } from './dto/notice.list.dto';
@@ -16,14 +14,13 @@ import { NoticeDto } from './dto/notice.dto';
 import { ProfileImg } from 'src/config/entities/profile.img.entity';
 import { UserInterestDessert } from 'src/config/entities/user.interest.dessert.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
-import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
 import { MemberDeleteDto } from './dto/member.delete.dto';
 import { MemberDeletion } from 'src/config/entities/member.deleteion.entity';
 import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
-import { MemberPointListDto } from './dto/member.pointlist.dto';
-import { MemberIdPagingDto } from './dto/member.id.paging.dto';
+import { MemberPointDtoList } from './dto/memberPointDtoList';
 import { NoticeType } from 'src/common/enum/noticetype.enum';
+import { CursorPaginationDto } from '../../common/pagination/dto/cursor.pagination.dto';
 
 @Injectable()
 export class MemberRepository {
@@ -45,60 +42,45 @@ export class MemberRepository {
   ) {}
 
   /**
-   * 회원가입시 사용자 검사
-   * @param memberEmail
-   * @returns
-   */
-  async findEmailOne(memberEmail: string) {
-    return await this.memberRepository.findOne({
-      select: {
-        memberId: true,
-        memberEmail: true,
-      },
-      where: { memberEmail },
-    });
-  }
-
-  /**
-   * 회원가입시 사용자 검사
-   * @param snsId
-   * @returns
-   */
-  async findSnsIdOne(snsId: string) {
-    return await this.memberRepository.findOne({
-      select: {
-        memberId: true,
-        memberEmail: true,
-      },
-      where: { snsId },
-    });
-  }
-
-  /**
-   * 사용자 로그인시도시 유효성 검사
-   * @param userValidationDto
-   * @returns
-   */
-  async memberValidate(userValidationDto: UserValidationDto) {
-    return await this.memberRepository.findOne({
-      where: { snsId: userValidationDto.snsId, isUsable: true },
-    });
-  }
-
-  /**
-   * snsId 조회
+   * 멤버 조회 by id
    * @param memberId
    * @returns
    */
-  async findSnsId(memberId) {
-    return await this.memberRepository.findOne({
-      select: { snsId: true },
-      where: { memberId },
-    });
+  async findMemberById(memberId: string) {
+    return await this.memberRepository.findOne({ where: { memberId } });
   }
 
   /**
-   * 회원가입
+   * 멤버 조회 by email
+   * @param memberEmail
+   * @returns
+   */
+  async findMemberByEmail(memberEmail: string) {
+    return await this.memberRepository.findOne({ where: { memberEmail } });
+  }
+
+  /**
+   * 멤버 조회 by sns id
+   * @param snsId
+   * @returns
+   */
+  async findMemberBySnsId(snsId: string) {
+    return await this.memberRepository.findOne({ where: { snsId } });
+  }
+
+  /**
+   * 멤버 조회 by sns id, isUsable true
+   * @param userValidationDto
+   * @returns
+   */
+  async findMemberBySnsIdAndIsUsable(userValidationDto: UserValidationDto) {
+    const snsId = userValidationDto.snsId;
+
+    return await this.memberRepository.findOne({ where: { snsId, isUsable: true } });
+  }
+
+  /**
+   * 멤버 저장
    * @param signInDto
    * @returns
    */
@@ -113,17 +95,17 @@ export class MemberRepository {
       firstCity: signInDto.firstCity,
       secondaryCity: signInDto.secondaryCity,
       thirdCity: signInDto.thirdCity,
-      isAgreeAD: signInDto.isAgreeAD,
+      adStatus: signInDto.isAgreeAD,
     });
   }
 
   /**
    * 닉네임 등록
    * @param newMemberId
-   * @param nickName
+   * @param nickname
    */
-  async updateMemberNickname(newMemberId: string, nickName: string) {
-    await this.memberRepository.update({ memberId: newMemberId }, { nickName });
+  async updateMemberNickname(newMemberId: string, nickname: string) {
+    await this.memberRepository.update({ memberId: newMemberId }, { nickname: nickname });
   }
   /**
    * 사용자 닉네임 조회
@@ -131,15 +113,15 @@ export class MemberRepository {
    * @returns
    */
   async findUserNickNameOne(memberIdDto: MemberIdDto) {
-    return await this.memberRepository.findOne({ select: { nickName: true }, where: { memberId: memberIdDto.memberId } });
+    return await this.memberRepository.findOne({ select: { nickname: true }, where: { memberId: memberIdDto.memberId } });
   }
 
   /**
    * 사용자정보 조회 - 이미지, 취향 join
-   * @param memberIdDto
+   * @param memberId
    * @returns
    */
-  async findMemberOne(memberIdDto: MemberIdDto) {
+  async findMemberInfos(memberId: string) {
     return await this.memberRepository
       .createQueryBuilder('m')
       .leftJoin(ProfileImg, 'profileImg', 'profileImg.memberMemberId = m.memberId') // 프로필 이미지와의 JOIN
@@ -148,7 +130,7 @@ export class MemberRepository {
       .select([
         'm.memberId AS "memberId"',
         'm.gender AS "gender"',
-        'm.nickName AS "nickName"',
+        'm.nickname AS "nickname"',
         'm.birthYear AS "birthYear"',
         'm.firstCity AS "firstCity"',
         'm.secondaryCity AS "secondaryCity"',
@@ -160,7 +142,7 @@ export class MemberRepository {
         'dc.dessertCategoryId AS "dessertCategoryId"',
         'dc.dessertName AS "dessertName"',
       ])
-      .where('m.memberId = :memberId', { memberId: memberIdDto.memberId }) // 특정 회원 ID 조건
+      .where({ memberId }) // 특정 회원 ID 조건
       .getRawMany();
   }
 
@@ -174,53 +156,61 @@ export class MemberRepository {
   }
   /**
    * 닉네임 존재여부 확인
-   * @param nickNameDto
+   * @param nickname
    */
-  async isUsableNickName(nickNameDto: NickNameDto) {
-    return await this.memberRepository.find({ select: { nickName: true }, where: { nickName: nickNameDto.nickName } });
+  async findMemberByNickname(nickname: string) {
+    return await this.memberRepository.find({ where: { nickname } });
   }
 
   /**
    * 사용자가 작성한 리뷰 카운트
-   * @param memberIdDto
+   * @param memberId
    * @returns
    */
-  async countReview(memberIdDto: MemberIdDto) {
-    return await this.reviewRepository.count({ where: { member: { memberId: memberIdDto.memberId } } });
+  async findReviewCount(memberId: string) {
+    return await this.reviewRepository.count({ where: { member: { memberId: memberId } } });
   }
 
   /**
    * 보유 밀
-   * @param memberIdDto
+   * @param memberId
    * @returns
    */
-  async findTotalPointOne(memberIdDto: MemberIdDto) {
-    return await this.pointRepository.find({ select: { totalPoint: true }, where: { member: { memberId: memberIdDto.memberId } } });
-  }
-
-  /**
-   * 알람 및 광고 수신여부 조회
-   * @param memberIdDto
-   * @returns
-   */
-  async findAlarmAndADStatue(memberIdDto: MemberIdDto) {
-    return await this.memberRepository.findOne({ select: { isAgreeAD: true, isAgreeAlarm: true }, where: { memberId: memberIdDto.memberId } });
+  async findTotalPoints(memberId: string) {
+    return await this.pointRepository.find({ select: { totalPoint: true }, where: { member: { memberId } } });
   }
 
   /**
    * 알람 수신여부 변경
-   * @param memberAlarmDto
+   * @param memberId
    */
-  async updateAlarm(memberAlarmDto: MemberAlarmDto) {
-    await this.memberRepository.update({ memberId: memberAlarmDto.memberId }, { isAgreeAlarm: memberAlarmDto.alarmStatus });
+  async updateAlarmStatus(memberId: string) {
+    const subQuery = this.memberRepository
+      .createQueryBuilder('subMember')
+      .select('subMember.alarm_status')
+      .where('subMember.id = :fromId', { memberId })
+      .getQuery();
+
+    const result = await this.memberRepository
+      .createQueryBuilder()
+      .update(Member)
+      .set({
+        alarmStatus: () => `(${subQuery})`,
+      })
+      .where('id = :toId', { memberId })
+      .execute();
+
+    return result.affected = result.affected === 0 ? 0 : result.affected;
   }
 
   /**
    * 광고 수신여부 변경
-   * @param memberAdDto
+   * @param memberId
    */
-  async updateAd(memberAdDto: MemberAdDto) {
-    await this.memberRepository.update({ memberId: memberAdDto.memberId }, { isAgreeAD: memberAdDto.adStatus });
+  async updateAd(memberId: string) {
+    // todo: isAgreeAd
+    const result = await this.memberRepository.update({ memberId }, { adStatus: false });
+    return result.affected = result.affected === 0 ? 0 : result.affected;
   }
 
   /**
@@ -233,18 +223,20 @@ export class MemberRepository {
 
   /**
    * 사용자 탈퇴
-   * @param userData
+   * @param memberId
    */
-  async deleteMember(userData) {
-    await this.memberRepository.update({ memberId: userData.memberId }, { isUsable: false, snsId: userData.snsId, nickName: userData.nickName, memberEmail: userData.memberEmail, memberName: userData.memberName });
+  async deleteMember(memberId: string) {
+    // await this.memberRepository.update({ memberId: userData.memberId }, { isUsable: false, snsId: userData.snsId, nickname: userData.nickname, memberEmail: userData.memberEmail, memberName: userData.memberName });
+    const result = await this.memberRepository.update({ memberId }, { isUsable: false });
+    return result.affected = result.affected === 0 ? 0 : result.affected;
   }
 
   /**
    * 이번달 포인트 조회
-   * @param memberIdDto
+   * @param memberId
    * @returns
    */
-  async findThisMonthPoint(memberIdDto: MemberIdDto) {
+  async findThisMonthPoint(memberId: string) {
     const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1); // 이번 달의 첫 날
     const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0); // 이번 달의 마지막 날
 
@@ -252,24 +244,24 @@ export class MemberRepository {
       .createQueryBuilder('ph')
       .select('SUM(ph.newPoint)', 'totalPoint')
       .leftJoin(Member, 'm', 'ph.memberMemberId = m.memberId')
-      .where('m.memberId = :memberId', { memberId: memberIdDto.memberId })
+      .where({ memberId })
       .andWhere('ph.createdDate BETWEEN :startDate AND :endDate', { startDate, endDate })
       .getRawOne();
   }
 
   /**
    * 보유밀 상세내역
-   * @param memberPointListDto
+   * @param memberPointDtoList
    * @returns
    */
-  async findPointHisoryList(memberPointListDto: MemberPointListDto) {
-    const { cursor, limit } = memberPointListDto;
+  async findPointHistoryList(memberPointDtoList: MemberPointDtoList) {
+    const { memberId, cursor, limit } = memberPointDtoList;
 
     const items = await this.pointHistory
       .createQueryBuilder('pointHistory')
       .leftJoinAndSelect('pointHistory.review', 'review')
       .select(['pointHistory.pointHistoryId', 'pointHistory.createdDate', 'pointHistory.newPoint', 'review.menuName'])
-      .where('pointHistory.memberMemberId = :memberId', { memberId: memberPointListDto.memberId })
+      .where('pointHistory.memberMemberId = :memberId', { memberId })
       .andWhere(cursor ? 'pointHistory.pointHistoryId < :cursor' : '1=1', { cursor: Number(cursor) })
       .orderBy('pointHistory.createdDate', 'DESC')
       .take(limit + 1)
@@ -305,8 +297,9 @@ export class MemberRepository {
    * @param noticeDto
    * @returns
    */
-  async findNoticeOne(noticeDto: NoticeDto) {
-    return await this.noticeRepository.findOne({ select: { content: true, title: true, createdDate: true }, where: { noticeId: noticeDto.noticeId, noticeType: noticeDto.noticeType } });
+  async findNotice(noticeDto: NoticeDto) {
+    const { noticeId, noticeType } = noticeDto;
+    return await this.noticeRepository.findOne( {where: { noticeId, noticeType } });
   }
 
   /**
@@ -323,7 +316,7 @@ export class MemberRepository {
         firstCity: memberUpdateDto.firstCity,
         secondaryCity: memberUpdateDto.secondaryCity,
         thirdCity: memberUpdateDto.thirdCity,
-        nickName: memberUpdateDto.nickName,
+        nickname: memberUpdateDto.nickname,
       },
     );
   }
@@ -348,13 +341,14 @@ export class MemberRepository {
 
   /**
    * 내 리뷰 리스트 조회
-   * @param memberIdPagingDto
+   * @param memberId
+   * @param cursorPaginationDto
    * @returns
    */
-  async findMyReviewList(memberIdPagingDto: MemberIdPagingDto) {
-    const { limit, cursor } = memberIdPagingDto;
+  async findReviewList(memberId: string, cursorPaginationDto: CursorPaginationDto) {
+    const { limit, cursor } = cursorPaginationDto;
     const items = await this.reviewRepository.find({
-      where: { member: { memberId: memberIdPagingDto.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
+      where: { member: { memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
       relations: ['reviewImg'],
       order: { createdDate: 'DESC' },
       take: limit + 1,

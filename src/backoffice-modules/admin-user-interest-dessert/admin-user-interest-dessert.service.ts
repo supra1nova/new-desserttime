@@ -3,7 +3,7 @@ import { AdminUserInterestDessertRepository } from './admin-user-interest-desser
 import { UserInterestDessert } from '../../config/entities/user.interest.dessert.entity';
 import { Member } from '../../config/entities/member.entity';
 import { DessertCategory } from '../../config/entities/dessert.category.entity';
-import { Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class AdminUserInterestDessertService {

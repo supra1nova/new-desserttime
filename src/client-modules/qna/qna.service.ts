@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { QnaRepository } from './qna.repository';
 import { CreateQnaDto } from './dto/create-qna.dto';
 import { QnaDto } from './dto/qna.dto';
-import { Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class QnaService {

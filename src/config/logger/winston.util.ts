@@ -2,32 +2,37 @@ import * as winston from 'winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
 import { WinstonModule, utilities } from 'nest-winston';
 
+const isProd = process.env.NODE_ENV === 'production';
 
-const dailyOption = (level: string) => {
-  return {
+const createDailyTransport = (level: string) =>
+  new winstonDaily({
     level,
-    datePattern: 'YYYY-MM-DD', //파일에 기록될 날짜패턴
-    dirname: process.cwd() + `/logs/${level}`, //`./logs/${level}` //파일이 저장될 디렉토리 경로
-    filename: `%DATE%.${level}.log`, //파일 명
-    maxFiles: 30, //파일이 저장될 일 수
-    zippedArchive: true, //로그가 쌓이면 압축해서 관리
-  };
-};
+    datePattern: 'YYYY-MM-DD',
+    dirname: `${process.cwd()}/logs/${level}`,
+    filename: `%DATE%_${level}.log`,
+    maxFiles: '7d',
+    zippedArchive: true,
+  });
 
-export const winstonLogger = WinstonModule.createLogger({
-  transports: [
-    new winston.transports.Console({
-      level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
-      format: winston.format.combine(
-        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        utilities.format.nestLike('Training-WAS', {
-          colors: true,
-          prettyPrint: true, //코드포멧, 이쁘게 쓰겠다~
-        }),
-      ),
+const consoleTransport = new winston.transports.Console({
+  level: isProd ? 'info' : 'silly',
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    utilities.format.nestLike(isProd ? 'DT-PRD' : 'DT-DEV', {
+      colors: true,
+      prettyPrint: true,
     }),
-    new winstonDaily(dailyOption('error')),
-    new winstonDaily(dailyOption('warn')),
-    new winstonDaily(dailyOption('info')),
-  ],
+  ),
 });
+
+const transports: winston.transport[] = [consoleTransport];
+
+if (isProd) {
+  transports.push(
+    createDailyTransport('error'),
+    createDailyTransport('warn'),
+    createDailyTransport('info'),
+  );
+}
+
+export const winstonLogger = WinstonModule.createLogger({ transports });

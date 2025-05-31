@@ -1,8 +1,6 @@
-import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { winstonLogger } from '../logger/winston.util';
-// import { JwtService } from '@nestjs/jwt';
-// import { Payload } from '../../auth/jwt/jwt.payload';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -18,12 +16,12 @@ export class LoggerMiddleware implements NestMiddleware {
     // const userId = payload ? payload.sub : 0;
 
     const accessData = {
-      timestamp: new Date(),
-      originalUrl,
-      method: method,
-      ip,
       statusCode,
+      method: method,
+      originalUrl,
+      ip,
       userAgent,
+      timestamp: new Date(),
     };
 
     winstonLogger.log({ accessData }); // USERID-${userId}

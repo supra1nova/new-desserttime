@@ -11,7 +11,6 @@ import { ReviewImg } from 'src/config/entities/review.img.entity';
 import { DessertCategory } from 'src/config/entities/dessert.category.entity';
 import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
-import { ReviewUpdateDto } from './dto/review.update.dto';
 import { ReviewIngredient } from 'src/config/entities/review.ingredient.entity';
 import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
@@ -46,14 +45,14 @@ export class ReviewRepository {
         'review.score AS "score"',
         'review.createdDate AS "createdDate"',
         'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
-        'member.nickName AS "memberNickName"',
+        'member.nickname AS "memberNickname"',
         'member.isHavingImg AS "memberIsHavingImg"',
         'profileImg.middlePath AS profileImgMiddlePath',
         'profileImg.path AS profileImgPath',
         'profileImg.extension AS profileImgExtention',
         'reviewImg.isMain AS "reviewImgIsMain"',
         'reviewImg.num AS "reviewImgNum"',
-        'reviewImg.middlepath AS "reviewImgMiddlepath"',
+        'reviewImg.middlePath AS "reviewImgMiddlepath"',
         'reviewImg.path AS "reviewImgPath"',
         'reviewImg.extention AS "reviewImgExtention"',
         'ingredient.ingredientName AS "ingredientName"',
@@ -123,7 +122,7 @@ export class ReviewRepository {
       .where('review.dessertCategoryDessertCategoryId=:dessertCategoryId', { dessertCategoryId })
       .andWhere('reviewImg.isMain=:isMain', { isMain: true })
       .select('review.reviewId', 'reviewId')
-      .addSelect('reviewImg.middlepath', 'middlepath')
+      .addSelect('reviewImg.middlePath', 'middlePath')
       .addSelect('reviewImg.path', 'path')
       .addSelect('reviewImg.extention', 'extention')
       .addSelect('reviewImg.imgName', 'imgName')
@@ -166,7 +165,7 @@ export class ReviewRepository {
       .where('review.dessertCategoryDessertCategoryId=:dessertCategoryId', { dessertCategoryId })
       .andWhere('reviewImg.isMain=:isMain', { isMain: true })
       .select('review.reviewId', 'reviewId')
-      .addSelect('reviewImg.middlepath', 'middlepath')
+      .addSelect('reviewImg.middlePath', 'middlePath')
       .addSelect('reviewImg.path', 'path')
       .addSelect('reviewImg.extention', 'extention')
       .addSelect('reviewImg.imgName', 'imgName')
@@ -197,14 +196,14 @@ export class ReviewRepository {
         'review.score AS "score"',
         'review.createdDate AS "createdDate"',
         'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
-        'member.nickName AS "memberNickName"',
+        'member.nickname AS "memberNickname"',
         'member.isHavingImg AS "memberIsHavingImg"',
         'profileImg.middlePath AS profileImgMiddlePath',
         'profileImg.path AS profileImgPath',
         'profileImg.extension AS profileImgExtention',
         'reviewImg.isMain AS "reviewImgIsMain"',
         'reviewImg.num AS "reviewImgNum"',
-        'reviewImg.middlepath AS "reviewImgMiddlepath"',
+        'reviewImg.middlePath AS "reviewImgMiddlepath"',
         'reviewImg.path AS "reviewImgPath"',
         'reviewImg.extention AS "reviewImgExtention"',
         'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
@@ -496,14 +495,14 @@ export class ReviewRepository {
         'review.score AS "score"',
         'review.createdDate AS "createdDate"',
         'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
-        'member.nickName AS "memberNickName"',
+        'member.nickname AS "memberNickname"',
         'member.isHavingImg AS "memberIsHavingImg"',
         'profileImg.middlePath AS profileImgMiddlePath',
         'profileImg.path AS profileImgPath',
         'profileImg.extension AS profileImgExtention',
         'reviewImg.isMain AS "reviewImgIsMain"',
         'reviewImg.num AS "reviewImgNum"',
-        'reviewImg.middlepath AS "reviewImgMiddlepath"',
+        'reviewImg.middlePath AS "reviewImgMiddlepath"',
         'reviewImg.path AS "reviewImgPath"',
         'reviewImg.extention AS "reviewImgExtention"',
         'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
