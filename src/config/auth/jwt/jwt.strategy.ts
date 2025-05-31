@@ -1,5 +1,4 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config/dist';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -12,19 +11,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(Member)
     private userRepository: Repository<Member>,
-    private configService: ConfigService,
   ) {
-    const secret = configService.get<string>('JWT_SECRET');
+    const secret = process.env.JWT_SECRET;
     if (!secret) {
-      console.log('secret ::::::', secret);
-      console.log('process.env.JWT_SECRET::::', process.env.JWT_SECRET);
-      //throw new Error('JWT_SECRET is not defined in environment variables');
+      throw new Error('JWT_SECRET is not defined in environment variables');
     }
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'efofhieeiir3r3939r39ry8f7ggawjrpu308y7gjcaoeir9ur8yfhsoujjoaie930w8ryiufdhjksdwhegy34tu89gredrisueywghqju', //configService.get<string>('JWT_SECRET'), //process.env.JWT_SECRET,
-      ignoreExpiration: false, //만료기간
+      secretOrKey: process.env.JWT_SECRET,
+      ignoreExpiration: false,
     });
   }
 
@@ -36,13 +32,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         memberId: true,
         memberName: true,
       },
-      where: { memberId, isUsable: true },
+      where: { memberId },
     });
 
-    if (member) {
-      return member;
-    } else {
+    if (!member) {
       throw new UnauthorizedException();
     }
+    return member
   }
 }

@@ -76,12 +76,11 @@ export class AdminMemberService {
 
   /**
    * 회원 삭제
-   * @param memberId
+   * @param deleteAdminMemberDto
    * @returns Promise<boolean>
    */
   @Transactional()
-  async delete(memberId: string) {
-    const deleteDto = new DeleteAdminMemberDto(memberId, false);
-    return this.adminMemberRepository.delete(deleteDto);
+  async delete(deleteAdminMemberDto: DeleteAdminMemberDto) {
+    return this.adminMemberRepository.delete(deleteAdminMemberDto.memberId);
   }
 }

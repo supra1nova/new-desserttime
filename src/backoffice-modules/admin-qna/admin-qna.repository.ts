@@ -30,9 +30,9 @@ export class AdminQnaRepository {
       qnaId: true,
       email: true,
       content: true,
-      createdDate: true,
+      createDate: true,
       replyContent: true,
-      replyCreatedDate: true,
+      replycreateDate: true,
       replyUpdateDate: true,
     };
     const whereClause = this.setWhereClause(searchAdminQnaDto);
@@ -43,7 +43,7 @@ export class AdminQnaRepository {
       skip: searchAdminQnaDto.getSkip(),
       take: searchAdminQnaDto.getTake(),
       order: {
-        createdDate: 'DESC',
+        createDate: 'DESC',
       },
     });
   }
@@ -55,7 +55,7 @@ export class AdminQnaRepository {
    * */
   async create(qnaId: string, qNAData: Partial<Qna>) {
     // await this.adminQnaRepository.update(qnaId, qNAData);
-    await this.adminQnaRepository.update({ qnaId: qnaId }, { isAnswered: true, replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyCreatedDate: new Date() });
+    await this.adminQnaRepository.update({ qnaId: qnaId }, { isAnswered: true, replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyCreateDate: new Date() });
   }
 
   /**
@@ -64,7 +64,7 @@ export class AdminQnaRepository {
    * @returns Promise<Qna>
    */
   async findOneById(qnaId: string) {
-    return await this.adminQnaRepository.createQueryBuilder('qna').select().where('qna.qnaId = :qnaId', { qnaId: true }).setParameter('qnaId', qnaId).orderBy('qna.createdDate', 'DESC').getOne();
+    return await this.adminQnaRepository.createQueryBuilder('qna').select().where('qna.qnaId = :qnaId', { qnaId: true }).setParameter('qnaId', qnaId).orderBy('qna.createDate', 'DESC').getOne();
   }
 
   /**

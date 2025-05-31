@@ -3,12 +3,12 @@ import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 import { Review } from '../../config/entities/review.entity';
 import { AdminSearchReviewDto } from './model/admin-search-review.dto';
 import { Member } from '../../config/entities/member.entity';
-import { DessertCategory } from '../../config/entities/dessert.category.entity';
-import { ReviewIngredient } from '../../config/entities/review.ingredient.entity';
+import { DessertCategory } from '../../config/entities/dessert-category.entity';
+import { ReviewIngredient } from '../../config/entities/review-ingredient.entity';
 import { Ingredient } from '../../config/entities/ingredient.entity';
 import { Accusation } from '../../config/entities/accusation.entity';
-import { ReviewImg } from '../../config/entities/review.img.entity';
-import { ReceiptImg } from '../../config/entities/receipt.Img.entity';
+import { ReviewImg } from '../../config/entities/review-img.entity';
+import { ReceiptImg } from '../../config/entities/receipt-img.entity';
 import { UpdateAdminReviewDto } from './model/update-admin-review.dto';
 import { ReviewStatus } from '../../common/enum/review.enum';
 import { UpdateStatusAdminReviewDto } from './model/update-status-admin-review.dto';
@@ -192,8 +192,8 @@ export class AdminReviewRepository {
     return [
       `LISTAGG(DISTINCT ing.ingredientId || ':' || ing.ingredientName, ', ') 
         WITHIN GROUP (ORDER BY ing.ingredientId) AS "ingredients"`,
-      `LISTAGG(DISTINCT acc.accusationId || '_' || TO_CHAR(acc.createdDate, 'YYYY-MM-DD HH24/MI/SS/FF6') || ':' || acc.reason, ', ') 
-        WITHIN GROUP (ORDER BY acc.createdDate DESC) AS "accusations"`,
+      `LISTAGG(DISTINCT acc.accusationId || '_' || TO_CHAR(acc.createDate, 'YYYY-MM-DD HH24/MI/SS/FF6') || ':' || acc.reason, ', ') 
+        WITHIN GROUP (ORDER BY acc.createDate DESC) AS "accusations"`,
       `LISTAGG(DISTINCT rvImg.reviewImgId || '_' || rvImg.middlePath || '_' || rvImg.path || ':' || rvImg.imgName || rvImg.extention, ', ') 
         WITHIN GROUP (ORDER BY rvImg.reviewImgId) AS "reviewImgs"`,
       `LISTAGG(DISTINCT rcptImg.receiptImgId || '_' || rcptImg.middlePath || '_' || rcptImg.path || ':' || rcptImg.imgName || rcptImg.extention, ', ') 

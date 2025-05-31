@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, Column, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  Column,
+  JoinColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Member } from './member.entity';
 
 @Entity()
@@ -10,10 +19,13 @@ export class Point {
   totalPoint: number;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 
   @OneToOne(() => Member, (member) => member.point)
   @JoinColumn()

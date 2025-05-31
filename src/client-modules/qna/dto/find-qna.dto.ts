@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class NicknameDto {
+export class FindQnaDto {
   @ApiProperty({
-    example: '불타는 고구마 냠 아뜨거',
-    description: '사용자 닉네임',
+    example: 'aaaaa',
+    description: '문의하기 id',
     required: true,
   })
   @IsNotEmpty()
-  readonly nickname: string;
+  readonly qnaId: string;
 }

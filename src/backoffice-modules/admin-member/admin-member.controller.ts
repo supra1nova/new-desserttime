@@ -3,6 +3,7 @@ import { AdminMemberService } from './admin-member.service';
 import { SearchAdminMemberDto } from './model/search-admin-member.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UpdateAdminMemberDto } from './model/update-admin-member.dto';
+import { DeleteAdminMemberDto } from './model/delete-admin-member.dto';
 
 @ApiTags('Admin Member')
 @Controller('admin/member')
@@ -55,11 +56,11 @@ export class AdminMemberController {
   @ApiOperation({ summary: '회원 삭제' })
   @ApiParam({
     name: 'memberId',
-    type: Number,
+    type: String,
     description: '회원 아이디',
   })
   @Delete(':memberId')
-  async delete(@Param('memberId') memberId: string) {
-    return this.adminMemberService.delete(memberId);
+  async delete(@Param() deleteAdminMemberDto: DeleteAdminMemberDto) {
+    return this.adminMemberService.delete(deleteAdminMemberDto);
   }
 }

@@ -7,19 +7,17 @@ export class ReplyAdminQnaDto {
     example: 'qna 답변 본문',
     required: true,
   })
-  @IsOptional()
   @IsString()
   readonly replyContent: string;
 
   @ApiProperty({
     readOnly: true,
-    type: () => Number,
     description: '답변 admin member id',
     example: '1',
     required: false,
-    default: 1,
+    default: '1',
   })
+  @IsString()
   @IsOptional()
-  @IsNumber()
-  readonly replyAdminId?: number | 1;
+  readonly replyAdminId?: string;
 }

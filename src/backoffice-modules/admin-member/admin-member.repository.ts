@@ -35,7 +35,7 @@ export class AdminMemberRepository {
       memberEmail: true,
       memberName: true,
       lastAccessDate: true,
-      createdDate: true,
+      createDate: true,
     };
     const whereClause = this.setWhereClause(searchAdminMemberDto);
 
@@ -45,7 +45,7 @@ export class AdminMemberRepository {
       skip: searchAdminMemberDto.getSkip(),
       take: searchAdminMemberDto.getTake(),
       order: {
-        createdDate: searchAdminMemberDto.orderValue,
+        createDate: searchAdminMemberDto.orderValue,
       },
     });
   }
@@ -68,7 +68,7 @@ export class AdminMemberRepository {
         'member.gender',
         'member.isHavingImg',
         'member.isUsable',
-        'member.createdDate',
+        'member.createDate',
         'member.updateDate',
         'member.lastAccessDate',
         'member.memo',
@@ -95,7 +95,7 @@ export class AdminMemberRepository {
       .leftJoin('member.profileImg', 'profileImg', 'profileImg.isUsable = 1')
       .where('member.memberId = :memberId', { memberId: true })
       .setParameter('memberId', memberId)
-      .orderBy('member.createdDate', 'DESC')
+      .orderBy('member.createDate', 'DESC')
       .orderBy('userInterestDessert.UIDid', 'ASC')
       .getOne();
   }
@@ -113,13 +113,12 @@ export class AdminMemberRepository {
 
   /**
    * 회원 삭제
-   * @param deleteAdminMemberDto
+   * @param memberId
    * @returns Promise<boolean>
    */
-  async delete(deleteAdminMemberDto: DeleteAdminMemberDto) {
-    const { memberId, ...elements } = deleteAdminMemberDto;
-    const updateResult = await this.adminMemberRepository.update({ memberId: memberId }, { ...elements });
-    return !!updateResult.affected;
+  async delete(memberId: string) {
+    const result = await this.adminMemberRepository.softDelete({ memberId });
+    return result.affected !== 0;
   }
 
   /**

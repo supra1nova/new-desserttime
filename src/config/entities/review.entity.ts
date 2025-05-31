@@ -1,12 +1,22 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
+  OneToOne,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Member } from './member.entity';
 import { Accusation } from './accusation.entity';
 import { Like } from './like.entity';
-import { ReviewImg } from './review.img.entity';
-import { DessertCategory } from './dessert.category.entity';
-import { PointHistory } from './point.history.entity';
-import { ReceiptImg } from './receipt.Img.entity';
-import { ReviewIngredient } from './review.ingredient.entity';
+import { ReviewImg } from './review-img.entity';
+import { DessertCategory } from './dessert-category.entity';
+import { PointHistory } from './point-history.entity';
+import { ReceiptImg } from './receipt-img.entity';
+import { ReviewIngredient } from './review-ingredient.entity';
 import { ReviewStatus } from '../../common/enum/review.enum';
 
 @Entity()
@@ -36,7 +46,7 @@ export class Review {
   isUpdated: boolean;
 
   @Column({ default: false }) //영수증 등록후 최초 수정여부
-  isInitalized: boolean;
+  isInitialized: boolean;
 
   @Column({ default: false }) //영수증 등록후 작성완료여부
   isSaved: boolean;
@@ -51,10 +61,13 @@ export class Review {
   status: ReviewStatus;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 
   @OneToMany(() => Accusation, (accusation) => accusation.review)
   accusations: Accusation[];
@@ -68,8 +81,8 @@ export class Review {
   @OneToMany(() => Like, (likes) => likes.review)
   likes: Like[];
 
-  @OneToMany(() => ReviewImg, (rImg) => rImg.reviewImg)
-  reviewImg: ReviewImg[];
+  @OneToMany(() => ReviewImg, (reviewImg) => reviewImg.reviewImg)
+  reviewImgs: ReviewImg[];
 
   @OneToOne(() => PointHistory, (pointHistory) => pointHistory.review)
   pointHistory: PointHistory;

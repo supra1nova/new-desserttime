@@ -8,15 +8,14 @@ import {
   OneToOne,
   DeleteDateColumn,
 } from 'typeorm';
-import { UserInterestDessert } from './user.interest.dessert.entity';
+import { UserInterestDessert } from './user-interest-dessert.entity';
 import { Qna } from './qna.entity';
 import { Review } from './review.entity';
 import { Like } from './like.entity';
-import { ProfileImg } from './profile.img.entity';
+import { ProfileImg } from './profile-img.entity';
 import { Accusation } from './accusation.entity';
 import { Point } from './point.entity';
 import { MemberType } from '../../common/enum/member.enum';
-import { MemberDeletion } from './member.deleteion.entity';
 
 @Entity()
 export class Member {
@@ -47,9 +46,6 @@ export class Member {
   @Column({ nullable: true, default: false })
   isHavingImg: boolean;
 
-  @Column({ nullable: true, default: true })
-  isUsable: boolean;
-
   @Column({ type: 'timestamp', nullable: true })
   lastAccessDate: Date;
 
@@ -75,7 +71,7 @@ export class Member {
   alarmStatus: boolean;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;
@@ -103,7 +99,4 @@ export class Member {
 
   @OneToOne(() => Point, (point) => point.member)
   point: Point;
-
-  @OneToOne(() => MemberDeletion, (memberDeletion) => memberDeletion.member)
-  memberDeletion: MemberDeletion;
 }

@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ReviewIngredient } from '../../config/entities/review.ingredient.entity';
+import { ReviewIngredient } from '../../config/entities/review-ingredient.entity';
 import { CreateAdminReviewIngredientDto } from './model/create-admin-review-ingredient.dto';
 import { DeleteAdminReviewIngredientDto } from './model/delete-admin-review-ingredient.dto';
 
