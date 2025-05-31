@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { AdminUserInterestDessertRepository } from './admin-user-interest-dessert.repository';
-import { UserInterestDessert } from '../../config/entities/user.interest.dessert.entity';
+import { UserInterestDessert } from '../../config/entities/user-interest-dessert.entity';
 import { Member } from '../../config/entities/member.entity';
-import { DessertCategory } from '../../config/entities/dessert.category.entity';
+import { DessertCategory } from '../../config/entities/dessert-category.entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
@@ -39,7 +39,7 @@ export class AdminUserInterestDessertService {
       newDessertCategory.dessertCategoryId = uid;
 
       newUserInterestDessert.member = newMember;
-      newUserInterestDessert.dc = newDessertCategory;
+      newUserInterestDessert.dessertCategory = newDessertCategory;
 
       newUserInterestDessertArr.push(newUserInterestDessert);
     }

@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { PointHistory } from '../../config/entities/point.history.entity';
+import { PointHistory } from '../../config/entities/point-history.entity';
 import { Repository } from 'typeorm';
 import { SearchAdminPointHistoryDto } from './model/search-admin-point-history.dto';
 
@@ -42,7 +42,7 @@ export class AdminPointHistoryRepository {
         pointHistoryId: true,
         newPoint: true,
         pointType: true,
-        createdDate: true,
+        createDate: true,
         review: {
           reviewId: true,
           menuName: true,
@@ -55,7 +55,7 @@ export class AdminPointHistoryRepository {
       skip: searchAdminPointHistoryDto.getSkip(),
       take: searchAdminPointHistoryDto.getTake(),
       order: {
-        createdDate: 'DESC',
+        createDate: 'DESC',
       },
     });
   }

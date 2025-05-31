@@ -1,4 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToOne,
+  JoinColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
 import { PointType } from '../../common/enum/point.enum';
@@ -15,10 +25,13 @@ export class PointHistory {
   pointType: PointType;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 
   @ManyToOne(() => Member, (member) => member.likes)
   member: Member;

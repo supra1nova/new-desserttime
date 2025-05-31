@@ -43,7 +43,7 @@ export class ReviewService {
             content: row.content,
             storeName: row.storeName,
             score: row.score,
-            createdDate: row.createdDate,
+            createDate: row.createDate,
             dessertCategoryId: row.dessertCategoryId,
             memberNickname: row.memberNickname,
             memberIsHavingImg: row.memberIsHavingImg,
@@ -166,7 +166,7 @@ export class ReviewService {
             content: review.content,
             storeName: review.storeName,
             score: review.score,
-            createdDate: review.createdDate,
+            createDate: review.createDate,
             dessertCategoryId: review.dessertCategoryId,
             memberNickname: review.memberNickname,
             memberIsHavingImg: review.memberIsHavingImg,
@@ -364,8 +364,8 @@ export class ReviewService {
         resultData['score'] = reviewData.score;
         resultData['dessertCategory'] = { dessertCategoryId: reviewData.dessertCategory?.dessertCategoryId, dessertName: reviewData.dessertCategory?.dessertName };
 
-        if (reviewData.reviewImg.length > 0) {
-          const reviewImg = reviewData.reviewImg.map((imgData) => {
+        if (reviewData.reviewImgs.length > 0) {
+          const reviewImg = reviewData.reviewImgs.map((imgData) => {
             return {
               reviewImgId: imgData.reviewImgId,
               middlePath: imgData.middlePath,
@@ -563,7 +563,7 @@ export class ReviewService {
             content: review.content,
             storeName: review.storeName,
             score: review.score,
-            createdDate: review.createdDate,
+            createDate: review.createDate,
             dessertCategoryId: review.dessertCategoryId,
             memberNickname: review.memberNickname,
             memberIsHavingImg: review.memberIsHavingImg,

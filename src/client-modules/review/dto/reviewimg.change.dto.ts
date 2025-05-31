@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsBoolean, IsDate, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class UpdateReviewImgDto {
   @ApiProperty({
-    type: Number,
+    type: String,
     description: '리뷰 이미지 id',
     required: true,
   })
   @IsNumber()
   @IsNotEmpty()
-  reviewImgId: number;
+  reviewImgId: string;
 
   @ApiProperty({
     type: Number,

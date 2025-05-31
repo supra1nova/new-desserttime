@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ReviewImg } from '../../config/entities/review.img.entity';
+import { ReviewImg } from '../../config/entities/review-img.entity';
 import { UpdateReviewImgDto } from '../../client-modules/review/dto/reviewimg.change.dto';
 
 export class AdminReviewImgRepository {
@@ -16,7 +16,7 @@ export class AdminReviewImgRepository {
 
     const numClause = updateReviewImgDtoArr.map((item) => `WHEN reviewImgId = ${item.reviewImgId} THEN ${item.num}`).join(' ');
     const mainClause = updateReviewImgDtoArr.map((item) => `WHEN reviewImgId = ${item.reviewImgId} THEN ${item.isMain ? 1 : 0}`).join(' ');
-    const usableClause = updateReviewImgDtoArr.map((item) => `WHEN reviewImgId = ${item.reviewImgId} THEN ${item.isUsable ? 1 : 0}`).join(' ');
+    const usableClause = updateReviewImgDtoArr.map((item) => `WHEN reviewImgId = ${item.reviewImgId} THEN ${item.isUsable ? Date.now() : null}`).join(' ');
 
     const updateResult = await this.adminReviewImgRepository
       .createQueryBuilder()
@@ -24,7 +24,7 @@ export class AdminReviewImgRepository {
       .set({
         num: () => `CASE ${numClause} END`,
         isMain: () => `CASE ${mainClause} END`,
-        isUsable: () => `CASE ${usableClause} END`,
+        deleteDate: () => `CASE ${usableClause} END`,
       })
       .where('reviewImgReviewId = :reviewId', { reviewId })
       .andWhere('reviewImgId IN (:...reviewImgIdArr)', { reviewImgIdArr })

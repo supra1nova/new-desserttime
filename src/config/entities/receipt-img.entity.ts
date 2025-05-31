@@ -19,7 +19,7 @@ export class ReceiptImg {
   imgName: string;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;

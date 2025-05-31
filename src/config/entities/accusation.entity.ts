@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
 
@@ -14,10 +22,13 @@ export class Accusation {
   content: string;
   
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
   
   @UpdateDateColumn()
   updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 
   @ManyToOne(()=>Member, member => member.accusations)
   member:Member

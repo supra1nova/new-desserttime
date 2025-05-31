@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Qna } from 'src/config/entities/qna.entity';
 import { Repository } from 'typeorm';
 import { CreateQnaDto } from './dto/create-qna.dto';
-import { QnaDto } from './dto/qna.dto';
+import { FindQnaDto } from './dto/find-qna.dto';
 
 @Injectable()
 export class QnaRepository {
@@ -16,7 +16,7 @@ export class QnaRepository {
     await this.qnaRepository.insert(createQnaDto);
   }
 
-  async findQNA(qnaDto: QnaDto) {
-    return await this.qnaRepository.findOne({ select: { qnaId: true, content: true, email: true, createdDate: true }, where: { isUsable: true, qnaId: qnaDto.qnaId } });
+  async findQna(qnaDto: FindQnaDto) {
+    return await this.qnaRepository.findOne({ where: qnaDto });
   }
 }

@@ -1,5 +1,5 @@
 import { NoticeType } from 'src/common/enum/noticetype.enum';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 
 @Entity()
 export class Notice {
@@ -25,8 +25,11 @@ export class Notice {
   isUsable: boolean;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 }

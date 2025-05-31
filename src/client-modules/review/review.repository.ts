@@ -6,12 +6,12 @@ import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { Like } from 'src/config/entities/like.entity';
 import { Member } from 'src/config/entities/member.entity';
-import { ProfileImg } from 'src/config/entities/profile.img.entity';
-import { ReviewImg } from 'src/config/entities/review.img.entity';
-import { DessertCategory } from 'src/config/entities/dessert.category.entity';
+import { ProfileImg } from 'src/config/entities/profile-img.entity';
+import { ReviewImg } from 'src/config/entities/review-img.entity';
+import { DessertCategory } from 'src/config/entities/dessert-category.entity';
 import { MemberIdDto } from './dto/member.id.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
-import { ReviewIngredient } from 'src/config/entities/review.ingredient.entity';
+import { ReviewIngredient } from 'src/config/entities/review-ingredient.entity';
 import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { Ingredient } from 'src/config/entities/ingredient.entity';
@@ -43,7 +43,7 @@ export class ReviewRepository {
         'review.content AS "content"',
         'review.storeName AS "storeName"',
         'review.score AS "score"',
-        'review.createdDate AS "createdDate"',
+        'review.createDate AS "createDate"',
         'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
         'member.nickname AS "memberNickname"',
         'member.isHavingImg AS "memberIsHavingImg"',
@@ -126,7 +126,7 @@ export class ReviewRepository {
       .addSelect('reviewImg.path', 'path')
       .addSelect('reviewImg.extention', 'extention')
       .addSelect('reviewImg.imgName', 'imgName')
-      .orderBy('review.createdDate', 'DESC')
+      .orderBy('review.createDate', 'DESC')
       .limit(10)
       .getRawMany();
   }
@@ -169,7 +169,7 @@ export class ReviewRepository {
       .addSelect('reviewImg.path', 'path')
       .addSelect('reviewImg.extention', 'extention')
       .addSelect('reviewImg.imgName', 'imgName')
-      .orderBy('review.createdDate', 'DESC')
+      .orderBy('review.createDate', 'DESC')
       .limit(10)
       .getRawMany();
   }
@@ -183,7 +183,7 @@ export class ReviewRepository {
     const { cursor, limit } = reviewCategoryDto;
 
     let orderField;
-    reviewCategoryDto.selectedOrder === 'D' ? (orderField = 'createdDate') : (orderField = 'totalLikedNum');
+    reviewCategoryDto.selectedOrder === 'D' ? (orderField = 'createDate') : (orderField = 'totalLikedNum');
 
     const queryBuilder = await this.review
       .createQueryBuilder('review')
@@ -194,7 +194,7 @@ export class ReviewRepository {
         'review.content AS "content"',
         'review.storeName AS "storeName"',
         'review.score AS "score"',
-        'review.createdDate AS "createdDate"',
+        'review.createDate AS "createDate"',
         'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
         'member.nickname AS "memberNickname"',
         'member.isHavingImg AS "memberIsHavingImg"',
@@ -323,7 +323,7 @@ export class ReviewRepository {
     const items = await this.review.find({
       select: { reviewId: true, menuName: true, storeName: true, status: true },
       where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdPagingDto.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
-      order: { createdDate: 'ASC', menuName: 'ASC' },
+      order: { createDate: 'ASC', menuName: 'ASC' },
     });
 
     return new ResponseCursorPagination(items, limit, 'reviewId');
@@ -493,7 +493,7 @@ export class ReviewRepository {
         'review.content AS "content"',
         'review.storeName AS "storeName"',
         'review.score AS "score"',
-        'review.createdDate AS "createdDate"',
+        'review.createDate AS "createDate"',
         'dessertCategory.dessertCategoryId AS "dessertCategoryId"',
         'member.nickname AS "memberNickname"',
         'member.isHavingImg AS "memberIsHavingImg"',
@@ -515,7 +515,7 @@ export class ReviewRepository {
       .where('review.isUsable = :isUsable', { isUsable: true })
       .andWhere('review.status = :status', { status: ReviewStatus.SAVED }) // status: In([ReviewStatus.WAIT, ReviewStatus.INIT])
       .andWhere('like.memberMemberId = :likeMemberId', { likeMemberId: memberIdPagingDto.memberId })
-      .orderBy('review.createdDate', 'DESC')
+      .orderBy('review.createDate', 'DESC')
       .setParameter('memberId', memberIdPagingDto.memberId)
       .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
 

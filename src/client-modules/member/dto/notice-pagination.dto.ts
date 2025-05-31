@@ -4,7 +4,7 @@ import { IsNotEmpty } from 'class-validator';
 import { NoticeType } from 'src/common/enum/noticetype.enum';
 import { CursorPaginationDto } from 'src/common/pagination/dto/cursor.pagination.dto';
 
-export class NoticeListDto extends CursorPaginationDto {
+export class NoticePaginationDto extends CursorPaginationDto {
   @Transform((value) => {
     return value.value == 'NOTICE' ? NoticeType.NOTICE : value.value == 'EVENT' ? NoticeType.EVENT : NoticeType.FAQ;
   })

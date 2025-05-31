@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserInterestDessert } from '../../config/entities/user.interest.dessert.entity';
+import { UserInterestDessert } from '../../config/entities/user-interest-dessert.entity';
 import { Repository } from 'typeorm';
 import { Member } from '../../config/entities/member.entity';
 
