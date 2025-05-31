@@ -28,8 +28,6 @@ import { ResponseInterceptor } from './config/interceptor/response.interceptor';
 import { ReviewModule } from './client-modules/review/review.module';
 import { AccusationModule } from './client-modules/accusation/accusation.module';
 import { FileTransModule } from './config/file/filetrans.module';
-import { addTransactionalDataSource } from 'typeorm-transactional';
-import { DataSource } from 'typeorm';
 import { AuthModule } from './config/auth/auth.module';
 
 @Module({
@@ -70,13 +68,8 @@ import { AuthModule } from './config/auth/auth.module';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => await typeORMConfig(configService),
-      dataSourceFactory: async (options) => {
-        if (!options) {
-          throw new Error('Invalid options passed');
-        }
-        return addTransactionalDataSource(new DataSource(options));
-      },
+      useFactory: async (configService: ConfigService) =>
+        await typeORMConfig(configService),
     }),
   ],
   controllers: [AppController],

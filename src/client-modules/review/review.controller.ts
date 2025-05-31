@@ -12,11 +12,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
-import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { MemberIdPagingDto } from './dto/review.dto';
-import { JwtAuthGuard } from 'src/config/auth/jwt/jwt.guard';
 import { ReviewSaveDto } from './dto/review.save.dto';
 import { ReviewMemberIdDto } from './dto/review.member.dto';
+import { JwtAuthGuard } from '../../config/auth/jwt/jwt.guard';
 
 @Controller('review')
 @ApiTags('Review')

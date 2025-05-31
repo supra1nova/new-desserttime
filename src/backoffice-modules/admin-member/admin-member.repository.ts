@@ -29,7 +29,7 @@ export class AdminMemberRepository {
     const selectClause = {
       memberId: true,
       isUsable: true,
-      nickName: true,
+      nickname: true,
       snsId: true,
       signInSns: true,
       memberEmail: true,
@@ -63,7 +63,7 @@ export class AdminMemberRepository {
         'member.signInSns',
         'member.memberEmail',
         'member.memberName',
-        'member.nickName',
+        'member.nickname',
         'member.birthYear',
         'member.gender',
         'member.isHavingImg',

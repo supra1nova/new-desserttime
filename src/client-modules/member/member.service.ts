@@ -1,26 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { SignInDto } from './dto/signin.dto';
 import { MemberRepository } from './member.repository';
-import { Transactional } from 'typeorm-transactional';
 import { UserValidationDto } from './dto/login.dto';
-import { MemberIdDto } from './dto/member.id';
-import { MemberDeleteDto } from './dto/member.delete.dto';
-import { MemberAlarmDto } from './dto/member.alarm.dto';
-import { MemberAdDto } from './dto/member.add.dto';
 import { NoticeListDto } from './dto/notice.list.dto';
 import { NoticeDto } from './dto/notice.dto';
-import { NickNameDto } from './dto/nickname.dto';
 import { MemberUpdateDto } from './member.update.dto';
-import { v4 as uuid } from 'uuid';
-import { MemberPointListDto } from './dto/member.pointlist.dto';
+import { MemberPointDtoList } from './dto/memberPointDtoList';
 import { MemberDeletion } from '../../common/enum/member.enum';
-import { MemberIdPagingDto } from './dto/member.id.paging.dto';
 import { AuthService } from 'src/config/auth/auth.service';
+import { CursorPaginationDto } from '../../common/pagination/dto/cursor.pagination.dto';
 
 @Injectable()
 export class MemberService {
   constructor(
-    private memberRepository: MemberRepository,
+    private readonly memberRepository: MemberRepository,
     private readonly authService: AuthService,
   ) {}
 
@@ -31,17 +25,17 @@ export class MemberService {
   @Transactional()
   async memberSignIn(signInDto: SignInDto) {
     try {
-      const isEmail = await this.memberRepository.findEmailOne(signInDto.memberEmail);
-      const isSnsId = await this.memberRepository.findSnsIdOne(signInDto.snsId);
+      const isEmail = await this.memberRepository.findMemberByEmail(signInDto.memberEmail);
+      const isSnsId = await this.memberRepository.findMemberBySnsId(signInDto.snsId);
 
       if (!isEmail && !isSnsId) {
         const pickedDCList = [];
 
         const newMember = await this.memberRepository.insertMember(signInDto);
         const newMemberId = newMember.identifiers[0].memberId;
-        const nickName = `${newMemberId}번째 달콤한 디저트`;
+        const nickname = `${newMemberId}번째 달콤한 디저트`;
 
-        await this.memberRepository.updateMemberNickname(newMemberId, nickName);
+        await this.memberRepository.updateMemberNickname(newMemberId, nickname);
 
         const categories = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5].filter(
           (category) => category !== undefined,
@@ -58,7 +52,7 @@ export class MemberService {
         if (categories.length > 0) {
           await this.memberRepository.insertPickCategoryList(pickedDCList);
         }
-        return await this.memberRepository.findSnsId(newMemberId);
+        return await this.memberRepository.findMemberBySnsId(newMemberId);
       } else {
         throw new BadRequestException('중복정보', {
           cause: new Error(),
@@ -77,110 +71,92 @@ export class MemberService {
    */
   @Transactional()
   async memberValidate(userValidationDto: UserValidationDto) {
-    try {
-      const memberData = await this.memberRepository.memberValidate(userValidationDto);
+    const memberData = await this.memberRepository.findMemberBySnsIdAndIsUsable(userValidationDto);
 
-      if (!memberData) {
-        throw new BadRequestException('미등록정보', {
-          cause: new Error(),
-          description: '가입되지않은 정보입니다.',
-        });
-      }
-      const token = await this.authService.jwtLogIn(memberData);
-      const result = {
-        memberId: memberData.memberId,
-        nickName: memberData.nickName,
-        token: token.token,
-      };
-      return result;
-    } catch (error) {
-      throw error;
+    if (!memberData) {
+      throw new BadRequestException('미등록정보', {
+        cause: new Error(),
+        description: '가입되지않은 정보입니다.',
+      });
     }
+    const token = await this.authService.jwtLogIn(memberData);
+    return {
+      memberId: memberData.memberId,
+      nickname: memberData.nickname,
+      token: token.token,
+    };
   }
 
   /**
    * 마이페이지 첫화면 (리뷰 수, 밀 수, 닉네임)
-   * @param memberIdDto
+   * @param memberId
    * @returns
    */
   @Transactional()
-  async myPageOverview(memberIdDto: MemberIdDto) {
-    try {
-      const nickName = await this.memberRepository.findUserNickNameOne(memberIdDto);
-      const usersReviewCount = await this.memberRepository.countReview(memberIdDto);
-      const usersPoint = await this.memberRepository.findTotalPointOne(memberIdDto);
-      const usersTotalPoint = usersPoint[0] ? usersPoint[0].totalPoint : 0;
-      return {
-        nickName: nickName.nickName,
-        usersReviewCount,
-        usersTotalPoint,
-      };
-    } catch (error) {
-      throw error;
-    }
+  async getMyPageInfo(memberId: string) {
+    const member = await this.memberRepository.findMemberById(memberId);
+    const usersReviewCount = await this.memberRepository.findReviewCount(memberId);
+    const usersPoint = await this.memberRepository.findTotalPoints(memberId);
+    const usersTotalPoint = usersPoint[0] ? usersPoint[0].totalPoint : 0;
+
+    return {
+      nickname: member.nickname,
+      usersReviewCount,
+      usersTotalPoint,
+    };
   }
 
   /**
    * 사용자 정보 조회
-   * @param memberIdDto
+   * @param memberId
    * @returns
    */
   @Transactional()
-  async getMemberOne(memberIdDto: MemberIdDto) {
-    try {
-      const memberData = await this.memberRepository.findMemberOne(memberIdDto);
+  async getMemberById(memberId: string) {
+    const datas = await this.memberRepository.findMemberInfos(memberId);
 
-      const result = memberData.reduce((acc, current) => {
-        if (acc['memberId'] == current.memberId) {
-          acc.desserts.push({
-            dessertCategoryId: current.dessertCategoryId,
-            dessertName: current.dessertName,
-          });
-        } else {
-          acc = {
-            memberId: current.memberId,
-            gender: current.gender,
-            nickName: current.nickName,
-            birthYear: current.birthYear,
-            firstCity: current.firstCity,
-            secondaryCity: current.secondaryCity,
-            thirdCity: current.thirdCity,
-            profileImgMiddlePath: current.profileImgMiddlePath,
-            profileImgId: current.profileImgId,
-            profileImgPath: current.profileImgPath,
-            profileImgExtension: current.profileImgExtension,
-            desserts: [
-              {
-                dessertCategoryId: current.dessertCategoryId,
-                dessertName: current.dessertName,
-              },
-            ],
-          };
-        }
-        return acc;
-      }, {});
+    return datas.reduce((acc, current) => {
+      if (acc['memberId'] == current.memberId) {
+        acc.desserts.push({
+          dessertCategoryId: current.dessertCategoryId,
+          dessertName: current.dessertName,
+        });
+      } else {
+        acc = {
+          memberId: current.memberId,
+          gender: current.gender,
+          nickname: current.nickname,
+          birthYear: current.birthYear,
+          firstCity: current.firstCity,
+          secondaryCity: current.secondaryCity,
+          thirdCity: current.thirdCity,
+          profileImgMiddlePath: current.profileImgMiddlePath,
+          profileImgId: current.profileImgId,
+          profileImgPath: current.profileImgPath,
+          profileImgExtension: current.profileImgExtension,
+          desserts: [
+            {
+              dessertCategoryId: current.dessertCategoryId,
+              dessertName: current.dessertName,
+            },
+          ],
+        };
+      }
 
-      return result;
-    } catch (error) {
-      throw error;
-    }
+      return acc;
+    }, {});
   }
 
   /**
    * 닉네임 사용여부 확인
-   * @param nickNameDto
+   * @param nickname
    * @returns
    */
   @Transactional()
-  async isUsableNickName(nickNameDto: NickNameDto) {
-    try {
-      const result = { usable: true };
-      const isUsableNickName = await this.memberRepository.isUsableNickName(nickNameDto);
-      if (isUsableNickName.length > 0) result.usable = false;
-      return result;
-    } catch (error) {
-      throw error;
-    }
+  async validateNickname(nickname: string) {
+    const members = await this.memberRepository.findMemberByNickname(nickname);
+
+    return members.length < 1;
   }
 
   /**
@@ -188,72 +164,72 @@ export class MemberService {
    * @param memberUpdateDto
    */
   @Transactional()
-  async patchMember(memberUpdateDto: MemberUpdateDto) {
-    try {
-      await this.memberRepository.saveMember(memberUpdateDto);
+  async updateMember(memberUpdateDto: MemberUpdateDto) {
+    await this.memberRepository.saveMember(memberUpdateDto);
 
-      const pickDessertList = [];
-      const categories = [memberUpdateDto.memberPickCategory1, memberUpdateDto.memberPickCategory2, memberUpdateDto.memberPickCategory3, memberUpdateDto.memberPickCategory4, memberUpdateDto.memberPickCategory5].filter(
-        (category) => category !== undefined,
-      );
-      categories.forEach((category) => {
-        if (category) {
-          pickDessertList.push({
-            member: { memberId: memberUpdateDto.memberId },
-            dc: { dessertCategoryId: category },
-          });
-        }
-      });
-      if (categories.length > 0) {
-        await this.memberRepository.deletePickCategoryList(memberUpdateDto);
-        await this.memberRepository.insertPickCategoryList(pickDessertList);
+    const pickDessertList = [];
+    const categories = [memberUpdateDto.memberPickCategory1, memberUpdateDto.memberPickCategory2, memberUpdateDto.memberPickCategory3, memberUpdateDto.memberPickCategory4, memberUpdateDto.memberPickCategory5].filter(
+      (category) => category !== undefined,
+    );
+    categories.forEach((category) => {
+      if (category) {
+        pickDessertList.push({
+          member: { memberId: memberUpdateDto.memberId },
+          dc: { dessertCategoryId: category },
+        });
       }
-    } catch (error) {
-      throw error;
+    });
+
+    if (categories.length > 0) {
+      await this.memberRepository.deletePickCategoryList(memberUpdateDto);
+      await this.memberRepository.insertPickCategoryList(pickDessertList);
     }
   }
 
   /**
    * 광고, 알람 수신 여부 조회
-   * @param memberIdDto
+   * @param memberId
    * @returns
    */
   @Transactional()
-  async getAlarmAndADStatue(memberIdDto: MemberIdDto) {
-    try {
-      const { isAgreeAD, isAgreeAlarm } = await this.memberRepository.findAlarmAndADStatue(memberIdDto);
-      return {
-        isAgreeAD,
-        isAgreeAlarm,
-      };
-    } catch (error) {
-      throw error;
-    }
+  async getAlarmAndAdStatus(memberId: string) {
+    const { adStatus, alarmStatus } = await this.memberRepository.findMemberById(memberId);
+
+    return {
+      adStatus: adStatus,
+      alarmStatus: alarmStatus,
+    };
   }
 
   /**
    * 알람 수신여부 업데이트
-   * @param memberAlarmDto
+   * @param memberId
    */
   @Transactional()
-  async patchAlarmStatus(memberAlarmDto: MemberAlarmDto) {
-    try {
-      await this.memberRepository.updateAlarm(memberAlarmDto);
-    } catch (error) {
-      throw error;
+  async updateAlarmStatus(memberId: string) {
+    const result = await this.memberRepository.updateAlarmStatus(memberId);
+
+    if (result < 1) {
+      throw new BadRequestException('알림 수신여부 업데이트 실패', {
+        cause: new Error(),
+        description: '알림 수신여부 업데이트에 실패했습니다.',
+      });
     }
   }
 
   /**
    * 광고 수신여부 업데이트
-   * @param memberAdDto
+   * @param memberId
    */
   @Transactional()
-  async patchAdStatus(memberAdDto: MemberAdDto) {
-    try {
-      await this.memberRepository.updateAd(memberAdDto);
-    } catch (error) {
-      throw error;
+  async updateAdStatus(memberId: string) {
+    const result = await this.memberRepository.updateAd(memberId);
+
+    if (result < 1) {
+      throw new BadRequestException('업데이트 실패', {
+        cause: new Error(),
+        description: '광고 수신 상태 업데이트에 실패했습니다.',
+      });
     }
   }
 
@@ -262,91 +238,67 @@ export class MemberService {
    * @returns
    */
   @Transactional()
-  async getReasonForLeaving() {
-    try {
-      const result = Object.entries(MemberDeletion).map(([key, value]) => ({
+  async getDeleteReason(): Promise<{code: string, text: MemberDeletion}> {
+    // todo: 탈퇴사유 공통코드로 db 저장 후 조회하도록 처리 필요
+    return new Promise<any>(() => {
+      return Object.entries(MemberDeletion).map(([key, value]) => ({
         code: key,
         text: value,
-      }));
-      return result;
-    } catch (error) {
-      throw error;
-    }
+      }))
+    });
   }
 
   /**
    * 사용자 탈퇴하기
-   * @param memberDeleteDto
+   * @param memberId
    */
   @Transactional()
-  async deleteMember(memberDeleteDto: MemberDeleteDto) {
-    try {
-      const member = await this.memberRepository.findMemberEntityOne(memberDeleteDto);
-      if (!member.isUsable) {
-        throw new BadRequestException('이미 삭제됨', {
-          cause: new Error(),
-          description: '이미 삭제된 사용자입니다.',
-        });
-      }
-      const deletionMember = await this.memberRepository.insertDeletionMember(memberDeleteDto);
-      const userData = {
-        snsId: uuid(),
-        memberId: memberDeleteDto.memberId,
-        memberName: `${member.memberName.substring(0, 1)}**`,
-        memberEmail: `${memberDeleteDto.memberId}@desserttime.com`,
-        nickName: `${deletionMember.identifiers[0].memberDeletionId}번째탈퇴한디타인`,
-      };
-      await this.memberRepository.deleteMember(userData);
-    } catch (error) {
-      throw error;
+  async deleteMember(memberId: string) {
+    const result = await this.memberRepository.deleteMember(memberId);
+
+    if (result < 1) {
+      throw new BadRequestException('탈퇴 실패', {
+        cause: new Error(),
+        description: '탈퇴에 실패했습니다.',
+      });
     }
   }
 
   /**
    * 이번달에 쌓은 포인트점수
-   * @param memberIdDto
+   * @param memberId
    * @returns
    */
   @Transactional()
-  async getPoint(memberIdDto: MemberIdDto) {
-    try {
-      const thisMonthPointData = await this.memberRepository.findThisMonthPoint(memberIdDto);
-      const totalPointData = await this.memberRepository.findTotalPointOne(memberIdDto);
-      const thisMonthPoint = !thisMonthPointData.totalPoint ? 0 : thisMonthPointData.totalPoint;
-      const totalPoint = !totalPointData[0] ? 0 : !totalPointData[0].totalPoint ? 0 : totalPointData[0].totalPoint;
-      const result = {
-        thisMonthPoint,
-        totalPoint,
-      };
-      return result;
-    } catch (error) {
-      throw error;
-    }
+  async getPoint(memberId: string) {
+    const thisMonthPointData = await this.memberRepository.findThisMonthPoint(memberId);
+    const totalPointData = await this.memberRepository.findTotalPoints(memberId);
+
+    const thisMonthPoint = !thisMonthPointData.totalPoint ? 0 : thisMonthPointData.totalPoint;
+    const totalPoint = !totalPointData[0] ? 0 : !totalPointData[0].totalPoint ? 0 : totalPointData[0].totalPoint;
+
+    return { thisMonthPoint, totalPoint };
   }
 
   /**
    * 보유밀 상세내역
-   * @param memberIdDto
+   * @param memberPointDtoList
    */
   @Transactional()
-  async getPointHisoryList(memberPointListDto: MemberPointListDto) {
-    try {
-      const pointHistoryList = await this.memberRepository.findPointHisoryList(memberPointListDto);
-      console.log('pointHistoryList', pointHistoryList);
-      const result = pointHistoryList.items.map((data) => {
-        const createdDate: string = data.createdDate.toISOString().substring(0, 10);
-        return {
-          pointHistoryId: data.pointHistoryId,
-          menuName: data.review ? data.review.menuName : '관리자 소관',
-          point: data.newPoint,
-          createdDate,
-        };
-      });
+  async getPointHistoryList(memberPointDtoList: MemberPointDtoList) {
+    const pointHistoryList = await this.memberRepository.findPointHistoryList(memberPointDtoList);
 
-      return { items: result, hasNextPage: pointHistoryList.hasNextPage, nextCursor: pointHistoryList.nextCursor };
-    } catch (error) {
-      throw error;
-    }
+    const result = pointHistoryList.items.map((data) => {
+      const createdDate: string = data.createdDate.toISOString().substring(0, 10);
+      return {
+        pointHistoryId: data.pointHistoryId,
+        menuName: data.review ? data.review.menuName : '관리자 소관',
+        point: data.newPoint,
+        createdDate,
+      };
+    });
+
+    return { items: result, hasNextPage: pointHistoryList.hasNextPage, nextCursor: pointHistoryList.nextCursor };
   }
 
   /**
@@ -356,12 +308,7 @@ export class MemberService {
    */
   @Transactional()
   async getNoticeList(noticeListDto: NoticeListDto) {
-    try {
-      const result = await this.memberRepository.findNoticeList(noticeListDto);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    return await this.memberRepository.findNoticeList(noticeListDto);
   }
 
   /**
@@ -370,26 +317,17 @@ export class MemberService {
    * @returns
    */
   @Transactional()
-  async getNoticeOne(noticeDto: NoticeDto) {
-    try {
-      const result = await this.memberRepository.findNoticeOne(noticeDto);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+  async getNotice(noticeDto: NoticeDto) {
+    return await this.memberRepository.findNotice(noticeDto);
   }
 
   /**
    * 사용자가 등록한 리뷰목록 조회하기
-   * @param memberIdDto
+   * @param memberId
+   * @param cursorPaginationDto
    */
   @Transactional()
-  async getMyReviewList(memberIdPagingDto: MemberIdPagingDto) {
-    try {
-      const reviewList = await this.memberRepository.findMyReviewList(memberIdPagingDto);
-      return reviewList;
-    } catch (error) {
-      throw error;
-    }
+  async getReviewList(memberId: string, cursorPaginationDto: CursorPaginationDto) {
+    return await this.memberRepository.findReviewList(memberId, cursorPaginationDto);
   }
 }

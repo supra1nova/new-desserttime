@@ -11,7 +11,7 @@ export class UpdateAdminMemberDto {
   })
   @IsString()
   @IsNotEmpty()
-  readonly nickName: string;
+  readonly nickname: string;
 
   @ApiProperty({
     type: String,

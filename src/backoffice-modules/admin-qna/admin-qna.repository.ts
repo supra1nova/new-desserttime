@@ -27,7 +27,7 @@ export class AdminQnaRepository {
   async findAll(searchAdminQnaDto: SearchAdminQnaDto) {
     const selectClause = {
       isAnswered: true,
-      qNAId: true,
+      qnaId: true,
       email: true,
       content: true,
       createdDate: true,
@@ -50,30 +50,30 @@ export class AdminQnaRepository {
 
   /**
    * qna 답변 생성
-   * @param qNAId
+   * @param qnaId
    * @param qNAData
    * */
-  async create(qNAId: string, qNAData: Partial<Qna>) {
-    // await this.adminQnaRepository.update(qNAId, qNAData);
-    await this.adminQnaRepository.update({ qnaId: qNAId }, { isAnswered: true, replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyCreatedDate: new Date() });
+  async create(qnaId: string, qNAData: Partial<Qna>) {
+    // await this.adminQnaRepository.update(qnaId, qNAData);
+    await this.adminQnaRepository.update({ qnaId: qnaId }, { isAnswered: true, replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyCreatedDate: new Date() });
   }
 
   /**
    * qna 단건 조회
-   * @param qNAId
+   * @param qnaId
    * @returns Promise<Qna>
    */
-  async findOneById(qNAId: string) {
-    return await this.adminQnaRepository.createQueryBuilder('qna').select().where('qna.qNAId = :qNAId', { qNAId: true }).setParameter('qNAId', qNAId).orderBy('qna.createdDate', 'DESC').getOne();
+  async findOneById(qnaId: string) {
+    return await this.adminQnaRepository.createQueryBuilder('qna').select().where('qna.qnaId = :qnaId', { qnaId: true }).setParameter('qnaId', qnaId).orderBy('qna.createdDate', 'DESC').getOne();
   }
 
   /**
    * qna 답변 수정
-   * @param qNAId
+   * @param qnaId
    * @param qNAData
    * */
-  async update(qNAId: string, qNAData: Partial<Qna>) {
-    await this.adminQnaRepository.update({ qnaId: qNAId }, { replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyUpdateDate: new Date() });
+  async update(qnaId: string, qNAData: Partial<Qna>) {
+    await this.adminQnaRepository.update({ qnaId: qnaId }, { replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyUpdateDate: new Date() });
   }
 
   /**

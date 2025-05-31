@@ -3,7 +3,6 @@ import { ReviewRepository } from './review.repository';
 import { ReviewCategoryDto } from './dto/review.category.dto';
 import { LikeDto } from './dto/like.dto';
 import { MemberIdDto } from './dto/member.id.dto';
-import { typeORMConfig } from 'src/config/typeorm/typeorm.config';
 import { ReviewCreateDto } from './dto/review.create.dto';
 import { ReviewIdDto } from './dto/review.id.dto';
 import { ReviewUpdateDto } from './dto/review.update.dto';
@@ -12,14 +11,13 @@ import * as path from 'path';
 import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
 import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
 import { IngredientNameDto } from './dto/ingredient.name.dto';
-import { Transactional } from 'typeorm-transactional';
 import { MemberIdPagingDto } from './dto/review.dto';
 import { ReviewSaveDto } from './dto/review.save.dto';
 import { ReviewMemberIdDto } from './dto/review.member.dto';
 import { AdminPointService } from 'src/backoffice-modules/admin-point/admin-point.service';
 import { UpdateAdminPointDto } from 'src/backoffice-modules/admin-point/model/update-admin-point.dto';
 import { PointType } from 'src/common/enum/point.enum';
-import { Ingredient } from 'src/config/entities/ingredient.entity';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class ReviewService {
@@ -47,7 +45,7 @@ export class ReviewService {
             score: row.score,
             createdDate: row.createdDate,
             dessertCategoryId: row.dessertCategoryId,
-            memberNickName: row.memberNickName,
+            memberNickname: row.memberNickname,
             memberIsHavingImg: row.memberIsHavingImg,
             isLiked: row.isLiked,
             profileImgMiddlePath: row.profileImgMiddlePath || null,
@@ -170,7 +168,7 @@ export class ReviewService {
             score: review.score,
             createdDate: review.createdDate,
             dessertCategoryId: review.dessertCategoryId,
-            memberNickName: review.memberNickName,
+            memberNickname: review.memberNickname,
             memberIsHavingImg: review.memberIsHavingImg,
             isLiked: review.isLiked,
             reviewImg: [],
@@ -370,7 +368,7 @@ export class ReviewService {
           const reviewImg = reviewData.reviewImg.map((imgData) => {
             return {
               reviewImgId: imgData.reviewImgId,
-              middlepath: imgData.middlePath,
+              middlePath: imgData.middlePath,
               path: imgData.path,
               extention: imgData.extension,
               imgName: imgData.imgName,
@@ -567,7 +565,7 @@ export class ReviewService {
             score: review.score,
             createdDate: review.createdDate,
             dessertCategoryId: review.dessertCategoryId,
-            memberNickName: review.memberNickName,
+            memberNickname: review.memberNickname,
             memberIsHavingImg: review.memberIsHavingImg,
             isLiked: review.isLiked,
             reviewImg: [],

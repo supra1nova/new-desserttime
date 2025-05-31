@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class AccusationRecordDto {
+export class AccusationDto {
   @ApiProperty({
     example: '1',
     description: '사용자ID',
