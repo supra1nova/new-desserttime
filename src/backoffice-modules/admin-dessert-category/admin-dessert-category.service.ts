@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Transactional } from 'typeorm-transactional';
 import { FirstCategoryAppendDto } from '../../client-modules/dessert-category/dto/firstcategory.append.dto';
 import { AdminDessertCategoryRepository } from './admin-dessert-category.repository';
 import { AdminSearchDessertCategoryDto } from './model/admin-search-dessert-category.dto';
 import { Page } from '../common/dto/page.dto';
 import { DessertCategoryIdDto } from '../../client-modules/dessert-category/dto/dessert.category.dto';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class AdminDessertCategoryService {

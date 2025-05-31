@@ -1,15 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as expressBasicAuth from 'express-basic-auth';
 import { APIDocument } from './config/swagger/swagger.api.document';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { winstonLogger } from './config/logger/winston.util';
 import { HttpExceptionFilter } from './config/filters/http.exception.filter';
 import { ValidationPipe } from '@nestjs/common';
-import { initializeTransactionalContext } from 'typeorm-transactional';
+import { initializeTransactionalContext, patchTypeORMRepositoryWithBaseRepository } from 'typeorm-transactional-cls-hooked';
 
 async function bootstrap() {
   initializeTransactionalContext();
+  patchTypeORMRepositoryWithBaseRepository();
 
   // app.use(
   //   ['/docs', '/docs-json'],

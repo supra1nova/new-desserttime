@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  OneToOne,
+  DeleteDateColumn,
+} from 'typeorm';
 import { UserInterestDessert } from './user.interest.dessert.entity';
 import { Qna } from './qna.entity';
 import { Review } from './review.entity';
@@ -27,7 +36,7 @@ export class Member {
   memberName: string;
 
   @Column({ nullable: true })
-  nickName: string;
+  nickname: string;
 
   @Column({ nullable: true })
   birthYear: number;
@@ -40,12 +49,6 @@ export class Member {
 
   @Column({ nullable: true, default: true })
   isUsable: boolean;
-
-  @CreateDateColumn()
-  createdDate: Date;
-
-  @UpdateDateColumn()
-  updateDate: Date;
 
   @Column({ type: 'timestamp', nullable: true })
   lastAccessDate: Date;
@@ -66,13 +69,22 @@ export class Member {
   thirdCity: string;
 
   @Column({ default: false })
-  isAgreeAD: boolean;
+  adStatus: boolean;
 
   @Column({ default: false })
-  isAgreeAlarm: boolean;
+  alarmStatus: boolean;
 
-  @OneToMany(() => UserInterestDessert, (udi) => udi.member)
-  uids: UserInterestDessert[];
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
+
+  @OneToMany(() => UserInterestDessert, (userInterestDessert) => userInterestDessert.member)
+  userInterestDesserts: UserInterestDessert[];
 
   @OneToMany(() => Qna, (qna) => qna.member)
   qnas: Qna[];

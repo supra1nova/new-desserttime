@@ -1,6 +1,6 @@
 export enum MemberSearchType {
   MEMBER_EMAIL = 'memberEmail',
-  NICKNAME = 'nickName',
+  NICKNAME = 'nickname',
 }
 
 export enum MemberGender {

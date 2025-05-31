@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PostAccusationDto } from './dto/post.accusation.dto';
-import { AccusationRecordDto } from './dto/accusation.record.dto';
+import { PostAccusationDto } from './dto/post-accusation.dto';
+import { AccusationDto } from './dto/accusation.dto';
 import { AccusationRepository } from './accusation.repository';
 import { AccusationEnum } from '../../common/enum/accusation.enum';
-import { Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class AccusationService {
@@ -13,12 +13,11 @@ export class AccusationService {
    * 신고 사유 목록 조회
    */
   @Transactional()
-  async getAccuList() {
-    const result = Object.entries(AccusationEnum).map(([key, value]) => ({
+  async getAccusationList() {
+    return Object.entries(AccusationEnum).map(([key, value]) => ({
       code: key,
       text: value,
     }));
-    return result;
   }
 
   /**
@@ -27,7 +26,7 @@ export class AccusationService {
    * @returns
    */
   @Transactional()
-  async postAccusation(postAccusationDto: PostAccusationDto) {
+  async insertAccusation(postAccusationDto: PostAccusationDto) {
     await this.accusationRepository.insertAccusation(postAccusationDto);
   }
 
@@ -37,11 +36,14 @@ export class AccusationService {
    * @returns
    */
   @Transactional()
-  async getPreAccuRecord(accusationRecordDto: AccusationRecordDto) {
-    let isPreAccuRecord = false;
+  async getAccusations(accusationRecordDto: AccusationDto) {
+    let isAlreadyAccused = false;
 
-    const preAccusation = await this.accusationRepository.findPreAccuRecord(accusationRecordDto);
-    if (preAccusation) isPreAccuRecord = true;
-    return { isPreAccuRecord };
+    const accusations = await this.accusationRepository.findAccusations(accusationRecordDto);
+    if (accusations) {
+      isAlreadyAccused = true;
+    }
+
+    return { isAlreadyAccused: isAlreadyAccused };
   }
 }

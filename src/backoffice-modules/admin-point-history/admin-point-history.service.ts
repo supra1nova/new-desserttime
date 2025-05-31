@@ -3,7 +3,7 @@ import { AdminPointHistoryRepository } from './admin-point-history.repository';
 import { UpdateAdminPointDto } from '../admin-point/model/update-admin-point.dto';
 import { Page } from '../common/dto/page.dto';
 import { SearchAdminPointHistoryDto } from './model/search-admin-point-history.dto';
-import { Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class AdminPointHistoryService {

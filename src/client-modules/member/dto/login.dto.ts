@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UserValidationDto {
   @ApiProperty({
@@ -7,6 +7,7 @@ export class UserValidationDto {
     description: '식별값',
     required: true,
   })
+  @IsString()
   @IsNotEmpty()
   readonly snsId: string;
 }

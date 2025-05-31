@@ -35,7 +35,7 @@ export class AdminMemberController {
   @ApiBody({
     type: UpdateAdminMemberDto,
     description: `
-      nickName: 회원 이름
+      nickname: 회원 이름
       memo: 관리자 메모
       gender: 회원 성별( M:남성 / F:여성 / N:선택안함 )
       firstCity: 1차 지역

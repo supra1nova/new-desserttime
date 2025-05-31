@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UpdateAdminPointDto } from './model/update-admin-point.dto';
 import { AdminPointRepository } from './admin-point.repository';
 import { AdminPointHistoryService } from '../admin-point-history/admin-point-history.service';
-import { Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class AdminPointService {

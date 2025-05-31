@@ -3,7 +3,7 @@ import { DessertCategoryRepository } from './dessert-category.repository';
 import { DessertSessionDto } from './dto/dessertsession.dto';
 import { ParentIdDto } from './dto/parent.id.dto';
 import { DessertCategoryNameDto } from './dto/dessert.category.name.dto';
-import { Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class DessertCategoryService {

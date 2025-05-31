@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Accusation } from 'src/config/entities/accusation.entity';
 import { Repository } from 'typeorm';
-import { PostAccusationDto } from './dto/post.accusation.dto';
-import { AccusationRecordDto } from './dto/accusation.record.dto';
+import { PostAccusationDto } from './dto/post-accusation.dto';
+import { AccusationDto } from './dto/accusation.dto';
 
 @Injectable()
 export class AccusationRepository {
@@ -28,7 +28,7 @@ export class AccusationRepository {
    * @param accusationRecordDto
    * @returns
    */
-  async findPreAccuRecord(accusationRecordDto: AccusationRecordDto) {
+  async findAccusations(accusationRecordDto: AccusationDto) {
     return await this.accustion.findOne({
       where: {
         member: { memberId: accusationRecordDto.memberId },
