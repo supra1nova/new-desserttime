@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
-import { DessertCategory } from '../../config/entities/dessert.category.entity';
+import { DessertCategory } from '../../config/entities/dessert-category.entity';
 import { AdminSearchDessertCategoryDto } from './model/admin-search-dessert-category.dto';
 import { FirstCategoryAppendDto } from '../../client-modules/dessert-category/dto/firstcategory.append.dto';
 import { DessertCategoryIdDto } from '../../client-modules/dessert-category/dto/dessert.category.dto';
@@ -98,17 +98,8 @@ export class AdminDessertCategoryRepository {
    * 카테고리 삭제
    */
   async deleteDessertCategory(dessertCategoryIdDto: DessertCategoryIdDto) {
-    const dessertCategoryId = dessertCategoryIdDto.dessertCategoryId;
-
-    const updateResult = await this.dessertCategoryRepository
-      .createQueryBuilder()
-      .update(DessertCategory)
-      .set({
-        isUsable: false,
-      })
-      .where('dessertCategoryId = :dessertCategoryId', { dessertCategoryId })
-      .execute();
-    return !!updateResult.affected;
+    const result = await this.dessertCategoryRepository.softDelete(dessertCategoryIdDto)
+    return !!result.affected;
   }
 
   /**

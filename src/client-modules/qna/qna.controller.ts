@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { QnaService } from './qna.service';
-import { QnaDto } from './dto/qna.dto';
+import { FindQnaDto } from './dto/find-qna.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateQnaDto } from './dto/create-qna.dto';
 import { JwtAuthGuard } from '../../config/auth/jwt/jwt.guard';
@@ -20,7 +20,7 @@ export class QnaController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '문의 1개 조회하기' })
   @Get()
-  async getQna(@Query() qnaIdDto: QnaDto) {
+  async getQna(@Query() qnaIdDto: FindQnaDto) {
     return await this.qnaService.getQna(qnaIdDto);
   }
 }

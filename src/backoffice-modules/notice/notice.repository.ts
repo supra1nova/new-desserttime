@@ -40,7 +40,7 @@ export class NoticeRepository {
       skip: searchNoticeDto.getSkip(),
       take: searchNoticeDto.getTake(),
       order: {
-        createdDate: 'DESC',
+        createDate: 'DESC',
       },
     });
   }

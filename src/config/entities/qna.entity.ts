@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Member } from './member.entity';
 
 @Entity()
@@ -21,20 +29,23 @@ export class Qna {
   @Column({ default: true })
   isUsable: boolean;
 
-  @CreateDateColumn()
-  createdDate: Date;
+  @CreateDateColumn({ nullable: false })
+  createDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;
 
+  @DeleteDateColumn()
+  deleteDate: Date;
+
   @Column({ nullable: true })
-  replyAdminId: number;
+  replyAdminId: string;
 
   @Column({
     type: 'timestamp',
     nullable: true,
   })
-  replyCreatedDate: Date;
+  replyCreateDate: Date;
 
   @Column({
     type: 'timestamp',

@@ -62,7 +62,7 @@ export class NoticeDto {
   })
   @IsDate()
   @IsNotEmpty()
-  readonly createdDate: Date;
+  readonly createDate: Date;
 
   @ApiProperty({
     description: '게시글 수정일',
@@ -70,5 +70,5 @@ export class NoticeDto {
     required: false,
   })
   @IsDate()
-  readonly updatedDate: Date;
+  readonly updateDate: Date;
 }

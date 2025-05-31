@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
-  JoinColumn,
+  JoinColumn, DeleteDateColumn,
 } from 'typeorm';
 import { Member } from './member.entity';
 
@@ -30,10 +30,13 @@ export class ProfileImg {
   isUsable: boolean;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 
   @OneToOne(() => Member, (member) => member.profileImg)
   @JoinColumn()

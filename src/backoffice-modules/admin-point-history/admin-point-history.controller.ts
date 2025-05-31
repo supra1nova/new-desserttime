@@ -11,7 +11,7 @@ export class AdminPointHistoryController {
   @ApiOperation({ summary: '특정 회원 포인트 내역 전체 조회' })
   @ApiParam({
     name: 'memberId',
-    type: Number,
+    type: String,
     description: '회원 아이디',
   })
   @Get(':memberId')

@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, RelationId } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  ManyToOne,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Review } from './review.entity';
 import { Ingredient } from './ingredient.entity';
 
@@ -8,7 +15,13 @@ export class ReviewIngredient {
   reviewIngredientId: string;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
+
+  @UpdateDateColumn()
+  updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 
   @ManyToOne(() => Ingredient, (ingredient) => ingredient.reviewIngredients)
   ingredient: Ingredient;

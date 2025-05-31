@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { UpdateReviewImgDto } from '../../../client-modules/review/dto/reviewimg.change.dto';
 
@@ -58,7 +58,7 @@ export class UpdateAdminReviewDto {
   @IsArray()
   @IsInt({ each: true })
   @IsOptional()
-  readonly reviewIngredientIdArr?: string[];
+  readonly reviewIngredientIds?: string[];
 
   @ApiProperty({
     type: Array,

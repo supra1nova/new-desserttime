@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
 
@@ -8,8 +8,8 @@ export class Like {
   likeId: string;
 
   @CreateDateColumn()
-  createdDate: Date;
-  
+  createDate: Date;
+
   @ManyToOne(()=>Member, member => member.likes)
   member:Member
 

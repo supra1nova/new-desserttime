@@ -6,14 +6,13 @@ import { MemberRepository } from './member.repository';
 import { Member } from 'src/config/entities/member.entity';
 import { Review } from 'src/config/entities/review.entity';
 import { Point } from 'src/config/entities/point.entity';
-import { PointHistory } from 'src/config/entities/point.history.entity';
+import { PointHistory } from 'src/config/entities/point-history.entity';
 import { Notice } from 'src/config/entities/notice.entity';
-import { UserInterestDessert } from 'src/config/entities/user.interest.dessert.entity';
-import { MemberDeletion } from 'src/config/entities/member.deleteion.entity';
+import { UserInterestDessert } from 'src/config/entities/user-interest-dessert.entity';
 import { AuthModule } from 'src/config/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member, Review, Point, PointHistory, Notice, UserInterestDessert, MemberDeletion]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Member, Review, Point, PointHistory, Notice, UserInterestDessert]), AuthModule],
   exports: [],
   controllers: [MemberController],
   providers: [MemberService, MemberRepository],

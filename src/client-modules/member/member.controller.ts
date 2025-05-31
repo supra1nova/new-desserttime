@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { SignInDto } from './dto/signin.dto';
+import { SignInDto } from './dto/sign-in.dto';
 import { MemberService } from './member.service';
-import { UserValidationDto } from './dto/login.dto';
-import { NoticeListDto } from './dto/notice.list.dto';
+import { ValidateUserDto } from './dto/validate-user.dto';
+import { NoticePaginationDto } from './dto/notice-pagination.dto';
 import { NoticeDto } from './dto/notice.dto';
 import { MemberUpdateDto } from './member.update.dto';
-import { MemberPointDtoList } from './dto/memberPointDtoList';
-import { MemberPagingDto } from './dto/memberPagingDto';
+import { MemberPointDto } from './dto/member-point.dto';
+import { MemberPaginationDto } from './dto/member-pagination.dto';
 import { MemberDeletion } from '../../common/enum/member.enum';
 import { JwtAuthGuard } from '../../config/auth/jwt/jwt.guard';
 
@@ -24,8 +24,8 @@ export class MemberController {
 
   @ApiOperation({ summary: '사용자 유효성 검사' })
   @Get('validation/:snsId')
-  async validateMember(@Param() userValidationDto: UserValidationDto) {
-    return await this.memberService.memberValidate(userValidationDto);
+  async validateMember(@Param() validateUserDto: ValidateUserDto) {
+    return await this.memberService.memberValidate(validateUserDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -112,13 +112,13 @@ export class MemberController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '보유밀 상세내역' })
   @Get('my-page/point/list/:memberId')
-  async getPointHistoryList(@Query() memberPointListDto: MemberPointDtoList) {
+  async getPointHistoryList(@Query() memberPointListDto: MemberPointDto) {
     return await this.memberService.getPointHistoryList(memberPointListDto);
   }
 
   @ApiOperation({ summary: '공지/이벤트/자주묻는질문 목록 조회' })
   @Get('my-page/notice/list/:noticeType')
-  async getNoticeList(@Query() noticeListDto: NoticeListDto) {
+  async getNoticeList(@Query() noticeListDto: NoticePaginationDto) {
     return await this.memberService.getNoticeList(noticeListDto);
   }
 
@@ -132,7 +132,7 @@ export class MemberController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '사용자가 등록한 리뷰목록 조회하기' })
   @Get('my-page/review')
-  async getReviewList(@Query() memberId: string, memberIdPagingDto: MemberPagingDto) {
+  async getReviewList(@Query() memberId: string, memberIdPagingDto: MemberPaginationDto) {
     return await this.memberService.getReviewList(memberId, memberIdPagingDto);
   }
 }

@@ -2,23 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/config/entities/member.entity';
 import { In, LessThan, Repository } from 'typeorm';
-import { UserValidationDto } from './dto/login.dto';
-import { SignInDto } from './dto/signin.dto';
+import { ValidateUserDto } from './dto/validate-user.dto';
+import { SignInDto } from './dto/sign-in.dto';
 import { Review } from 'src/config/entities/review.entity';
-import { MemberIdDto } from './dto/member.id';
 import { Point } from 'src/config/entities/point.entity';
-import { PointHistory } from 'src/config/entities/point.history.entity';
+import { PointHistory } from 'src/config/entities/point-history.entity';
 import { Notice } from 'src/config/entities/notice.entity';
-import { NoticeListDto } from './dto/notice.list.dto';
+import { NoticePaginationDto } from './dto/notice-pagination.dto';
 import { NoticeDto } from './dto/notice.dto';
-import { ProfileImg } from 'src/config/entities/profile.img.entity';
-import { UserInterestDessert } from 'src/config/entities/user.interest.dessert.entity';
-import { DessertCategory } from 'src/config/entities/dessert.category.entity';
+import { ProfileImg } from 'src/config/entities/profile-img.entity';
+import { UserInterestDessert } from 'src/config/entities/user-interest-dessert.entity';
+import { DessertCategory } from 'src/config/entities/dessert-category.entity';
 import { MemberUpdateDto } from './member.update.dto';
-import { MemberDeleteDto } from './dto/member.delete.dto';
-import { MemberDeletion } from 'src/config/entities/member.deleteion.entity';
 import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
-import { MemberPointDtoList } from './dto/memberPointDtoList';
+import { MemberPointDto } from './dto/member-point.dto';
 import { NoticeType } from 'src/common/enum/noticetype.enum';
 import { CursorPaginationDto } from '../../common/pagination/dto/cursor.pagination.dto';
 
@@ -37,8 +34,6 @@ export class MemberRepository {
     private noticeRepository: Repository<Notice>,
     @InjectRepository(UserInterestDessert)
     private userInterestDessertRepository: Repository<UserInterestDessert>,
-    @InjectRepository(MemberDeletion)
-    private memberDeletionRepository: Repository<MemberDeletion>,
   ) {}
 
   /**
@@ -70,13 +65,13 @@ export class MemberRepository {
 
   /**
    * 멤버 조회 by sns id, isUsable true
-   * @param userValidationDto
+   * @param validateUserDto
    * @returns
    */
-  async findMemberBySnsIdAndIsUsable(userValidationDto: UserValidationDto) {
-    const snsId = userValidationDto.snsId;
+  async findMemberBySnsIdAndIsUsable(validateUserDto: ValidateUserDto) {
+    const snsId = validateUserDto.snsId;
 
-    return await this.memberRepository.findOne({ where: { snsId, isUsable: true } });
+    return await this.memberRepository.findOne({ where: { snsId } });
   }
 
   /**
@@ -85,35 +80,32 @@ export class MemberRepository {
    * @returns
    */
   async insertMember(signInDto: SignInDto) {
-    return await this.memberRepository.insert({
-      snsId: signInDto.snsId,
-      memberName: signInDto.memberName,
-      memberEmail: signInDto.memberEmail,
-      signInSns: signInDto.signInSns,
-      birthYear: signInDto.birthYear,
-      gender: signInDto.memberGender,
-      firstCity: signInDto.firstCity,
-      secondaryCity: signInDto.secondaryCity,
-      thirdCity: signInDto.thirdCity,
-      adStatus: signInDto.isAgreeAD,
-    });
+    return await this.memberRepository.createQueryBuilder()
+      .insert()
+      .into(Member)
+      .values({
+        snsId: signInDto.snsId,
+        memberName: signInDto.memberName,
+        memberEmail: signInDto.memberEmail,
+        signInSns: signInDto.signInSns,
+        birthYear: signInDto.birthYear,
+        gender: signInDto.memberGender,
+        firstCity: signInDto.firstCity,
+        secondaryCity: signInDto.secondaryCity,
+        thirdCity: signInDto.thirdCity,
+        adStatus: signInDto.isAgreeAD,
+      }).returning(['seq'])
+      .execute();
   }
 
   /**
    * 닉네임 등록
-   * @param newMemberId
+   * @param memberId
    * @param nickname
    */
-  async updateMemberNickname(newMemberId: string, nickname: string) {
-    await this.memberRepository.update({ memberId: newMemberId }, { nickname: nickname });
-  }
-  /**
-   * 사용자 닉네임 조회
-   * @param memberIdDto
-   * @returns
-   */
-  async findUserNickNameOne(memberIdDto: MemberIdDto) {
-    return await this.memberRepository.findOne({ select: { nickname: true }, where: { memberId: memberIdDto.memberId } });
+  async updateMemberNickname(memberId: string, nickname: string) {
+    const result = await this.memberRepository.update({ memberId: memberId }, { nickname: nickname });
+    return !!result.affected;
   }
 
   /**
@@ -146,14 +138,6 @@ export class MemberRepository {
       .getRawMany();
   }
 
-  /**
-   * 사용자 정보조회 - member entity 정보만 조회
-   */
-  async findMemberEntityOne(memberDeleteDto: MemberDeleteDto) {
-    return await this.memberRepository.findOne({
-      where: { memberId: memberDeleteDto.memberId },
-    });
-  }
   /**
    * 닉네임 존재여부 확인
    * @param nickname
@@ -200,7 +184,7 @@ export class MemberRepository {
       .where('id = :toId', { memberId })
       .execute();
 
-    return result.affected = result.affected === 0 ? 0 : result.affected;
+    return !!result.affected;
   }
 
   /**
@@ -210,15 +194,7 @@ export class MemberRepository {
   async updateAd(memberId: string) {
     // todo: isAgreeAd
     const result = await this.memberRepository.update({ memberId }, { adStatus: false });
-    return result.affected = result.affected === 0 ? 0 : result.affected;
-  }
-
-  /**
-   * 탈퇴회원 데이터 저장
-   * @param memberDeleteDto
-   */
-  async insertDeletionMember(memberDeleteDto: MemberDeleteDto) {
-    return await this.memberDeletionRepository.insert({ reason: memberDeleteDto.reasonForLeaving, content: memberDeleteDto.context, memberId: memberDeleteDto.memberId });
+    return !!result.affected;
   }
 
   /**
@@ -226,9 +202,8 @@ export class MemberRepository {
    * @param memberId
    */
   async deleteMember(memberId: string) {
-    // await this.memberRepository.update({ memberId: userData.memberId }, { isUsable: false, snsId: userData.snsId, nickname: userData.nickname, memberEmail: userData.memberEmail, memberName: userData.memberName });
-    const result = await this.memberRepository.update({ memberId }, { isUsable: false });
-    return result.affected = result.affected === 0 ? 0 : result.affected;
+    const result = await this.memberRepository.softDelete({ memberId });
+    return !!result.affected;
   }
 
   /**
@@ -245,7 +220,7 @@ export class MemberRepository {
       .select('SUM(ph.newPoint)', 'totalPoint')
       .leftJoin(Member, 'm', 'ph.memberMemberId = m.memberId')
       .where({ memberId })
-      .andWhere('ph.createdDate BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('ph.createDate BETWEEN :startDate AND :endDate', { startDate, endDate })
       .getRawOne();
   }
 
@@ -254,16 +229,16 @@ export class MemberRepository {
    * @param memberPointDtoList
    * @returns
    */
-  async findPointHistoryList(memberPointDtoList: MemberPointDtoList) {
+  async findPointHistoryList(memberPointDtoList: MemberPointDto) {
     const { memberId, cursor, limit } = memberPointDtoList;
 
     const items = await this.pointHistory
       .createQueryBuilder('pointHistory')
       .leftJoinAndSelect('pointHistory.review', 'review')
-      .select(['pointHistory.pointHistoryId', 'pointHistory.createdDate', 'pointHistory.newPoint', 'review.menuName'])
+      .select(['pointHistory.pointHistoryId', 'pointHistory.createDate', 'pointHistory.newPoint', 'review.menuName'])
       .where('pointHistory.memberMemberId = :memberId', { memberId })
-      .andWhere(cursor ? 'pointHistory.pointHistoryId < :cursor' : '1=1', { cursor: Number(cursor) })
-      .orderBy('pointHistory.createdDate', 'DESC')
+      .andWhere(cursor ? 'pointHistory.pointHistoryId < :cursor' : '1 = 1', { cursor: Number(cursor) })
+      .orderBy('pointHistory.createDate', 'DESC')
       .take(limit + 1)
       .getMany();
     return new ResponseCursorPagination(items, limit, 'pointHistoryId');
@@ -274,9 +249,9 @@ export class MemberRepository {
    * @param noticeListDto
    * @returns
    */
-  async findNoticeList(noticeListDto: NoticeListDto) {
+  async findNoticeList(noticeListDto: NoticePaginationDto) {
     const { cursor, limit } = noticeListDto;
-    const selectFields: any = { title: true, createdDate: true, noticeId: true };
+    const selectFields: any = { title: true, createDate: true, noticeId: true };
     if (noticeListDto.noticeType == NoticeType.FAQ) selectFields.content = true;
     const items = await this.noticeRepository.find({
       select: selectFields,
@@ -285,7 +260,7 @@ export class MemberRepository {
         noticeType: noticeListDto.noticeType,
         // ...(cursor ? { noticeId: LessThan(Number(cursor)) } : {})
       },*/
-      order: { createdDate: 'DESC' },
+      order: { createDate: 'DESC' },
       take: limit + 1, // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
     });
 
@@ -350,7 +325,7 @@ export class MemberRepository {
     const items = await this.reviewRepository.find({
       where: { member: { memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
       relations: ['reviewImg'],
-      order: { createdDate: 'DESC' },
+      order: { createDate: 'DESC' },
       take: limit + 1,
     });
 

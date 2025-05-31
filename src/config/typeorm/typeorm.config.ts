@@ -1,21 +1,20 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { UserInterestDessert } from '../entities/user.interest.dessert.entity';
+import { UserInterestDessert } from '../entities/user-interest-dessert.entity';
 import { Member } from '../entities/member.entity';
-import { ProfileImg } from '../entities/profile.img.entity';
+import { ProfileImg } from '../entities/profile-img.entity';
 import { Review } from '../entities/review.entity';
-import { ReviewImg } from '../entities/review.img.entity';
+import { ReviewImg } from '../entities/review-img.entity';
 import { Qna } from '../entities/qna.entity';
 import { Notice } from '../entities/notice.entity';
 import { Accusation } from '../entities/accusation.entity';
-import { DessertCategory } from '../entities/dessert.category.entity';
+import { DessertCategory } from '../entities/dessert-category.entity';
 import { Like } from '../entities/like.entity';
 import { Point } from '../entities/point.entity';
-import { PointHistory } from '../entities/point.history.entity';
-import { ReceiptImg } from '../entities/receipt.Img.entity';
-import { ReviewIngredient } from '../entities/review.ingredient.entity';
+import { PointHistory } from '../entities/point-history.entity';
+import { ReceiptImg } from '../entities/receipt-img.entity';
+import { ReviewIngredient } from '../entities/review-ingredient.entity';
 import { Ingredient } from '../entities/ingredient.entity';
-import { MemberDeletion } from '../entities/member.deleteion.entity';
 import { DataSourceOptions } from 'typeorm';
 
 export const typeORMConfig = async (configService: ConfigService): Promise<TypeOrmModuleOptions> => {
@@ -30,6 +29,6 @@ export const typeORMConfig = async (configService: ConfigService): Promise<TypeO
     connectTimeout: parseInt(process.env.DB_CONNECT_TIMEOUT), //30초가 지나면 트랜잭션을 롤백한다.
     // migrations: [process.cwd() + '\\src\\database\\migrations\\*.ts'],
     // migrationsRun: true, //자동적으로 처음 migration이 실행되도록 한다.
-    entities: [MemberDeletion, UserInterestDessert, Member, ProfileImg, Like, Review, ReviewImg, Qna, Notice, Accusation, DessertCategory, Point, PointHistory, ReceiptImg, Ingredient, ReviewIngredient],
+    entities: [UserInterestDessert, Member, ProfileImg, Like, Review, ReviewImg, Qna, Notice, Accusation, DessertCategory, Point, PointHistory, ReceiptImg, Ingredient, ReviewIngredient],
   };
 };

@@ -4,9 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  OneToMany, DeleteDateColumn,
 } from 'typeorm';
-import { UserInterestDessert } from './user.interest.dessert.entity';
+import { UserInterestDessert } from './user-interest-dessert.entity';
 import { Review } from './review.entity';
 
 @Entity()
@@ -27,16 +27,16 @@ export class DessertCategory {
   sortNum: number;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;
 
-  @Column({ nullable: true, default: true })
-  isUsable: boolean;
+  @DeleteDateColumn()
+  deleteDate: Date;
 
-  @OneToMany(() => UserInterestDessert, (uid) => uid.dc)
-  uid: UserInterestDessert[];
+  @OneToMany(() => UserInterestDessert, (userInterestDessert) => userInterestDessert.dessertCategory)
+  userInterestDesserts: UserInterestDessert[];
 
   @OneToMany(() => Review, (review) => review.dessertCategory)
   reviews: Review[];

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DessertCategory } from 'src/config/entities/dessert.category.entity';
+import { DessertCategory } from 'src/config/entities/dessert-category.entity';
 import { In, Repository } from 'typeorm';
 import { DessertSessionDto } from './dto/dessertsession.dto';
 import { ParentIdDto } from './dto/parent.id.dto';

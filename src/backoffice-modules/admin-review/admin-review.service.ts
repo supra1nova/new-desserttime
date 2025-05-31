@@ -62,7 +62,7 @@ export class AdminReviewService {
    */
   @Transactional()
   async processUpdate(reviewId: string, updateAdminReviewDto: UpdateAdminReviewDto) {
-    const { reviewIngredientIdArr, reviewImgs, ...otherFields } = updateAdminReviewDto;
+    const { reviewIngredientIds, reviewImgs, ...otherFields } = updateAdminReviewDto;
 
     const updateData = {
       ...otherFields,
@@ -72,7 +72,7 @@ export class AdminReviewService {
     const updateReviewResult = await this.update(reviewId, updateData);
     if (!updateReviewResult) throw new Error('리뷰 수정에 실패했습니다.');
 
-    if (reviewIngredientIdArr) await this.adminReviewIngredientService.processDeleteInsert(reviewId, reviewIngredientIdArr);
+    if (reviewIngredientIds) await this.adminReviewIngredientService.processDeleteInsert(reviewId, reviewIngredientIds);
     if (reviewImgs) await this.adminReviewImgService.update(reviewId, reviewImgs);
     return true;
   }
@@ -157,16 +157,16 @@ export class AdminReviewService {
         if (item === undefined || item === null || item === '' || item.toLowerCase() === 'null') return;
 
         // idWithPath 또는 value 가 없다면 result 추가 없이 return
-        const [idWithCreatedDate, value] = item.split(':');
-        if (idWithCreatedDate === undefined || idWithCreatedDate === null || idWithCreatedDate === '' || idWithCreatedDate.toLowerCase() === 'null') return;
+        const [idWithcreateDate, value] = item.split(':');
+        if (idWithcreateDate === undefined || idWithcreateDate === null || idWithcreateDate === '' || idWithcreateDate.toLowerCase() === 'null') return;
         if (value === undefined || value === null || value === '' || value.toLowerCase() === 'null') return;
 
         // id 또는 tgtImgName 이 없다면 result 추가 없이 return
-        const [id, createdDate] = idWithCreatedDate.split('_');
+        const [id, createDate] = idWithcreateDate.split('_');
         if (id === undefined || id === null || id === '' || id.toLowerCase() === 'null') return;
-        if (createdDate === undefined || createdDate === null || createdDate === '' || createdDate.toLowerCase() === 'null') return;
+        if (createDate === undefined || createDate === null || createDate === '' || createDate.toLowerCase() === 'null') return;
 
-        result.push({ id: parseInt(id, 10), value, createdDate: createdDate.replaceAll('/', ':') });
+        result.push({ id: parseInt(id, 10), value, createDate: createDate.replaceAll('/', ':') });
       });
     }
     return result;

@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
-import { ReviewIngredient } from './review.ingredient.entity';
+import { ReviewIngredient } from './review-ingredient.entity';
 
 @Entity()
 export class Ingredient {
@@ -13,7 +13,7 @@ export class Ingredient {
   usable: boolean;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @OneToMany(() => ReviewIngredient, (reviewIngredients) => reviewIngredients.ingredient)
   reviewIngredients: ReviewIngredient[];

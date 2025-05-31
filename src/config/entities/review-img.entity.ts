@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Review } from './review.entity';
 
 @Entity()
@@ -21,18 +29,18 @@ export class ReviewImg {
   @Column({ default: false })
   isMain: boolean;
 
-  @Column({ default: true })
-  isUsable: boolean;
-
   @Column()
   num: number;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(() => Review, (review) => review.reviewImg)
+  @DeleteDateColumn()
+  deleteDate: Date;
+
+  @ManyToOne(() => Review, (review) => review.reviewImgs)
   reviewImg: Review;
 }

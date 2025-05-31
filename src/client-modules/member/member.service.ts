@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { SignInDto } from './dto/signin.dto';
+import { SignInDto } from './dto/sign-in.dto';
 import { MemberRepository } from './member.repository';
-import { UserValidationDto } from './dto/login.dto';
-import { NoticeListDto } from './dto/notice.list.dto';
+import { ValidateUserDto } from './dto/validate-user.dto';
+import { NoticePaginationDto } from './dto/notice-pagination.dto';
 import { NoticeDto } from './dto/notice.dto';
 import { MemberUpdateDto } from './member.update.dto';
-import { MemberPointDtoList } from './dto/memberPointDtoList';
+import { MemberPointDto } from './dto/member-point.dto';
 import { MemberDeletion } from '../../common/enum/member.enum';
 import { AuthService } from 'src/config/auth/auth.service';
 import { CursorPaginationDto } from '../../common/pagination/dto/cursor.pagination.dto';
@@ -24,54 +24,63 @@ export class MemberService {
    */
   @Transactional()
   async memberSignIn(signInDto: SignInDto) {
-    try {
-      const isEmail = await this.memberRepository.findMemberByEmail(signInDto.memberEmail);
-      const isSnsId = await this.memberRepository.findMemberBySnsId(signInDto.snsId);
+    const isEmail = await this.memberRepository.findMemberByEmail(signInDto.memberEmail);
+    const isSnsId = await this.memberRepository.findMemberBySnsId(signInDto.snsId);
 
-      if (!isEmail && !isSnsId) {
-        const pickedDCList = [];
+    if (isEmail || isSnsId) {
+      throw new BadRequestException('중복정보', {
+        cause: new Error(),
+        description: '이미 등록된 사용자입니다.',
+      });
+    }
 
-        const newMember = await this.memberRepository.insertMember(signInDto);
-        const newMemberId = newMember.identifiers[0].memberId;
-        const nickname = `${newMemberId}번째 달콤한 디저트`;
+    const pickedDCList = [];
 
-        await this.memberRepository.updateMemberNickname(newMemberId, nickname);
+    const newMember = await this.memberRepository.insertMember(signInDto);
+    if (!newMember) {
+      throw new BadRequestException('등록실패', {
+        cause: new Error(),
+        description: '사용자 등록에 실패했습니다.',
+      });
+    }
 
-        const categories = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5].filter(
-          (category) => category !== undefined,
-        );
-        categories.forEach((category) => {
-          if (category) {
-            pickedDCList.push({
-              member: { memberId: newMemberId },
-              dc: { dessertCategoryId: category },
-            });
-          }
-        });
+    const insertedSeq = newMember.raw[0].SEQ; // Oracle은 대문자 컬럼명
+    const memberId = newMember.raw[0].memberId
+    const nickname = `${insertedSeq}번째 달콤한 디저트`;
 
-        if (categories.length > 0) {
-          await this.memberRepository.insertPickCategoryList(pickedDCList);
-        }
-        return await this.memberRepository.findMemberBySnsId(newMemberId);
-      } else {
-        throw new BadRequestException('중복정보', {
-          cause: new Error(),
-          description: '이미 등록된 사용자입니다.',
+    const updateMemberResult = await this.memberRepository.updateMemberNickname(memberId, nickname);
+    if (!updateMemberResult) {
+      throw new BadRequestException('요청실패', {
+        cause: new Error(),
+        description: '회원 정보를 업데이트할 수 없습니다.',
+      })
+    }
+
+    const categoriesArr = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5];
+    const categories = categoriesArr.filter((category) => category !== undefined);
+    categories.forEach((category) => {
+      if (category) {
+        pickedDCList.push({
+          member: { memberId },
+          dessertCategory: { dessertCategoryId: category },
         });
       }
-    } catch (error) {
-      throw error;
+    });
+
+    if (categories.length > 0) {
+      await this.memberRepository.insertPickCategoryList(pickedDCList);
     }
+    return await this.memberRepository.findMemberById(memberId);
   }
 
   /**
    * 사용자 유효성검사
-   * @param userValidationDto
+   * @param validateUserDto
    * @returns
    */
   @Transactional()
-  async memberValidate(userValidationDto: UserValidationDto) {
-    const memberData = await this.memberRepository.findMemberBySnsIdAndIsUsable(userValidationDto);
+  async memberValidate(validateUserDto: ValidateUserDto) {
+    const memberData = await this.memberRepository.findMemberBySnsIdAndIsUsable(validateUserDto);
 
     if (!memberData) {
       throw new BadRequestException('미등록정보', {
@@ -81,8 +90,9 @@ export class MemberService {
     }
     const token = await this.authService.jwtLogIn(memberData);
     return {
-      memberId: memberData.memberId,
-      nickname: memberData.nickname,
+      id: memberData.memberId,
+      email: memberData.memberEmail,
+      name: memberData.memberName,
       token: token.token,
     };
   }
@@ -209,7 +219,7 @@ export class MemberService {
   async updateAlarmStatus(memberId: string) {
     const result = await this.memberRepository.updateAlarmStatus(memberId);
 
-    if (result < 1) {
+    if (result) {
       throw new BadRequestException('알림 수신여부 업데이트 실패', {
         cause: new Error(),
         description: '알림 수신여부 업데이트에 실패했습니다.',
@@ -225,7 +235,7 @@ export class MemberService {
   async updateAdStatus(memberId: string) {
     const result = await this.memberRepository.updateAd(memberId);
 
-    if (result < 1) {
+    if (result) {
       throw new BadRequestException('업데이트 실패', {
         cause: new Error(),
         description: '광고 수신 상태 업데이트에 실패했습니다.',
@@ -256,7 +266,7 @@ export class MemberService {
   async deleteMember(memberId: string) {
     const result = await this.memberRepository.deleteMember(memberId);
 
-    if (result < 1) {
+    if (result) {
       throw new BadRequestException('탈퇴 실패', {
         cause: new Error(),
         description: '탈퇴에 실패했습니다.',
@@ -285,16 +295,16 @@ export class MemberService {
    * @param memberPointDtoList
    */
   @Transactional()
-  async getPointHistoryList(memberPointDtoList: MemberPointDtoList) {
+  async getPointHistoryList(memberPointDtoList: MemberPointDto) {
     const pointHistoryList = await this.memberRepository.findPointHistoryList(memberPointDtoList);
 
     const result = pointHistoryList.items.map((data) => {
-      const createdDate: string = data.createdDate.toISOString().substring(0, 10);
+      const createDate: string = data.createDate.toISOString().substring(0, 10);
       return {
         pointHistoryId: data.pointHistoryId,
         menuName: data.review ? data.review.menuName : '관리자 소관',
         point: data.newPoint,
-        createdDate,
+        createDate,
       };
     });
 
@@ -307,7 +317,7 @@ export class MemberService {
    * @returns
    */
   @Transactional()
-  async getNoticeList(noticeListDto: NoticeListDto) {
+  async getNoticeList(noticeListDto: NoticePaginationDto) {
     return await this.memberRepository.findNoticeList(noticeListDto);
   }
 
