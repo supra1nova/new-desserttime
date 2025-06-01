@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Review } from './review.entity';
 
 @Entity()
@@ -23,6 +31,9 @@ export class ReceiptImg {
 
   @UpdateDateColumn()
   updateDate: Date;
+
+  @DeleteDateColumn()
+  deleteDate: Date;
 
   @OneToMany(() => Review, (review) => review.receiptImg)
   review: Review[];

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AdminReviewImgRepository } from './admin-review-img.repository';
-import { UpdateReviewImgDto } from '../../client-modules/review/dto/reviewimg.change.dto';
+import { UpdateReviewImgDto } from '../../client-modules/review/dto/update-review-img.dto';
 
 @Injectable()
 export class AdminReviewImgService {

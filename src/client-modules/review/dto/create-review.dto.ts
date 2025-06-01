@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
-export class ReviewUpdateDto {
+export class CreateReviewDto {
   @ApiProperty({
     example: '1',
     description: '사용자 Id',
@@ -15,8 +15,7 @@ export class ReviewUpdateDto {
     description: '리뷰 Id',
     required: false,
   })
-  @IsOptional()
-  reviewId: string;
+  readonly reviewId: string;
 
   @ApiProperty({
     example: '온혜화',
@@ -37,37 +36,34 @@ export class ReviewUpdateDto {
   @ApiProperty({
     example: '1',
     description: '디저트 카테고리 Id',
-    required: true,
+    required: false,
   })
-  @IsNotEmpty()
   readonly dessertCategoryId: string;
 
   @ApiProperty({
     example: '4',
     description: '점수',
-    required: true,
+    required: false,
   })
-  @IsNotEmpty()
   readonly score: number;
 
   @ApiProperty({
     example: '[1,2]',
     description: '선택된 재료Id list',
-    required: true,
+    required: false,
   })
   readonly ingredientId: number[];
 
   @ApiProperty({
     example: '정말정말 맛있습니다. 분위기도 좋고요. 사장님도 친절했어요. 또 올게요! 단골예약~',
     description: '후기 내용',
-    required: true,
+    required: false,
   })
-  @IsNotEmpty()
   readonly content: string;
 
   @ApiProperty({
-    example: 'SAVED',
-    description: '작성완료 : SAVED',
+    example: 'INIT',
+    description: '뒤로가기 : INIT',
     required: true,
   })
   @IsNotEmpty()

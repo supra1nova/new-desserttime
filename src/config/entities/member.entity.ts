@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   OneToOne,
-  DeleteDateColumn,
+  DeleteDateColumn, JoinColumn,
 } from 'typeorm';
 import { UserInterestDessert } from './user-interest-dessert.entity';
 import { Qna } from './qna.entity';
@@ -79,6 +79,14 @@ export class Member {
   @DeleteDateColumn()
   deleteDate: Date;
 
+  @OneToOne(() => ProfileImg, (profileImg) => profileImg.member)
+  @JoinColumn({ name: 'profile_img_id' })
+  profileImg: ProfileImg;
+
+  @OneToOne(() => Point, (point) => point.member)
+  @JoinColumn({ name: 'point_id' })
+  point: Point;
+
   @OneToMany(() => UserInterestDessert, (userInterestDessert) => userInterestDessert.member)
   userInterestDesserts: UserInterestDessert[];
 
@@ -93,10 +101,4 @@ export class Member {
 
   @OneToMany(() => Like, (likes) => likes.member)
   likes: Like[];
-
-  @OneToOne(() => ProfileImg, (profileImg) => profileImg.member)
-  profileImg: ProfileImg;
-
-  @OneToOne(() => Point, (point) => point.member)
-  point: Point;
 }

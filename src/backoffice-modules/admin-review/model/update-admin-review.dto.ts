@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { UpdateReviewImgDto } from '../../../client-modules/review/dto/reviewimg.change.dto';
+import { UpdateReviewImgDto } from '../../../client-modules/review/dto/update-review-img.dto';
 
 export class UpdateAdminReviewDto {
   @ApiProperty({

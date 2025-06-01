@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class ReviewImgIdDto {
+export class GetRegistrableReviewListDto {
   @ApiProperty({
-    example: 'aaaaa',
-    description: '리뷰이미지 Id',
+    example: '1',
+    description: '사용자 Id',
     required: true,
   })
   @IsNotEmpty()
-  readonly reviewImgId: string;
+  readonly memberId: string;
 }

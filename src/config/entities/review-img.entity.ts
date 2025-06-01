@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  DeleteDateColumn,
+  DeleteDateColumn, JoinColumn,
 } from 'typeorm';
 import { Review } from './review.entity';
 
@@ -42,5 +42,6 @@ export class ReviewImg {
   deleteDate: Date;
 
   @ManyToOne(() => Review, (review) => review.reviewImgs)
+  @JoinColumn({ name: 'review_id' })
   reviewImg: Review;
 }

@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { CursorPaginationDto } from 'src/common/pagination/dto/cursor.pagination.dto';
 
-export class MemberIdPagingDto extends CursorPaginationDto {
+export class SearchRegistrableReview extends CursorPaginationDto {
   @ApiProperty({
-    example: '1',
+    example: 'aaaa',
     description: '사용자 Id',
     required: true,
   })

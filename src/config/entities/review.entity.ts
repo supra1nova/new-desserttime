@@ -7,7 +7,7 @@ import {
   OneToMany,
   ManyToOne,
   OneToOne,
-  DeleteDateColumn,
+  DeleteDateColumn, JoinColumn,
 } from 'typeorm';
 import { Member } from './member.entity';
 import { Accusation } from './accusation.entity';
@@ -69,27 +69,31 @@ export class Review {
   @DeleteDateColumn()
   deleteDate: Date;
 
-  @OneToMany(() => Accusation, (accusation) => accusation.review)
-  accusations: Accusation[];
+  @OneToOne(() => PointHistory, (pointHistory) => pointHistory.review)
+  @JoinColumn({ name: 'point_history_id' })
+  pointHistory: PointHistory;
 
   @ManyToOne(() => Member, (member) => member.reviews)
+  @JoinColumn({ name: 'member_id' })
   member: Member;
 
   @ManyToOne(() => DessertCategory, (dessertCategory) => dessertCategory.reviews)
+  @JoinColumn({ name: 'dessert_category_id' })
   dessertCategory: DessertCategory;
+
+  @ManyToOne(() => ReceiptImg, (receiptImg) => receiptImg.review)
+  @JoinColumn({ name: 'receipt_img_id' })
+  receiptImg: ReceiptImg;
+
+  @OneToMany(() => ReviewIngredient, (reviewIngredients) => reviewIngredients.review)
+  reviewIngredients: ReviewIngredient[];
+
+  @OneToMany(() => Accusation, (accusation) => accusation.review)
+  accusations: Accusation[];
 
   @OneToMany(() => Like, (likes) => likes.review)
   likes: Like[];
 
   @OneToMany(() => ReviewImg, (reviewImg) => reviewImg.reviewImg)
   reviewImgs: ReviewImg[];
-
-  @OneToOne(() => PointHistory, (pointHistory) => pointHistory.review)
-  pointHistory: PointHistory;
-
-  @ManyToOne(() => ReceiptImg, (receiptImg) => receiptImg.review)
-  receiptImg: ReceiptImg;
-
-  @OneToMany(() => ReviewIngredient, (reviewIngredients) => reviewIngredients.review)
-  reviewIngredients: ReviewIngredient[];
 }
