@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { UpdateReviewImgDto } from './reviewimg.change.dto';
+import { UpdateReviewImgDto } from './update-review-img.dto';
 
 export class UpdateReviewImgListDto {
   @ApiProperty({
@@ -13,9 +13,9 @@ export class UpdateReviewImgListDto {
     required: true,
     type: [UpdateReviewImgDto],
   })
-  @IsNotEmpty()
-  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateReviewImgDto)
+  @IsArray()
+  @IsNotEmpty()
   readonly reviewImg: UpdateReviewImgDto[];
 }

@@ -1,20 +1,20 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { ReviewCategoryDto } from './dto/review.category.dto';
+import { SearchReviewByCategoryDto } from './dto/search-review-by-category.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LikeDto } from './dto/like.dto';
-import { MemberIdDto } from './dto/member.id.dto';
-import { ReviewCreateDto } from './dto/review.create.dto';
-import { ReviewIdDto } from './dto/review.id.dto';
-import { ReviewUpdateDto } from './dto/review.update.dto';
+import { GetRegistrableReviewListDto } from './dto/get-registrable-review-list.dto';
+import { CreateRegistrableReviewDto } from './dto/create-registrable-review.dto';
+import { GetRegistrableReviewDto } from './dto/get-registrable-review.dto';
+import { UpdateReviewDto } from './dto/update-review.dto';
 import { multerOptionsFactory } from 'src/config/file/multer.option.factory';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
-import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
-import { UpdateReviewImgListDto } from './dto/reviewimg.list.change.dto';
-import { MemberIdPagingDto } from './dto/review.dto';
-import { ReviewSaveDto } from './dto/review.save.dto';
-import { ReviewMemberIdDto } from './dto/review.member.dto';
+import { CreateReviewImgDto } from './dto/create-review-img.dto';
+import { DeleteReviewImgDto } from './dto/delete-review-img.dto';
+import { UpdateReviewImgListDto } from './dto/update-review-img-list.dto';
+import { SearchRegistrableReview } from './dto/search-registrable-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { GetReviewDto } from './dto/get-review.dto';
 import { JwtAuthGuard } from '../../config/auth/jwt/jwt.guard';
 
 @Controller('review')
@@ -24,68 +24,68 @@ export class ReviewController {
 
   @ApiOperation({ summary: '리뷰 하나 조회' })
   @Get()
-  async findReviewOne(@Query() reviewMemberIdDto: ReviewMemberIdDto) {
-    return await this.reviewService.findReviewOne(reviewMemberIdDto);
+  async getReview(@Query() getReviewDto: GetReviewDto) {
+    return await this.reviewService.getReview(getReviewDto);
   }
 
   @ApiOperation({ summary: '홈화면 - 카테고리별 리뷰 이미지 목록 조회' })
   @Get('home/list/:memberId')
-  async getHomeReviewImgList(@Param(new ValidationPipe({ whitelist: true, transform: true })) memberIdDto: MemberIdDto) {
-    return await this.reviewService.getHomeReviewImgList(memberIdDto);
+  async getReviewListWithImagePerCategory(@Param(new ValidationPipe({ whitelist: true, transform: true })) getRegistrableReviewListDto: GetRegistrableReviewListDto) {
+    return await this.reviewService.getReviewListWithImagePerCategory(getRegistrableReviewListDto);
   }
 
   @ApiOperation({ summary: '선택한 카테고리의 리뷰 목록 조회' })
   @Get('category/list/:dessertCategoryId/:selectedOrder/:memberId')
-  async getReviewCategoryList(@Param() reviewCategoryDto: ReviewCategoryDto) {
-    return await this.reviewService.findReviewCategoryList(reviewCategoryDto);
+  async getReviewListByCategory(@Param() searchReviewByCategoryDto: SearchReviewByCategoryDto) {
+    return await this.reviewService.findReviewListByCategory(searchReviewByCategoryDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '리뷰에 좋아요 하기' })
   @Post('like/:memberId/:reviewId/:isLike')
-  async postLikeItem(@Param() likeDto: LikeDto) {
-    await this.reviewService.postLikeItem(likeDto);
+  async createLike(@Param() likeDto: LikeDto) {
+    await this.reviewService.insertLike(likeDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '후기작성가능한 총 후기 갯수' })
-  @Get('generable/count/:memberId')
-  async getGenerableReviewCount(@Query() memberIdDto: MemberIdDto) {
-    return await this.reviewService.getGenerableReviewCount(memberIdDto);
+  @ApiOperation({ summary: '작성가능한 총 후기 갯수' })
+  @Get('registrable/count/:memberId')
+  async getRegistrableReviewCount(@Param() getRegistrableReviewListDto: GetRegistrableReviewListDto) {
+    return await this.reviewService.getRegistrableReviewCount(getRegistrableReviewListDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '이번달, 후기 작성가능한 일수' })
-  @Get('generable/date')
-  async getGenerableReviewDate() {
-    return await this.reviewService.getGenerableReviewDate();
+  @Get('registrable/date')
+  async getRegistrableReviewDate() {
+    return await this.reviewService.getRegistrableReviewDate();
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '후기 작성가능한 후기 목록' })
-  @Get('generable/list/:memberId')
-  async getGenerableReviewList(@Param() memberIdPagingDto: MemberIdPagingDto) {
-    return await this.reviewService.getGenerableReviewList(memberIdPagingDto);
+  @Get('registrable/list/:memberId')
+  async getRegistrableReviewList(@Param() searchRegistrableReview: SearchRegistrableReview) {
+    return await this.reviewService.getRegistrableReviewList(searchRegistrableReview);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '후기 작성목록 등록' })
-  @Post('generable/list')
-  async postGernerableReviewList(@Body() reviewCreateDto: ReviewCreateDto) {
-    return await this.reviewService.postGenerableReviewList(reviewCreateDto);
+  @Post('registrable/list')
+  async createRegistrableReviewList(@Body() createRegistrableReviewDto: CreateRegistrableReviewDto) {
+    return await this.reviewService.createRegistrableReviewList(createRegistrableReviewDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '작성 가능한 후기 하나 삭제' })
-  @Delete('generable')
-  async deleteGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
-    return await this.reviewService.deleteGenerableReview(reviewIdDto);
+  @Delete('registrable')
+  async deleteRegistrableReview(@Param() getRegistrableReviewDto: GetRegistrableReviewDto) {
+    return await this.reviewService.deleteRegistrableReview(getRegistrableReviewDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -99,25 +99,25 @@ export class ReviewController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '후기작성 - 작성가능한 후기 하나 조회' })
-  @Get('generable/:reviewId')
-  async getGenerableReview(@Param() reviewIdDto: ReviewIdDto) {
-    return await this.reviewService.getGenerableReview(reviewIdDto);
+  @Get('registrable/:reviewId')
+  async getRegistrableReview(@Param() getRegistrableReviewDto: GetRegistrableReviewDto) {
+    return await this.reviewService.getRegistrableReview(getRegistrableReviewDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '후기작성 - 후기 하나 생성 및 수정 (뒤로가기)' })
-  @Post('generable')
-  async postGenerableReview(@Body() reviewSaveDto: ReviewSaveDto) {
-    return await this.reviewService.postGenerableReview(reviewSaveDto);
+  @Post('registrable')
+  async createRegistrableReview(@Body() reviewSaveDto: CreateReviewDto) {
+    return await this.reviewService.createRegistrableReview(reviewSaveDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '후기 작성 - 후기 등록 (작성완료)' })
-  @Patch('generable')
-  async patchGenerableReview(@Body() reviewUpdateDto: ReviewUpdateDto) {
-    return await this.reviewService.patchGenerableReview(reviewUpdateDto);
+  @Patch('registrable')
+  async updateRegistrableReview(@Body() updateReviewDto: UpdateReviewDto) {
+    return await this.reviewService.updateRegistrableReview(updateReviewDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -136,32 +136,32 @@ export class ReviewController {
   })
   @UseInterceptors(FileInterceptor('file', multerOptionsFactory()))
   @ApiOperation({ summary: '리뷰이미지 하나 저장' })
-  @Post('generable/img/:reviewId/:num/:isMain')
-  async postReviewImg(@UploadedFile() file: Express.Multer.File, @Param() reviewImgSaveDto: ReviewImgSaveDto) {
-    return await this.reviewService.postReviewImg(reviewImgSaveDto, file);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '리뷰이미지 하나 삭제' })
-  @Delete('generable/img/:reviewImgId')
-  async deleteReviewImg(@Param() reviewImgIdDto: ReviewImgIdDto) {
-    await this.reviewService.deleteReviewImg(reviewImgIdDto);
+  @Post('registrable/img/:reviewId/:num/:isMain')
+  async createReviewImg(@UploadedFile() file: Express.Multer.File, @Param() createReviewImgDto: CreateReviewImgDto) {
+    return await this.reviewService.createReviewImg(createReviewImgDto, file);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '리뷰이미지 삭제후/순서변경/메인변경 수정' })
-  @Patch('generable/img')
+  @Patch('registrable/img')
   async updateReviewImg(@Body() updateReviewImgListDto: UpdateReviewImgListDto) {
     await this.reviewService.updateReviewImg(updateReviewImgListDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: '리뷰이미지 하나 삭제' })
+  @Delete('registrable/img/:reviewImgId')
+  async deleteReviewImg(@Param() reviewImgIdDto: DeleteReviewImgDto) {
+    await this.reviewService.deleteReviewImg(reviewImgIdDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: '사용자가 좋아요를 누른 리뷰 목록 조회' })
   @Get('like/list/:memberId')
-  async getLikedReviewList(@Param() memberIdPagingDto: MemberIdPagingDto) {
+  async getLikedReviewList(@Param() memberIdPagingDto: SearchRegistrableReview) {
     return await this.reviewService.getLikedReviewList(memberIdPagingDto);
   }
 }

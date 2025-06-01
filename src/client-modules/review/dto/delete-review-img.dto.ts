@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class IngredientNameDto {
+export class DeleteReviewImgDto {
   @ApiProperty({
-    example: '견과류',
-    description: '재료명',
+    example: 'aaaaa',
+    description: '리뷰이미지 Id',
     required: true,
   })
   @IsNotEmpty()
-  readonly ingredientName: string;
+  readonly reviewImgId: string;
 }

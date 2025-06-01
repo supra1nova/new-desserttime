@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  DeleteDateColumn,
+  DeleteDateColumn, JoinColumn,
 } from 'typeorm';
 import { Member } from './member.entity';
 
@@ -54,5 +54,6 @@ export class Qna {
   replyUpdateDate: Date;
 
   @ManyToOne(() => Member, (member) => member.qnas)
+  @JoinColumn({ name: 'member_id' })
   member: Member;
 }

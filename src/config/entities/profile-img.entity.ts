@@ -39,6 +39,6 @@ export class ProfileImg {
   deleteDate: Date;
 
   @OneToOne(() => Member, (member) => member.profileImg)
-  @JoinColumn()
+  @JoinColumn({ name: 'member_id' })
   member: Member;
 }

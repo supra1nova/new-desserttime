@@ -2,24 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/config/entities/review.entity';
 import { In, LessThan, Repository } from 'typeorm';
-import { ReviewCategoryDto } from './dto/review.category.dto';
+import { SearchReviewByCategoryDto } from './dto/search-review-by-category.dto';
 import { LikeDto } from './dto/like.dto';
 import { Like } from 'src/config/entities/like.entity';
 import { Member } from 'src/config/entities/member.entity';
 import { ProfileImg } from 'src/config/entities/profile-img.entity';
 import { ReviewImg } from 'src/config/entities/review-img.entity';
 import { DessertCategory } from 'src/config/entities/dessert-category.entity';
-import { MemberIdDto } from './dto/member.id.dto';
-import { ReviewIdDto } from './dto/review.id.dto';
+import { GetRegistrableReviewListDto } from './dto/get-registrable-review-list.dto';
+import { GetRegistrableReviewDto } from './dto/get-registrable-review.dto';
 import { ReviewIngredient } from 'src/config/entities/review-ingredient.entity';
-import { ReviewImgSaveDto } from './dto/reviewimg.save.dto';
-import { ReviewImgIdDto } from './dto/reviewimg.id.dto';
+import { CreateReviewImgDto } from './dto/create-review-img.dto';
+import { DeleteReviewImgDto } from './dto/delete-review-img.dto';
 import { Ingredient } from 'src/config/entities/ingredient.entity';
-import { IngredientNameDto } from './dto/ingredient.name.dto';
 import { ReviewStatus } from 'src/common/enum/review.enum';
 import { ResponseCursorPagination } from 'src/common/pagination/response.cursor.pagination';
-import { MemberIdPagingDto } from './dto/review.dto';
-import { ReviewMemberIdDto } from './dto/review.member.dto';
+import { SearchRegistrableReview } from './dto/search-registrable-review.dto';
+import { GetReviewDto } from './dto/get-review.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -32,8 +31,8 @@ export class ReviewRepository {
     @InjectRepository(ReviewImg) private reviewImg: Repository<ReviewImg>,
   ) {}
 
-  async findReviewOne(reviewMemberIdDto: ReviewMemberIdDto) {
-    const memberId = reviewMemberIdDto.memberId;
+  async findReview(getReviewDto: GetReviewDto) {
+    const memberId = getReviewDto.memberId;
     return await this.review
       .createQueryBuilder('review')
       .select([
@@ -49,12 +48,12 @@ export class ReviewRepository {
         'member.isHavingImg AS "memberIsHavingImg"',
         'profileImg.middlePath AS profileImgMiddlePath',
         'profileImg.path AS profileImgPath',
-        'profileImg.extension AS profileImgExtention',
+        'profileImg.extension AS profileImgExtension',
         'reviewImg.isMain AS "reviewImgIsMain"',
         'reviewImg.num AS "reviewImgNum"',
-        'reviewImg.middlePath AS "reviewImgMiddlepath"',
+        'reviewImg.middlePath AS "reviewImgMiddlePath"',
         'reviewImg.path AS "reviewImgPath"',
-        'reviewImg.extention AS "reviewImgExtention"',
+        'reviewImg.extension AS "reviewImgExtension"',
         'ingredient.ingredientName AS "ingredientName"',
         'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
       ])
@@ -67,24 +66,24 @@ export class ReviewRepository {
       .leftJoin(Ingredient, 'ingredient', 'ingredient.ingredientId = reviewIngredient.ingredientIngredientId') // 수정됨
       .where('review.isUsable = :isUsable', { isUsable: true })
       .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
-      .andWhere('review.reviewId = :reviewId', { reviewId: reviewMemberIdDto.reviewId })
+      .andWhere('review.reviewId = :reviewId', { reviewId: getReviewDto.reviewId })
       .setParameter('memberId', memberId)
       .getRawMany();
   }
 
   /**
    * 사용자가 선택한 카테고리의 2차 목록 조회
-   * @param memberIdDto
+   * @param getRegistrableReviewListDto
    * @returns
    */
-  async findMemberInterestList(memberIdDto: MemberIdDto) {
+  async findMemberInterestList(getRegistrableReviewListDto: GetRegistrableReviewListDto) {
     return await this.member
       .createQueryBuilder('member')
       .leftJoin('member.uids', 'uids')
       .leftJoin(DessertCategory, 'dc', 'dc.parentDCId = uids.dcDessertCategoryId')
       .select('dc.dessertCategoryId')
       .where('dc.sessionNum = :sessionNum', { sessionNum: 2 })
-      .andWhere('member.memberId =:memberId', { memberId: memberIdDto.memberId })
+      .andWhere('member.memberId =:memberId', { memberId: getRegistrableReviewListDto.memberId })
       .getRawMany();
   }
 
@@ -124,7 +123,7 @@ export class ReviewRepository {
       .select('review.reviewId', 'reviewId')
       .addSelect('reviewImg.middlePath', 'middlePath')
       .addSelect('reviewImg.path', 'path')
-      .addSelect('reviewImg.extention', 'extention')
+      .addSelect('reviewImg.extension', 'extension')
       .addSelect('reviewImg.imgName', 'imgName')
       .orderBy('review.createDate', 'DESC')
       .limit(10)
@@ -167,7 +166,7 @@ export class ReviewRepository {
       .select('review.reviewId', 'reviewId')
       .addSelect('reviewImg.middlePath', 'middlePath')
       .addSelect('reviewImg.path', 'path')
-      .addSelect('reviewImg.extention', 'extention')
+      .addSelect('reviewImg.extension', 'extension')
       .addSelect('reviewImg.imgName', 'imgName')
       .orderBy('review.createDate', 'DESC')
       .limit(10)
@@ -176,14 +175,14 @@ export class ReviewRepository {
 
   /**
    * 리뷰 카테코리 날짜순 목록 조회
-   * @param reviewCategoryDto
+   * @param searchReviewByCategoryDto
    * @returns
    */
-  async findReviewCategoryList(reviewCategoryDto: ReviewCategoryDto) {
-    const { cursor, limit } = reviewCategoryDto;
+  async findReviewListByCategory(searchReviewByCategoryDto: SearchReviewByCategoryDto) {
+    const { cursor, limit } = searchReviewByCategoryDto;
 
     let orderField;
-    reviewCategoryDto.selectedOrder === 'D' ? (orderField = 'createDate') : (orderField = 'totalLikedNum');
+    searchReviewByCategoryDto.selectedOrder === 'D' ? (orderField = 'createDate') : (orderField = 'totalLikedNum');
 
     const queryBuilder = await this.review
       .createQueryBuilder('review')
@@ -200,12 +199,12 @@ export class ReviewRepository {
         'member.isHavingImg AS "memberIsHavingImg"',
         'profileImg.middlePath AS profileImgMiddlePath',
         'profileImg.path AS profileImgPath',
-        'profileImg.extension AS profileImgExtention',
+        'profileImg.extension AS profileImgExtension',
         'reviewImg.isMain AS "reviewImgIsMain"',
         'reviewImg.num AS "reviewImgNum"',
-        'reviewImg.middlePath AS "reviewImgMiddlepath"',
+        'reviewImg.middlePath AS "reviewImgMiddlePath"',
         'reviewImg.path AS "reviewImgPath"',
-        'reviewImg.extention AS "reviewImgExtention"',
+        'reviewImg.extension AS "reviewImgExtension"',
         'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
       ])
       .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')
@@ -216,9 +215,9 @@ export class ReviewRepository {
       .where('review.isUsable = :isUsable', { isUsable: true })
       .andWhere('review.status = :status', { status: ReviewStatus.SAVED })
       .andWhere('dessertCategory.dessertCategoryId = :dessertCategoryId', {
-        dessertCategoryId: reviewCategoryDto.dessertCategoryId,
+        dessertCategoryId: searchReviewByCategoryDto.dessertCategoryId,
       })
-      .setParameter('memberId', reviewCategoryDto.memberId)
+      .setParameter('memberId', searchReviewByCategoryDto.memberId)
       .orderBy(`review.${orderField}`, 'DESC')
       .take(limit + 1); // limit보다 하나 더 많이 조회해 다음 페이지 유무를 확인
 
@@ -305,24 +304,24 @@ export class ReviewRepository {
 
   /**
    * 후기작성가능한 후기 갯수
-   * @param memberIdDto
+   * @param getRegistrableReviewListDto
    */
-  async findGenerableReviewCount(memberIdDto: MemberIdDto) {
+  async findGenerableReviewCount(getRegistrableReviewListDto: GetRegistrableReviewListDto) {
     return await this.review.count({
-      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdDto.memberId } },
+      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: getRegistrableReviewListDto.memberId } },
     });
   }
 
   /**
    * 후기작성가능한 후기 목록조회
-   * @param memberIdDto
+   * @param searchRegistrableReview
    * @returns
    */
-  async findGenerableReviewList(memberIdPagingDto: MemberIdPagingDto) {
-    const { limit, cursor } = memberIdPagingDto;
+  async findRegistrableReviewList(searchRegistrableReview: SearchRegistrableReview) {
+    const { limit, cursor } = searchRegistrableReview;
     const items = await this.review.find({
       select: { reviewId: true, menuName: true, storeName: true, status: true },
-      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: memberIdPagingDto.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
+      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: searchRegistrableReview.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
       order: { createDate: 'ASC', menuName: 'ASC' },
     });
 
@@ -334,7 +333,7 @@ export class ReviewRepository {
    * @param insertData
    * @returns
    */
-  async insertGenerableReviewList(insertData) {
+  async insertGenerableReviewList(insertData: any) {
     return await this.review.save(insertData);
   }
 
@@ -342,19 +341,10 @@ export class ReviewRepository {
    * 후기 하나 삭제
    * @returns
    */
-  async deleteGenerableReview(reviewIdDto: ReviewIdDto) {
-    return await this.review.delete(reviewIdDto);
+  async deleteGenerableReview(getRegistrableReviewDto: GetRegistrableReviewDto) {
+    return await this.review.delete(getRegistrableReviewDto);
   }
 
-  /**
-   * 재료 하나 생성
-   * @param ingredientNameDto
-   */
-  async insertIngredientList(ingredientNameDto: IngredientNameDto) {
-    await this.ingredient.insert({
-      ingredientName: ingredientNameDto.ingredientName,
-    });
-  }
   /**
    * 재료 목록 조회
    * @returns
@@ -364,10 +354,10 @@ export class ReviewRepository {
   }
   /**
    * 작성 가능한 후기 하나 조회
-   * @param reviewIdDto
+   * @param getRegistrableReviewDto
    * @returns
    */
-  async findGenerableReview(reviewIdDto: ReviewIdDto) {
+  async findGenerableReview(getRegistrableReviewDto: GetRegistrableReviewDto) {
     const statusArray = [ReviewStatus.WAIT, ReviewStatus.INIT];
     return await this.review
       .createQueryBuilder('review')
@@ -375,7 +365,7 @@ export class ReviewRepository {
       .leftJoinAndSelect('review.reviewImg', 'reviewImg')
       .leftJoinAndSelect('review.reviewIngredients', 'reviewIngredient')
       .leftJoinAndSelect('reviewIngredient.ingredient', 'ingredient')
-      .where('review.reviewId = :reviewId', { reviewId: reviewIdDto.reviewId })
+      .where('review.reviewId = :reviewId', { reviewId: getRegistrableReviewDto.reviewId })
       .andWhere('review.status IN (:...statuses)', { statuses: statusArray })
       .andWhere('review.isUsable = :isUsable', { isUsable: true })
       .getOne();
@@ -383,48 +373,48 @@ export class ReviewRepository {
 
   /**
    * 기존 리뷰에 선택된 재료가 있는지 확인
-   * @param reviewUpdateDto
+   * @param updateReviewDto
    */
-  async findReviewIngredient(reviewUpdateDto: any) {
-    return await this.reviewIngredient.find({ where: { review: { reviewId: reviewUpdateDto.reviewId } } });
+  async findReviewIngredient(updateReviewDto: any) {
+    return await this.reviewIngredient.find({ where: { review: { reviewId: updateReviewDto.reviewId } } });
   }
 
   /**
    * 기존 리뷰에 선택된 재료 삭제
-   * @param reviewUpdateDto
+   * @param updateReviewDto
    */
-  async deleteReviewIngredient(reviewUpdateDto: any) {
-    await this.reviewIngredient.delete({ review: { reviewId: reviewUpdateDto.reviewId } });
+  async deleteReviewIngredient(updateReviewDto: any) {
+    await this.reviewIngredient.delete({ review: { reviewId: updateReviewDto.reviewId } });
   }
 
   /**
    * 리뷰에 선택된 재료 추가
-   * @param saveReviewIngre
+   * @param saveReviewIngredient
    */
-  async insertReviewIngredient(saveReviewIngre) {
-    await this.reviewIngredient.save(saveReviewIngre);
+  async insertReviewIngredient(saveReviewIngredient: any) {
+    await this.reviewIngredient.save(saveReviewIngredient);
   }
 
   /**
    * 후기 작성 내용 수정/ 작성 완료
-   * @param reviewUpdateDto
+   * @param updateReviewDto
    * @returns
    */
-  async updateGenerableReview(reviewUpdateDto: any) {
+  async updateGenerableReview(updateReviewDto: any) {
     const saveReview = new Review();
-    saveReview.content = reviewUpdateDto.content;
-    saveReview.status = reviewUpdateDto.status == 'SAVED' ? ReviewStatus.SAVED : ReviewStatus.INIT;
-    saveReview.menuName = reviewUpdateDto.menuName;
-    saveReview.score = reviewUpdateDto.score;
-    saveReview.storeName = reviewUpdateDto.storeName;
-    if (reviewUpdateDto.reviewId) saveReview.reviewId = reviewUpdateDto.reviewId;
+    saveReview.content = updateReviewDto.content;
+    saveReview.status = updateReviewDto.status == 'SAVED' ? ReviewStatus.SAVED : ReviewStatus.INIT;
+    saveReview.menuName = updateReviewDto.menuName;
+    saveReview.score = updateReviewDto.score;
+    saveReview.storeName = updateReviewDto.storeName;
+    if (updateReviewDto.reviewId) saveReview.reviewId = updateReviewDto.reviewId;
 
     const member = new Member();
-    member.memberId = reviewUpdateDto.memberId;
+    member.memberId = updateReviewDto.memberId;
     saveReview.member = member;
 
     const dessertCategory = new DessertCategory();
-    dessertCategory.dessertCategoryId = reviewUpdateDto.dessertCategoryId;
+    dessertCategory.dessertCategoryId = updateReviewDto.dessertCategoryId;
     saveReview.dessertCategory = dessertCategory;
 
     return await this.review.save(saveReview);
@@ -432,28 +422,29 @@ export class ReviewRepository {
 
   /**
    * 리뷰 이미지 카운트
-   * @param reviewImgSaveDto
+   * @param createReviewImgDto
    * @returns
    */
-  async counteReviewImg(reviewImgSaveDto: ReviewImgSaveDto) {
+  async countReviewImg(createReviewImgDto: CreateReviewImgDto) {
     return await this.reviewImg.count({
-      where: { reviewImg: { reviewId: reviewImgSaveDto.reviewId } },
+      where: { reviewImg: { reviewId: createReviewImgDto.reviewId } },
     });
   }
+
   /**
    * 리뷰 이미지 파일 하나 저장
-   * @param reviewImgSaveDto
+   * @param createReviewImgDto
    * @param file
    */
-  async insertReviewImg(reviewImgSaveDto: ReviewImgSaveDto, file) {
+  async insertReviewImg(createReviewImgDto: CreateReviewImgDto, file: any) {
     return await this.reviewImg.insert({
       middlePath: 'reviewImg', //process.env.REVIEW_IMG_MIDDLE_PATH,
       path: file.path,
-      extension: file.extention,
+      extension: file.extension,
       imgName: file.imgName,
-      isMain: reviewImgSaveDto.isMain,
-      num: reviewImgSaveDto.num,
-      reviewImg: { reviewId: reviewImgSaveDto.reviewId },
+      isMain: createReviewImgDto.isMain,
+      num: createReviewImgDto.num,
+      reviewImg: { reviewId: createReviewImgDto.reviewId },
     });
   }
 
@@ -461,11 +452,11 @@ export class ReviewRepository {
    * 리뷰이미지 하나 삭제
    * @param reviewImgIdDto
    */
-  async deleteReviewImg(reviewImgIdDto: ReviewImgIdDto) {
+  async deleteReviewImg(reviewImgIdDto: DeleteReviewImgDto) {
     await this.reviewImg.delete(reviewImgIdDto);
   }
 
-  async findReviewImgId(reviewImgId) {
+  async findReviewImgId(reviewImgId: any) {
     return await this.reviewImg.findOne({
       where: { reviewImgId },
     });
@@ -473,16 +464,16 @@ export class ReviewRepository {
 
   /**
    * 리뷰이미지 순서/메인 변경
-   * @param reviewImgChangeDto
+   * @param entitiesToSave
    */
-  async saveReviewImg(entitiesToSave) {
+  async saveReviewImg(entitiesToSave: any) {
     await this.reviewImg.save(entitiesToSave);
   }
 
   /**
    * 내가 좋아요를 누른 리뷰 목록조회하기
    */
-  async findLikedReviewList(memberIdPagingDto: MemberIdPagingDto) {
+  async findLikedReviewList(memberIdPagingDto: SearchRegistrableReview) {
     const { cursor, limit } = memberIdPagingDto;
     const queryBuilder = await this.review
       .createQueryBuilder('review')
@@ -499,12 +490,12 @@ export class ReviewRepository {
         'member.isHavingImg AS "memberIsHavingImg"',
         'profileImg.middlePath AS profileImgMiddlePath',
         'profileImg.path AS profileImgPath',
-        'profileImg.extension AS profileImgExtention',
+        'profileImg.extension AS profileImgExtension',
         'reviewImg.isMain AS "reviewImgIsMain"',
         'reviewImg.num AS "reviewImgNum"',
-        'reviewImg.middlePath AS "reviewImgMiddlepath"',
+        'reviewImg.middlePath AS "reviewImgMiddlePath"',
         'reviewImg.path AS "reviewImgPath"',
-        'reviewImg.extention AS "reviewImgExtention"',
+        'reviewImg.extension AS "reviewImgExtension"',
         'CASE WHEN like.memberMemberId = :memberId THEN 1 ELSE 0 END AS "isLiked"',
       ])
       .leftJoin(DessertCategory, 'dessertCategory', 'dessertCategory.dessertCategoryId = review.dessertCategoryDessertCategoryId')

@@ -194,9 +194,9 @@ export class AdminReviewRepository {
         WITHIN GROUP (ORDER BY ing.ingredientId) AS "ingredients"`,
       `LISTAGG(DISTINCT acc.accusationId || '_' || TO_CHAR(acc.createDate, 'YYYY-MM-DD HH24/MI/SS/FF6') || ':' || acc.reason, ', ') 
         WITHIN GROUP (ORDER BY acc.createDate DESC) AS "accusations"`,
-      `LISTAGG(DISTINCT rvImg.reviewImgId || '_' || rvImg.middlePath || '_' || rvImg.path || ':' || rvImg.imgName || rvImg.extention, ', ') 
+      `LISTAGG(DISTINCT rvImg.reviewImgId || '_' || rvImg.middlePath || '_' || rvImg.path || ':' || rvImg.imgName || rvImg.extension, ', ') 
         WITHIN GROUP (ORDER BY rvImg.reviewImgId) AS "reviewImgs"`,
-      `LISTAGG(DISTINCT rcptImg.receiptImgId || '_' || rcptImg.middlePath || '_' || rcptImg.path || ':' || rcptImg.imgName || rcptImg.extention, ', ') 
+      `LISTAGG(DISTINCT rcptImg.receiptImgId || '_' || rcptImg.middlePath || '_' || rcptImg.path || ':' || rcptImg.imgName || rcptImg.extension, ', ') 
         WITHIN GROUP (ORDER BY rcptImg.receiptImgId) AS "receiptImgs"`,
     ];
   }

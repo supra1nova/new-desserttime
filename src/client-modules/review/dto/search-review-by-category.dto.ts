@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { CursorPaginationDto } from 'src/common/pagination/dto/cursor.pagination.dto';
 
-export class ReviewCategoryDto extends CursorPaginationDto {
+export class SearchReviewByCategoryDto extends CursorPaginationDto {
   @ApiProperty({
     example: '74',
     description: '카테고리 Id',
