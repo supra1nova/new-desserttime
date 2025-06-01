@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ReviewImg } from '../../config/entities/review-img.entity';
-import { UpdateReviewImgDto } from '../../client-modules/review/dto/reviewimg.change.dto';
+import { UpdateReviewImgDto } from '../../client-modules/review/dto/update-review-img.dto';
 
 export class AdminReviewImgRepository {
   constructor(@InjectRepository(ReviewImg) private adminReviewImgRepository: Repository<ReviewImg>) {}

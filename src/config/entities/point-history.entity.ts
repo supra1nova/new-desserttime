@@ -34,9 +34,10 @@ export class PointHistory {
   deleteDate: Date;
 
   @ManyToOne(() => Member, (member) => member.likes)
+  @JoinColumn({ name: 'member_id' })
   member: Member;
 
   @OneToOne(() => Review, (review) => review.pointHistory)
-  @JoinColumn()
+  @JoinColumn({ name: 'review_id' })
   review: Review;
 }

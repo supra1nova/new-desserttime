@@ -28,6 +28,6 @@ export class Point {
   deleteDate: Date;
 
   @OneToOne(() => Member, (member) => member.point)
-  @JoinColumn()
+  @JoinColumn({ name: 'member_id' })
   member: Member;
 }

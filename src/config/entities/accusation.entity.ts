@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  DeleteDateColumn,
+  DeleteDateColumn, JoinColumn,
 } from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
@@ -31,8 +31,10 @@ export class Accusation {
   deleteDate: Date;
 
   @ManyToOne(()=>Member, member => member.accusations)
+  @JoinColumn({ name: 'member_id' })
   member:Member
 
   @ManyToOne(()=>Review, review => review.accusations)
+  @JoinColumn({ name: 'review_id' })
   review:Review
 }
