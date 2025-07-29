@@ -11,7 +11,10 @@ export class AdminPointRepository {
    * @param totalPoint
    * */
   async insert(memberId: string, totalPoint: number) {
-    const insertResult = await this.adminPointRepository.insert({ member: { memberId: memberId }, totalPoint: totalPoint });
+    const insertResult = await this.adminPointRepository.insert({
+      member: { memberId: memberId },
+      totalPoint: totalPoint,
+    });
     return insertResult.identifiers.length > 0;
   }
 

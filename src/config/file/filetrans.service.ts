@@ -22,7 +22,7 @@ export class FileTransService {
 
   async downloadFile(filePath: string): Promise<Buffer> {
     //__dirname : 현재 디랙토리까지 경로,  process.cwd() : 프로젝트 경로,  __filename : 현재 파일까지의 경로
-    let fileDirectoryPath = path.join(process.env.fileroot, filePath); //파일 풀경로
+    const fileDirectoryPath = path.join(process.env.fileroot, filePath); //파일 풀경로
     const readStream = fs.createReadStream(fileDirectoryPath, {
       highWaterMark: 1000000000,
     });
@@ -37,8 +37,8 @@ export class FileTransService {
   }
 
   //파일삭제
-  async deleteFile(filePath) {
-    let fileDirectoryPath = path.join(process.env.fileroot, filePath); //파일 풀경로
+  async deleteFile(filePath: string) {
+    const fileDirectoryPath = path.join(process.env.fileroot, filePath); //파일 풀경로
     fs.unlink(fileDirectoryPath, (err) => {
       if (err) {
         console.error(err);
@@ -48,7 +48,7 @@ export class FileTransService {
   }
 
   //폴더 안에 있는 파일목록 삭제
-  async deleteFiles(filePath) {
+  async deleteFiles(filePath: string) {
     try {
       //fs.readdirSync : 해당경로의 파일들을 가져온다.
       const files = fs.readdirSync(path.join(process.env.fileroot, filePath));

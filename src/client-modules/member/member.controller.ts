@@ -88,7 +88,7 @@ export class MemberController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '탈퇴사유 항목 조회(라디오버튼)' })
   @Get('my-page/delete-reason')
-  async getDeleteReason(): Promise<{code: string, text: MemberDeletion}> {
+  async getDeleteReason(): Promise<{ code: string; text: MemberDeletion }> {
     return await this.memberService.getDeleteReason();
   }
 

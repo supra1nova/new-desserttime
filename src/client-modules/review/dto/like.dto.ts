@@ -20,7 +20,7 @@ export class LikeDto {
   readonly reviewId: string;
 
   @Transform((value) => {
-    return value.value == 'true' ? true : false;
+    return value.value == 'true';
   })
   @ApiProperty({
     example: 'true',

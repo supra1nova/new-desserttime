@@ -5,13 +5,9 @@ import { QnaRepository } from './qna.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Qna } from 'src/config/entities/qna.entity';
 
-@Module({    
-  imports: [
-  TypeOrmModule.forFeature([
-    Qna
-  ]),
-],
+@Module({
+  imports: [TypeOrmModule.forFeature([Qna])],
   controllers: [QnaController],
-  providers: [QnaService,QnaRepository]
+  providers: [QnaService, QnaRepository],
 })
 export class QnAModule {}

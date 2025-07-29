@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
 
@@ -7,11 +7,11 @@ export class Like {
   @PrimaryGeneratedColumn('uuid')
   likeId: string;
 
-  @ManyToOne(()=>Member, member => member.likes)
+  @ManyToOne(() => Member, (member) => member.likes)
   @JoinColumn({ name: 'member_id' })
-  member:Member
+  member: Member;
 
-  @ManyToOne(()=>Review, review => review.likes)
+  @ManyToOne(() => Review, (review) => review.likes)
   @JoinColumn({ name: 'review_id' })
-  review:Review
+  review: Review;
 }

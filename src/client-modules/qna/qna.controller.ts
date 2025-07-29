@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { QnaService } from './qna.service';
 import { FindQnaDto } from './dto/find-qna.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';

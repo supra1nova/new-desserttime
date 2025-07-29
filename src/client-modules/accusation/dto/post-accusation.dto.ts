@@ -6,7 +6,18 @@ import { AccusationEnum } from 'src/common/enum/accusation.enum';
 export class PostAccusationDto {
   @Transform((value) => {
     const key = value.value;
-    return key == 'ETC' ? AccusationEnum.ETC : key == 'ABUSE' ? AccusationEnum.ABUSE : key == 'PRIVATE' ? AccusationEnum.PRIVATE : key == 'OBSCENE' ? AccusationEnum.OBSCENE : AccusationEnum.COPYRIGHT_INFRINGEMENT;
+    switch (key) {
+      case 'ETC':
+        return AccusationEnum.ETC;
+      case 'ABUSE':
+        return AccusationEnum.ABUSE;
+      case 'PRIVATE':
+        return AccusationEnum.PRIVATE;
+      case 'OBSCENE':
+        return AccusationEnum.OBSCENE;
+      default:
+        return AccusationEnum.COPYRIGHT_INFRINGEMENT;
+    }
   })
   @ApiProperty({
     example: 'ETC',

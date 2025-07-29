@@ -1,6 +1,6 @@
 // pagination/dto/cursor-pagination.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsNumber, Min } from 'class-validator';
+import { IsOptional, Min } from 'class-validator';
 
 export class CursorPaginationDto {
   @ApiProperty({

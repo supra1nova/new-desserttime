@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { SearchReviewByCategoryDto } from './dto/search-review-by-category.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -30,7 +30,15 @@ export class ReviewController {
 
   @ApiOperation({ summary: '홈화면 - 카테고리별 리뷰 이미지 목록 조회' })
   @Get('home/list/:memberId')
-  async getReviewListWithImagePerCategory(@Param(new ValidationPipe({ whitelist: true, transform: true })) getRegistrableReviewListDto: GetRegistrableReviewListDto) {
+  async getReviewListWithImagePerCategory(
+    @Param(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+      }),
+    )
+    getRegistrableReviewListDto: GetRegistrableReviewListDto,
+  ) {
     return await this.reviewService.getReviewListWithImagePerCategory(getRegistrableReviewListDto);
   }
 

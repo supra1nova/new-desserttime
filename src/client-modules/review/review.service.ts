@@ -90,13 +90,13 @@ export class ReviewService {
     let memberInterestList = [];
     let randomReviewCount = 25;
     let reviewImgList = [];
-    if (getRegistrableReviewListDto.memberId) memberInterestList = await this.reviewRepository.findMemberInterestList(getRegistrableReviewListDto);
+    if (getRegistrableReviewListDto.memberId) memberInterestList = await this.reviewRepository.findMemberInterests(getRegistrableReviewListDto);
 
     if (memberInterestList.length > 0) {
       const dessertCategoryList = memberInterestList.map((category) => category.dc_dessertCategoryId);
 
       if (dessertCategoryList.length > 0) {
-        const usableCategoryList = await this.reviewRepository.findUsablecategoryList(dessertCategoryList);
+        const usableCategoryList = await this.reviewRepository.findUsableCategories(dessertCategoryList);
 
         if (usableCategoryList && usableCategoryList.length > 0) {
           randomReviewCount -= usableCategoryList.length;
@@ -190,7 +190,11 @@ export class ReviewService {
     });
 
     // Map을 배열로 변환하여 반환
-    return { items: Array.from(grouped.values()), hasNextPage: reviewCategoryList.hasNextPage, nextCursor: reviewCategoryList.nextCursor };
+    return {
+      items: Array.from(grouped.values()),
+      hasNextPage: reviewCategoryList.hasNextPage,
+      nextCursor: reviewCategoryList.nextCursor,
+    };
   }
 
   /**
@@ -297,6 +301,7 @@ export class ReviewService {
   async getIngredientList() {
     return await this.reviewRepository.findIngredientList();
   }
+
   /**
    * 작성 가능한 후기 하나 조회
    * @param getRegistrableReviewDto
@@ -312,7 +317,10 @@ export class ReviewService {
       resultData['menuName'] = reviewData.menuName;
       resultData['storeName'] = reviewData.storeName;
       resultData['score'] = reviewData.score;
-      resultData['dessertCategory'] = { dessertCategoryId: reviewData.dessertCategory?.dessertCategoryId, dessertName: reviewData.dessertCategory?.dessertName };
+      resultData['dessertCategory'] = {
+        dessertCategoryId: reviewData.dessertCategory?.dessertCategoryId,
+        dessertName: reviewData.dessertCategory?.dessertName,
+      };
 
       if (reviewData.reviewImgs.length > 0) {
         const reviewImgs = reviewData.reviewImgs.map((imgData) => {
@@ -358,7 +366,10 @@ export class ReviewService {
       if (ingredientList.length > 0) await this.reviewRepository.deleteReviewIngredient(reviewSaveDto);
       //2. 재료 저장
       if (reviewSaveDto.ingredientId.length > 0) {
-        const saveReviewIngredient = reviewSaveDto.ingredientId.map((data) => ({ ingredient: { ingredientId: data }, review: { reviewId: reviewSaveDto.reviewId } }));
+        const saveReviewIngredient = reviewSaveDto.ingredientId.map((data) => ({
+          ingredient: { ingredientId: data },
+          review: { reviewId: reviewSaveDto.reviewId },
+        }));
         await this.reviewRepository.insertReviewIngredient(saveReviewIngredient);
       }
     }
@@ -460,7 +471,7 @@ export class ReviewService {
   @Transactional()
   async updateReviewImg(updateReviewImgListDto: UpdateReviewImgListDto) {
     const entitiesToSave = [];
-    
+
     for (const updateDto of updateReviewImgListDto.reviewImg) {
       const reviewImg = await this.reviewRepository.findReviewImgId(updateDto.reviewImgId);
 
@@ -530,6 +541,10 @@ export class ReviewService {
     });
 
     // Map을 배열로 변환하여 반환
-    return { items: Array.from(grouped.values()), hasNextPage: likedReviewList.hasNextPage, nextCursor: likedReviewList.nextCursor };
+    return {
+      items: Array.from(grouped.values()),
+      hasNextPage: likedReviewList.hasNextPage,
+      nextCursor: likedReviewList.nextCursor,
+    };
   }
 }

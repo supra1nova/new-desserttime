@@ -76,7 +76,7 @@ export class ReviewRepository {
    * @param getRegistrableReviewListDto
    * @returns
    */
-  async findMemberInterestList(getRegistrableReviewListDto: GetRegistrableReviewListDto) {
+  async findMemberInterests(getRegistrableReviewListDto: GetRegistrableReviewListDto) {
     return await this.member
       .createQueryBuilder('member')
       .leftJoin('member.uids', 'uids')
@@ -90,16 +90,16 @@ export class ReviewRepository {
   /**
    * 사용자가 고른 카테고리중에 리뷰 수가 5개 이상인 디저트카테고리 조회.
    * 리뷰갯수가 많은 순으로 총 25개만 조회
-   * @param dessertCategoryId
+   * @param dessertCategoryIds
    * @returns
    */
-  async findUsablecategoryList(dessertCategoryId) {
+  async findUsableCategories(dessertCategoryIds: number[]) {
     return await this.review
       .createQueryBuilder('review')
       .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
       .andWhere({ status: ReviewStatus.SAVED })
       .andWhere({ isUsable: true })
-      .andWhere('dc.dessertCategoryId IN (:...dessertCategoryId)', { dessertCategoryId })
+      .andWhere('dc.dessertCategoryId IN (:...dessertCategoryIds)', { dessertCategoryIds })
       .groupBy('dc.dessertCategoryId, dc.dessertName')
       .having('COUNT(review.reviewId) >= :minReviewCount', { minReviewCount: 5 })
       .orderBy('COUNT(review.reviewId)', 'DESC')
@@ -113,7 +113,7 @@ export class ReviewRepository {
    * @param dessertCategoryId
    * @returns
    */
-  async findReviewImgList(dessertCategoryId) {
+  async findReviewImgList(dessertCategoryId: number) {
     return await this.review
       .createQueryBuilder('review')
       .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
@@ -133,10 +133,10 @@ export class ReviewRepository {
   /**
    * 사용자가 선택하지 않은 카테고리 중에서
    * 리뷰수가 많은 2차 카테고리 목록 조회
-   * @param limitnum
+   * @param limit
    * @returns
    */
-  async findRandomCategoryList(limitnum: number) {
+  async findRandomCategoryList(limit: number) {
     return await this.review
       .createQueryBuilder('review')
       .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
@@ -146,7 +146,7 @@ export class ReviewRepository {
       .groupBy('dc.dessertCategoryId, dc.dessertName')
       .orderBy('COUNT(review.reviewId)', 'DESC')
       .select(['dc.dessertCategoryId', 'dc.dessertName'])
-      .limit(limitnum)
+      .limit(limit)
       .getRawMany();
   }
 
@@ -156,7 +156,7 @@ export class ReviewRepository {
    * @param dessertCategoryId
    * @returns
    */
-  async findRandomReviewImgList(dessertCategoryId) {
+  async findRandomReviewImgList(dessertCategoryId: number) {
     return await this.review
       .createQueryBuilder('review')
       .leftJoin(DessertCategory, 'dc', 'review.dessertCategoryDessertCategoryId = dc.dessertCategoryId')
@@ -184,7 +184,7 @@ export class ReviewRepository {
     let orderField;
     searchReviewByCategoryDto.selectedOrder === 'D' ? (orderField = 'createDate') : (orderField = 'totalLikedNum');
 
-    const queryBuilder = await this.review
+    const queryBuilder = this.review
       .createQueryBuilder('review')
       .select([
         'review.reviewId AS "reviewId"',
@@ -308,7 +308,11 @@ export class ReviewRepository {
    */
   async findGenerableReviewCount(getRegistrableReviewListDto: GetRegistrableReviewListDto) {
     return await this.review.count({
-      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: getRegistrableReviewListDto.memberId } },
+      where: {
+        isUsable: true,
+        status: In([ReviewStatus.WAIT, ReviewStatus.INIT]),
+        member: { memberId: getRegistrableReviewListDto.memberId },
+      },
     });
   }
 
@@ -321,7 +325,12 @@ export class ReviewRepository {
     const { limit, cursor } = searchRegistrableReview;
     const items = await this.review.find({
       select: { reviewId: true, menuName: true, storeName: true, status: true },
-      where: { isUsable: true, status: In([ReviewStatus.WAIT, ReviewStatus.INIT]), member: { memberId: searchRegistrableReview.memberId }, ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}) },
+      where: {
+        isUsable: true,
+        status: In([ReviewStatus.WAIT, ReviewStatus.INIT]),
+        member: { memberId: searchRegistrableReview.memberId },
+        ...(cursor ? { pointHistoryId: LessThan(Number(cursor)) } : {}),
+      },
       order: { createDate: 'ASC', menuName: 'ASC' },
     });
 
@@ -350,8 +359,13 @@ export class ReviewRepository {
    * @returns
    */
   async findIngredientList() {
-    return await this.ingredient.find({ select: { ingredientId: true, ingredientName: true }, where: { usable: true }, order: { ingredientId: 'ASC' } });
+    return await this.ingredient.find({
+      select: { ingredientId: true, ingredientName: true },
+      where: { usable: true },
+      order: { ingredientId: 'ASC' },
+    });
   }
+
   /**
    * 작성 가능한 후기 하나 조회
    * @param getRegistrableReviewDto
@@ -475,7 +489,7 @@ export class ReviewRepository {
    */
   async findLikedReviewList(memberIdPagingDto: SearchRegistrableReview) {
     const { cursor, limit } = memberIdPagingDto;
-    const queryBuilder = await this.review
+    const queryBuilder = this.review
       .createQueryBuilder('review')
       .select([
         'review.reviewId AS "reviewId"',

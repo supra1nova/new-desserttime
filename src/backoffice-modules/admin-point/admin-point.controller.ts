@@ -20,7 +20,6 @@ export class AdminPointController {
     return await this.adminPointService.saveRecallPoint('save', memberId, createAdminPointDto);
   }
 
-
   @ApiOperation({ summary: '포인트 회수' })
   @ApiParam({
     name: 'memberId',

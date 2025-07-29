@@ -15,12 +15,7 @@ export class AdminDessertCategoryRepository {
   async findDessertCategoryListCountByParentDCId(adminSearchDessertCategoryDto: AdminSearchDessertCategoryDto) {
     return await this.dessertCategoryRepository
       .createQueryBuilder('dc')
-      .select([
-        'dc.dessertName        AS "dessertName"',
-        'dc.sessionNum         AS "sessionNum"',
-        'dc.dessertCategoryId  AS "dessertCategoryId"',
-        'dc.parentDCId         AS "parentDCId"',
-      ])
+      .select(['dc.dessertName        AS "dessertName"', 'dc.sessionNum         AS "sessionNum"', 'dc.dessertCategoryId  AS "dessertCategoryId"', 'dc.parentDCId         AS "parentDCId"'])
       .where('dc.parentDCId = :parentDCId', { parentDCId: adminSearchDessertCategoryDto.parentDCId })
       .getCount();
   }
@@ -33,12 +28,7 @@ export class AdminDessertCategoryRepository {
   async findDessertCategoryListByParentDCId(adminSearchDessertCategoryDto: AdminSearchDessertCategoryDto) {
     return await this.dessertCategoryRepository
       .createQueryBuilder('dc')
-      .select([
-        'dc.dessertName        AS "dessertName"',
-        'dc.sessionNum         AS "sessionNum"',
-        'dc.dessertCategoryId  AS "dessertCategoryId"',
-        'dc.parentDCId         AS "parentDCId"',
-      ])
+      .select(['dc.dessertName        AS "dessertName"', 'dc.sessionNum         AS "sessionNum"', 'dc.dessertCategoryId  AS "dessertCategoryId"', 'dc.parentDCId         AS "parentDCId"'])
       .where('dc.parentDCId = :parentDCId', { parentDCId: adminSearchDessertCategoryDto.parentDCId })
       .orderBy('dc.dessertCategoryId', 'ASC')
       .offset(adminSearchDessertCategoryDto.getSkip())
@@ -98,7 +88,7 @@ export class AdminDessertCategoryRepository {
    * 카테고리 삭제
    */
   async deleteDessertCategory(dessertCategoryIdDto: DessertCategoryIdDto) {
-    const result = await this.dessertCategoryRepository.softDelete(dessertCategoryIdDto)
+    const result = await this.dessertCategoryRepository.softDelete(dessertCategoryIdDto);
     return !!result.affected;
   }
 
@@ -126,10 +116,7 @@ export class AdminDessertCategoryRepository {
     const lastSubQr = this.dessertCategoryRepository
       .createQueryBuilder()
       .subQuery()
-      .select([
-        'lastSubQr.dessertCategoryId  AS "dessertCategoryId"',
-        'lastSubQr.dessertName        AS "dessertName"',
-      ])
+      .select(['lastSubQr.dessertCategoryId  AS "dessertCategoryId"', 'lastSubQr.dessertName        AS "dessertName"'])
       .from(DessertCategory, 'lastSubQr')
       .getQuery();
 

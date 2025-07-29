@@ -6,12 +6,11 @@ import { DataSource } from 'typeorm';
 export class InitService implements OnModuleInit {
   constructor(
     //private initRepository: InitRepository) {}
-  private readonly dataSource: DataSource) {}
+    private readonly dataSource: DataSource,
+  ) {}
 
   onModuleInit() {
     //this.initRepository.insertAdmin();
-
     // this.dataSource.query('ALTER SYSTEM FLUSH SHARED_POOL');
-  
-}
+  }
 }
