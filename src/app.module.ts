@@ -61,15 +61,14 @@ import { AuthModule } from './config/auth/auth.module';
       serveStaticOptions: {
         //index: false, // 디렉토리 색인 페이지 표시 비활성화
         setHeaders: (res, filePath) => {
-          const filename= filePath.split('/').pop(); // 파일 경로에서 파일명 추출
+          const filename = filePath.split('/').pop(); // 파일 경로에서 파일명 추출
           res.setHeader('Content-Security-Policy', 'upgrade-insecure-requests', `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`);
         },
       },
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) =>
-        await typeORMConfig(configService),
+      useFactory: async (configService: ConfigService) => await typeORMConfig(configService),
     }),
   ],
   controllers: [AppController],

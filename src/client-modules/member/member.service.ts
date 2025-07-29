@@ -45,7 +45,7 @@ export class MemberService {
     }
 
     const insertedSeq = newMember.raw[0].SEQ; // Oracle은 대문자 컬럼명
-    const memberId = newMember.raw[0].memberId
+    const memberId = newMember.raw[0].memberId;
     const nickname = `${insertedSeq}번째 달콤한 디저트`;
 
     const updateMemberResult = await this.memberRepository.updateMemberNickname(memberId, nickname);
@@ -53,7 +53,7 @@ export class MemberService {
       throw new BadRequestException('요청실패', {
         cause: new Error(),
         description: '회원 정보를 업데이트할 수 없습니다.',
-      })
+      });
     }
 
     const categoriesArr = [signInDto.memberPickCategory1, signInDto.memberPickCategory2, signInDto.memberPickCategory3, signInDto.memberPickCategory4, signInDto.memberPickCategory5];
@@ -248,13 +248,13 @@ export class MemberService {
    * @returns
    */
   @Transactional()
-  async getDeleteReason(): Promise<{code: string, text: MemberDeletion}> {
+  async getDeleteReason(): Promise<{ code: string; text: MemberDeletion }> {
     // todo: 탈퇴사유 공통코드로 db 저장 후 조회하도록 처리 필요
     return new Promise<any>(() => {
       return Object.entries(MemberDeletion).map(([key, value]) => ({
         code: key,
         text: value,
-      }))
+      }));
     });
   }
 

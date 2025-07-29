@@ -1,12 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  DeleteDateColumn, JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, DeleteDateColumn, JoinColumn } from 'typeorm';
 import { Member } from './member.entity';
 import { Review } from './review.entity';
 
@@ -16,25 +8,25 @@ export class Accusation {
   accusationId: string;
 
   @Column()
-  reason:string;
+  reason: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   content: string;
-  
+
   @CreateDateColumn()
   createDate: Date;
-  
+
   @UpdateDateColumn()
   updateDate: Date;
 
   @DeleteDateColumn()
   deleteDate: Date;
 
-  @ManyToOne(()=>Member, member => member.accusations)
+  @ManyToOne(() => Member, (member) => member.accusations)
   @JoinColumn({ name: 'member_id' })
-  member:Member
+  member: Member;
 
-  @ManyToOne(()=>Review, review => review.accusations)
+  @ManyToOne(() => Review, (review) => review.accusations)
   @JoinColumn({ name: 'review_id' })
-  review:Review
+  review: Review;
 }

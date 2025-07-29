@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  ManyToOne,
-  UpdateDateColumn,
-  DeleteDateColumn, JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn, DeleteDateColumn, JoinColumn } from 'typeorm';
 import { Review } from './review.entity';
 import { Ingredient } from './ingredient.entity';
 

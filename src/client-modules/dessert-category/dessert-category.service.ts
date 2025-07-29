@@ -68,8 +68,7 @@ export class DessertCategoryService {
   @Transactional()
   async getSessionSubDessertCategory(parentIdDto: ParentIdDto) {
     try {
-      const subCategoryList = await this.dessertCategoryRepository.findSessionSubDessertCategoryList(parentIdDto);
-      return subCategoryList;
+      return await this.dessertCategoryRepository.findSessionSubDessertCategoryList(parentIdDto);
     } catch (error) {
       throw error;
     }

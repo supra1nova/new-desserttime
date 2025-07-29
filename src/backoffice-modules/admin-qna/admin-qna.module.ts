@@ -6,7 +6,7 @@ import { Qna } from '../../config/entities/qna.entity';
 import { AdminQnaRepository } from './admin-qna.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Qna]) ],
+  imports: [TypeOrmModule.forFeature([Qna])],
   exports: [],
   controllers: [AdminQnaController],
   providers: [AdminQnaService, AdminQnaRepository],

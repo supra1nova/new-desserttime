@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { InitService } from './Init.service';
 import { InitRepository } from './init.repository';
 
-
 @Module({
   imports: [TypeOrmModule.forFeature([])],
   controllers: [],

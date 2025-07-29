@@ -28,11 +28,7 @@ const consoleTransport = new winston.transports.Console({
 const transports: winston.transport[] = [consoleTransport];
 
 if (isProd) {
-  transports.push(
-    createDailyTransport('error'),
-    createDailyTransport('warn'),
-    createDailyTransport('info'),
-  );
+  transports.push(createDailyTransport('error'), createDailyTransport('warn'), createDailyTransport('info'));
 }
 
 export const winstonLogger = WinstonModule.createLogger({ transports });

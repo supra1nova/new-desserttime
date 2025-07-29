@@ -1,14 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  ManyToOne,
-  OneToOne,
-  DeleteDateColumn, JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, OneToOne, DeleteDateColumn, JoinColumn } from 'typeorm';
 import { Member } from './member.entity';
 import { Accusation } from './accusation.entity';
 import { Like } from './like.entity';

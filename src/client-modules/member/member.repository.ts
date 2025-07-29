@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/config/entities/member.entity';
-import { In, LessThan, Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { ValidateUserDto } from './dto/validate-user.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { Review } from 'src/config/entities/review.entity';
@@ -80,7 +80,8 @@ export class MemberRepository {
    * @returns
    */
   async insertMember(signInDto: SignInDto) {
-    return await this.memberRepository.createQueryBuilder()
+    return await this.memberRepository
+      .createQueryBuilder()
       .insert()
       .into(Member)
       .values({
@@ -94,7 +95,8 @@ export class MemberRepository {
         secondaryCity: signInDto.secondaryCity,
         thirdCity: signInDto.thirdCity,
         adStatus: signInDto.isAgreeAD,
-      }).returning(['seq'])
+      })
+      .returning(['seq'])
       .execute();
   }
 
@@ -169,11 +171,7 @@ export class MemberRepository {
    * @param memberId
    */
   async updateAlarmStatus(memberId: string) {
-    const subQuery = this.memberRepository
-      .createQueryBuilder('subMember')
-      .select('subMember.alarm_status')
-      .where('subMember.id = :fromId', { memberId })
-      .getQuery();
+    const subQuery = this.memberRepository.createQueryBuilder('subMember').select('subMember.alarm_status').where('subMember.id = :fromId', { memberId }).getQuery();
 
     const result = await this.memberRepository
       .createQueryBuilder()
@@ -274,7 +272,7 @@ export class MemberRepository {
    */
   async findNotice(noticeDto: NoticeDto) {
     const { noticeId, noticeType } = noticeDto;
-    return await this.noticeRepository.findOne( {where: { noticeId, noticeType } });
+    return await this.noticeRepository.findOne({ where: { noticeId, noticeType } });
   }
 
   /**

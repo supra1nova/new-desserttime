@@ -55,7 +55,15 @@ export class AdminQnaRepository {
    * */
   async create(qnaId: string, qNAData: Partial<Qna>) {
     // await this.adminQnaRepository.update(qnaId, qNAData);
-    await this.adminQnaRepository.update({ qnaId: qnaId }, { isAnswered: true, replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyCreateDate: new Date() });
+    await this.adminQnaRepository.update(
+      { qnaId: qnaId },
+      {
+        isAnswered: true,
+        replyContent: qNAData.replyContent,
+        replyAdminId: qNAData.replyAdminId,
+        replyCreateDate: new Date(),
+      },
+    );
   }
 
   /**
@@ -73,7 +81,14 @@ export class AdminQnaRepository {
    * @param qNAData
    * */
   async update(qnaId: string, qNAData: Partial<Qna>) {
-    await this.adminQnaRepository.update({ qnaId: qnaId }, { replyContent: qNAData.replyContent, replyAdminId: qNAData.replyAdminId, replyUpdateDate: new Date() });
+    await this.adminQnaRepository.update(
+      { qnaId: qnaId },
+      {
+        replyContent: qNAData.replyContent,
+        replyAdminId: qNAData.replyAdminId,
+        replyUpdateDate: new Date(),
+      },
+    );
   }
 
   /**
